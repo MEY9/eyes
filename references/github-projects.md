@@ -77,6 +77,17 @@
 - 值得深入研究：是
 - 备注：项目已同步到本仓库的 `skills/gpt-image2-ppt/` 并安装为 Codex skill；图片式幻灯片的文字和图表通常会成为整页图像，不等同于原生可编辑文本框，使用时需核查仓库及第三方模板/素材授权。
 
+### image-to-editable-ppt-skill
+
+- GitHub：<https://github.com/ningzimu/image-to-editable-ppt-skill>
+- 状态：已收录
+- 主要功能：将单张或多张幻灯片图片、扫描型 PPT/PPTX 和 PDF 重建为对象级可编辑 `.pptx`；尽量把可识别文字恢复为原生文本框，把简单几何恢复为 PowerPoint 形状，把复杂插画、照片和纹理保留为可单独移动的图片素材，并通过 OCR、逐页重建、结构校验和最终组装完成交付。
+- 对本项目的用途：与 `codex-ppt`、`gpt-image2-ppt` 形成“先生成高质量视觉稿，再转换为可编辑 PPT”的配套链路；适合教材课件生成后，让教师继续修改标题、正文、基础图形和图片位置，也可用于处理扫描型教材或图片版课件。
+- 适用产品类型：可编辑教育 PPT / 图片转 PPTX / 教材课件 / 扫描 PDF 转 PPT / 演示文稿重建
+- 技术栈：Python、`editppt` CLI、OCR、PowerPoint 对象级重建、页面级多 Agent 分工、清单与验证报告、PPTX 最终组装。
+- 值得深入研究：是
+- 备注：项目已安装为 Codex skill，并同步到本仓库的 `skills/image-to-editable-ppt/`；它不是从零创作 PPT 的工具，复杂视觉通常仍会保留为图片层，最终效果依赖 OCR、字体和本机 PPTX 回渲染环境；公开仓库 README 标注 MIT 许可证。
+
 ## 待审核项目
 
 发现的新项目先放在这里，经过审核后再移动到“项目列表”。
