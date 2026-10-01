@@ -1,0 +1,4 @@
+interface:
+  display_name: "GitHub 链接收藏"
+  short_description: "整理、说明并审核教育视觉相关 GitHub 项目"
+  default_prompt: "帮我存储 GitHub 链接"
