@@ -1,0 +1,23 @@
+# 本地环境与构建产物
+.DS_Store
+node_modules/
+dist/
+build/
+.env
+.env.*
+!.env.example
+
+# 教材、客户资料和未经确认的外部素材默认不进入远程仓库
+materials/textbooks/**/*.pdf
+materials/customer-data/
+materials/private/
+assets/unlicensed/
+
+# 生成的临时媒体
+products/**/generated/
+tmp/
+
+# Codex / IDE 本地状态
+.codex-local/
+.idea/
+.vscode/
