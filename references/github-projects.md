@@ -44,6 +44,17 @@
 - 值得深入研究：是
 - 备注：公开仓库，页面标注 MIT 许可证；项目包含第三方公开提示词与示例图片的整理，使用时需分别核查素材来源、授权与商用限制。
 
+### html-ppt-designer
+
+- GitHub：<https://github.com/andyhuo520/html-ppt-designer>
+- 状态：已收录
+- 主要功能：将结构化的 `slides.json`、可选的设计规格和图片映射转换成 HTML 演示文稿；支持多种视觉风格、CSS 翻页动画、网页/音视频内容转录、Unsplash 或 AI 配图，以及通过 TTS、Playwright 和 FFmpeg 导出带配音与字幕的教学视频。
+- 对本项目的用途：作为教材内容转 HTML 课件和微课视频的参考架构，重点研究其页面数据结构、视觉变量、幻灯片引擎、`data-narration` 讲解词和音频驱动视频导出流程；可与当前教育 PPT 产品流程的 HTML 分支结合。
+- 适用产品类型：HTML 课件 / 交互演示 / 教学视频 / 教育 PPT 原型
+- 技术栈：Python、JSON、HTML/CSS、JavaScript、Playwright、FFmpeg、Edge TTS/OpenAI TTS/国产 TTS，以及 Unsplash 和 ZENMUX 配图接口。
+- 值得深入研究：是
+- 备注：公开仓库，页面标注 MIT 许可证。当前源码快照中部分风格模板文件缺失，`E1` 等风格可能回退到默认模板；AI 配图结果与 HTML 图片映射之间也需要进一步核验。项目主要输出 HTML/MP4，不直接生成原生可编辑 PPTX。
+
 ## 待审核项目
 
 发现的新项目先放在这里，经过审核后再移动到“项目列表”。
