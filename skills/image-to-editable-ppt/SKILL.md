@@ -34,6 +34,7 @@ These parent-level rules are stated once here; page-level rules live in the refe
 - All page object decisions follow `references/page-decision-tree.md`, including its no-fallback rule for foreground visual objects and its rule that deterministic validation is a structure gate that never waives an object-source decision.
 - `manifest.json` is the authoritative page build source: `editppt run record` validates `page.pptx` against it, and `editppt run finalize` rebuilds the final deck from recorded page manifests. Required fields and coordinate contracts are defined in `references/manifest-schema.md`.
 - `editppt prepare` writes per-page text measurements (`text_hints.json`/`text_hints.png`). How page reconstructors consume them is defined in `references/page-decision-tree.md` section 3.1.
+- When the project contains `scripts/paddleocr_api.py` and `.env` has `PADDLEOCR_ACCESS_TOKEN`, use that Python API wrapper as the content-aware OCR source before page reconstruction. Default to `PaddleOCR-VL-1.6`; use `PP-OCRv6` for precise text boxes and `PP-StructureV3` for table/layout-heavy pages. Keep OCR output in the task run directory and never copy the token into prompts, manifests, logs, or PPTX artifacts.
 - Page reconstructors — either page workers or the parent agent in single-page local mode — are driven by prompts generated from `prompts/page-worker.md`.
 
 ### Image Backend Selection
