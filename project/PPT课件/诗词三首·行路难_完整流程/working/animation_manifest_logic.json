@@ -1,0 +1,3096 @@
+{
+  "input": "/Users/sk/Documents/Codex/monigouwu/eyes/project/PPT课件/诗词三首·行路难_完整流程/outputs/诗词三首·行路难_完整流程_可编辑.pptx",
+  "output": "/Users/sk/Documents/Codex/monigouwu/eyes/project/PPT课件/诗词三首·行路难_完整流程/outputs/诗词三首·行路难_完整流程_逻辑动画版.pptx",
+  "slides": [
+    {
+      "slide": 1,
+      "click_count": 3,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "封面标题",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 15,
+              "name": "TextBox 15",
+              "text": "行路难",
+              "kind": "text"
+            },
+            {
+              "shape_id": 16,
+              "name": "TextBox 16",
+              "text": "李白",
+              "kind": "text"
+            },
+            {
+              "shape_id": 17,
+              "name": "TextBox 17",
+              "text": "九年级语文",
+              "kind": "text"
+            },
+            {
+              "shape_id": 18,
+              "name": "TextBox 18",
+              "text": "从一杯酒读出人生的转折",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "人物与主题意象",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 5,
+              "name": "Separated seated Li Bai illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 6,
+              "name": "Separated sailing ship",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 10,
+              "name": "Separated wine jar with blank red label",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 12,
+              "name": "Separated bronze ewer",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 14,
+              "name": "Separated drinking cup",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 7,
+              "name": "Dark-red brush plaque without text",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 8,
+              "name": "Ochre brush plaque without text",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 9,
+              "name": "Cream ornate subtitle plaque without text",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 13,
+              "name": "Separated plate with food",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 19,
+              "name": "TextBox 19",
+              "text": "酒",
+              "kind": "text"
+            },
+            {
+              "shape_id": 11,
+              "name": "Separated wooden table",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 2,
+      "click_count": 6,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "单元导入",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 27,
+              "name": "TextBox 27",
+              "text": "从品酒师到见习酿酒师",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "读：读出酒味",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 28,
+              "name": "TextBox 28",
+              "text": "读",
+              "kind": "text"
+            },
+            {
+              "shape_id": 32,
+              "name": "TextBox 32",
+              "text": "读出酒味",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "品：画出情感心电图",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 29,
+              "name": "TextBox 29",
+              "text": "品",
+              "kind": "text"
+            },
+            {
+              "shape_id": 33,
+              "name": "TextBox 33",
+              "text": "画出情感心电图",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "辨：看见诗艺",
+          "effect": "appear",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 30,
+              "name": "TextBox 30",
+              "text": "辨",
+              "kind": "text"
+            },
+            {
+              "shape_id": 34,
+              "name": "TextBox 34",
+              "text": "看见诗艺",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "purpose": "酿：说出精神力量",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 31,
+              "name": "TextBox 31",
+              "text": "酿",
+              "kind": "text"
+            },
+            {
+              "shape_id": 35,
+              "name": "TextBox 35",
+              "text": "说出精神力量",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 6,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 25,
+              "name": "Calligraphy brush",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 15,
+              "name": "Painted arrow one",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 16,
+              "name": "Painted arrow two",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 17,
+              "name": "Painted arrow three",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 23,
+              "name": "Open illustrated book",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 22,
+              "name": "Central bowl",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 24,
+              "name": "Painted scroll",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 37,
+              "name": "TextBox 37",
+              "text": "酿",
+              "kind": "text"
+            },
+            {
+              "shape_id": 19,
+              "name": "Lower-left wine jar",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 21,
+              "name": "Lower-left bowl",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 36,
+              "name": "TextBox 36",
+              "text": "酒",
+              "kind": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 3,
+      "click_count": 6,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "课堂目标",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 30,
+              "name": "TextBox 30",
+              "text": "今天要酿出什么",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "理解诗意诗情",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 18,
+              "name": "open book icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 31,
+              "name": "TextBox 31",
+              "text": "理解诗意诗情",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "绘制情感心电图",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 19,
+              "name": "heartbeat icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 27,
+              "name": "emotional heartbeat chart illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 32,
+              "name": "TextBox 32",
+              "text": "绘制情感心电图",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "辨析浪漫主义手法",
+          "effect": "appear",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 20,
+              "name": "magnifying glass icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 33,
+              "name": "TextBox 33",
+              "text": "辨析浪漫主义手法",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "purpose": "完成诗歌品鉴卡",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 21,
+              "name": "paper and pencil icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 34,
+              "name": "TextBox 34",
+              "text": "完成诗歌品鉴卡",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 6,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 14,
+              "name": "ink-wash scholar holding a wine cup",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 29,
+              "name": "paper sketch illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 28,
+              "name": "ink mountain and cloud illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 26,
+              "name": "calligraphy scroll and brush illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 15,
+              "name": "wine jar, cups and bowl",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 16,
+              "name": "small sailing boat",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 4,
+      "click_count": 3,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "李白与酒",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 3,
+              "name": "Poet emblem icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 7,
+              "name": "Li Bai seated with raised wine cup",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 14,
+              "name": "TextBox 14",
+              "text": "李白",
+              "kind": "text"
+            },
+            {
+              "shape_id": 17,
+              "name": "TextBox 17",
+              "text": "诗仙",
+              "kind": "text"
+            },
+            {
+              "shape_id": 18,
+              "name": "TextBox 18",
+              "text": "酒仙",
+              "kind": "text"
+            },
+            {
+              "shape_id": 19,
+              "name": "TextBox 19",
+              "text": "酒进入李白的诗歌与生命",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "异常出现",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 20,
+              "name": "TextBox 20",
+              "text": "今天却出现停杯不能食",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 16,
+              "name": "TextBox 16",
+              "text": "酒",
+              "kind": "text"
+            },
+            {
+              "shape_id": 15,
+              "name": "TextBox 15",
+              "text": "与",
+              "kind": "text"
+            },
+            {
+              "shape_id": 4,
+              "name": "Wine jar emblem icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 5,
+              "name": "Wine bowl emblem icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 8,
+              "name": "Ornate gold wine ewer",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 6,
+              "name": "Reclining drinker emblem icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 9,
+              "name": "Foreground food dish and bowl",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 10,
+              "name": "Plate of buns",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 11,
+              "name": "Red draped cloth",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 5,
+      "click_count": 6,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "阅读任务",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 19,
+              "name": "TextBox 19",
+              "text": "先读全文，再找 异常",
+              "kind": "text"
+            },
+            {
+              "shape_id": 24,
+              "name": "TextBox 24",
+              "text": "行路难（其一）",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "自由朗读与圈画",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 20,
+              "name": "TextBox 20",
+              "text": "自由朗读",
+              "kind": "text"
+            },
+            {
+              "shape_id": 21,
+              "name": "TextBox 21",
+              "text": "圈画酒、剑、路、梦、云帆",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "疏通诗意",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 22,
+              "name": "TextBox 22",
+              "text": "结合注释疏通诗意",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "寻找异常",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 23,
+              "name": "TextBox 23",
+              "text": "找出饮酒场景中的异常",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "purpose": "全诗文本",
+          "effect": "appear",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 25,
+              "name": "TextBox 25",
+              "text": "金樽清酒斗十千， 玉盘珍羞直万钱。 停杯投箸不能食， 拔剑四顾心茫然。 欲渡黄河冰塞川， 将登太行雪满山。 闲来垂钓碧溪上， 忽复乘舟梦日边。 行路难，多歧路，今安在。 长风破浪会有时， 直挂云帆济沧海。",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 6,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 9,
+              "name": "Open-book icon badge",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 8,
+              "name": "Dark ceramic wine jar",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 10,
+              "name": "Paintbrush icon badge",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 15,
+              "name": "Gold wine cup",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 11,
+              "name": "Document icon badge",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 18,
+              "name": "Red seal stamp",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 17,
+              "name": "Ornate sword",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 14,
+              "name": "Plate with food and garnish",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 12,
+              "name": "Magnifying-glass icon badge",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 16,
+              "name": "Ornate sword scabbard",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "click_count": 5,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "关键发现",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 18,
+              "name": "TextBox 18",
+              "text": "关键发现：停杯投箸不能食",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "盛宴与不能食",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 11,
+              "name": "raised platter of food",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 19,
+              "name": "TextBox 19",
+              "text": "金樽清酒斗十千",
+              "kind": "text"
+            },
+            {
+              "shape_id": 20,
+              "name": "TextBox 20",
+              "text": "玉盘珍羞直万钱",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "动作突变",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 12,
+              "name": "fallen cup and spilled wine",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 13,
+              "name": "chopsticks and scattered food",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 21,
+              "name": "TextBox 21",
+              "text": "停杯投箸不能食",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "内心茫然",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 7,
+              "name": "seated poet illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 22,
+              "name": "TextBox 22",
+              "text": "拔剑四顾心茫然",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 8,
+              "name": "hanging lantern and red curtain",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 14,
+              "name": "first crescent brush bullet",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 15,
+              "name": "second crescent brush bullet",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 16,
+              "name": "third crescent brush bullet",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 9,
+              "name": "engraved bronze wine vessel",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 17,
+              "name": "fourth crescent brush bullet",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 6,
+              "name": "ornate dark wooden tabletop",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 10,
+              "name": "fish plate",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 7,
+      "click_count": 4,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "探究任务",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 32,
+              "name": "TextBox 32",
+              "text": "探究任务：画出情感心电图",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "情感曲线骨架",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 7,
+              "name": "red line chart icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 9,
+              "name": "Line 9",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 10,
+              "name": "Line 10",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 11,
+              "name": "Line 11",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 12,
+              "name": "Line 12",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 13,
+              "name": "Line 13",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 14,
+              "name": "Line 14",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 15,
+              "name": "Line 15",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 16,
+              "name": "Line 16",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 17,
+              "name": "Line 17",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 18,
+              "name": "Path 18",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 19,
+              "name": "Ellipse 19",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 20,
+              "name": "Ellipse 20",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 21,
+              "name": "Ellipse 21",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 22,
+              "name": "Ellipse 22",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 23,
+              "name": "Ellipse 23",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 24,
+              "name": "Ellipse 24",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 25,
+              "name": "Ellipse 25",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 26,
+              "name": "Ellipse 26",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 27,
+              "name": "Ellipse 27",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 28,
+              "name": "Ellipse 28",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 37,
+              "name": "Ellipse 37",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 38,
+              "name": "Ellipse 38",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 39,
+              "name": "Ellipse 39",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 40,
+              "name": "Ellipse 40",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "四步探究",
+          "effect": "appear",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 45,
+              "name": "TextBox 45",
+              "text": "独立阅读",
+              "kind": "text"
+            },
+            {
+              "shape_id": 46,
+              "name": "TextBox 46",
+              "text": "小组交流",
+              "kind": "text"
+            },
+            {
+              "shape_id": 47,
+              "name": "TextBox 47",
+              "text": "标注情感高度",
+              "kind": "text"
+            },
+            {
+              "shape_id": 48,
+              "name": "TextBox 48",
+              "text": "解释上升或 下降的依据",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 3,
+              "name": "red wine jar and cup",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 8,
+              "name": "paper and brush illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 6,
+              "name": "three-person group illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 5,
+              "name": "open book illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 29,
+              "name": "first dark red brush arrow",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 30,
+              "name": "second dark red brush arrow",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 31,
+              "name": "third dark red brush arrow",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 36,
+              "name": "Roundrect 36",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 33,
+              "name": "Roundrect 33",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 34,
+              "name": "Roundrect 34",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 35,
+              "name": "Roundrect 35",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 41,
+              "name": "TextBox 41",
+              "text": "1",
+              "kind": "text"
+            },
+            {
+              "shape_id": 42,
+              "name": "TextBox 42",
+              "text": "2",
+              "kind": "text"
+            },
+            {
+              "shape_id": 43,
+              "name": "TextBox 43",
+              "text": "3",
+              "kind": "text"
+            },
+            {
+              "shape_id": 44,
+              "name": "TextBox 44",
+              "text": "4",
+              "kind": "text"
+            },
+            {
+              "shape_id": 4,
+              "name": "lower-left vase, plum blossom and tabletop cluster",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 8,
+      "click_count": 5,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "AI互动入口",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 42,
+              "name": "TextBox 42",
+              "text": "AI互动： 情感心电图",
+              "kind": "text"
+            },
+            {
+              "shape_id": 43,
+              "name": "TextBox 43",
+              "text": "跟随诗句的起伏，绘制李白的情感心电图， 在转折处找到你的证据。",
+              "kind": "text"
+            },
+            {
+              "shape_id": 58,
+              "name": "TextBox 58",
+              "text": "拖动节点，绘制你的情感心电图。",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "诗句节点",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 48,
+              "name": "TextBox 48",
+              "text": "金樽清酒 斗十千",
+              "kind": "text"
+            },
+            {
+              "shape_id": 49,
+              "name": "TextBox 49",
+              "text": "停杯投箸 不能食",
+              "kind": "text"
+            },
+            {
+              "shape_id": 50,
+              "name": "TextBox 50",
+              "text": "欲渡黄河 冰塞川",
+              "kind": "text"
+            },
+            {
+              "shape_id": 51,
+              "name": "TextBox 51",
+              "text": "闲来垂钓 碧溪上",
+              "kind": "text"
+            },
+            {
+              "shape_id": 52,
+              "name": "TextBox 52",
+              "text": "行路难 多歧路 今安在",
+              "kind": "text"
+            },
+            {
+              "shape_id": 53,
+              "name": "TextBox 53",
+              "text": "长风破浪 会有时",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "操作任务",
+          "effect": "appear",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 54,
+              "name": "TextBox 54",
+              "text": "操作任务",
+              "kind": "text"
+            },
+            {
+              "shape_id": 55,
+              "name": "TextBox 55",
+              "text": "六个诗句节点",
+              "kind": "text"
+            },
+            {
+              "shape_id": 57,
+              "name": "TextBox 57",
+              "text": "调整情感高度",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "AI反馈",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 61,
+              "name": "TextBox 61",
+              "text": "提交后查看反馈",
+              "kind": "text"
+            },
+            {
+              "shape_id": 62,
+              "name": "TextBox 62",
+              "text": "看看AI如何评价你的解读， 并与同学分享。",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 11,
+              "name": "separated warm beige task band instance 1",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 63,
+              "name": "TextBox 63",
+              "text": "1",
+              "kind": "text"
+            },
+            {
+              "shape_id": 56,
+              "name": "TextBox 56",
+              "text": "根据诗句提示，观察情感变化。",
+              "kind": "text"
+            },
+            {
+              "shape_id": 44,
+              "name": "TextBox 44",
+              "text": "情感高度",
+              "kind": "text"
+            },
+            {
+              "shape_id": 35,
+              "name": "separated painted left jar with blank label",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 13,
+              "name": "separated warm beige task band instance 2",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 64,
+              "name": "TextBox 64",
+              "text": "2",
+              "kind": "text"
+            },
+            {
+              "shape_id": 32,
+              "name": "separated pointing hand task icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 45,
+              "name": "TextBox 45",
+              "text": "高涨",
+              "kind": "text"
+            },
+            {
+              "shape_id": 67,
+              "name": "TextBox 67",
+              "text": "行 路 难",
+              "kind": "text"
+            },
+            {
+              "shape_id": 15,
+              "name": "separated warm beige task band instance 3",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 65,
+              "name": "TextBox 65",
+              "text": "3",
+              "kind": "text"
+            },
+            {
+              "shape_id": 33,
+              "name": "separated document task icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 59,
+              "name": "TextBox 59",
+              "text": "填写一个转折点证据",
+              "kind": "text"
+            },
+            {
+              "shape_id": 46,
+              "name": "TextBox 46",
+              "text": "平稳",
+              "kind": "text"
+            },
+            {
+              "shape_id": 60,
+              "name": "TextBox 60",
+              "text": "选择一个你认为最重要的转折点， 写下诗句作为证据。",
+              "kind": "text"
+            },
+            {
+              "shape_id": 47,
+              "name": "TextBox 47",
+              "text": "低落",
+              "kind": "text"
+            },
+            {
+              "shape_id": 66,
+              "name": "TextBox 66",
+              "text": "4",
+              "kind": "text"
+            },
+            {
+              "shape_id": 17,
+              "name": "separated warm beige task band instance 4",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 34,
+              "name": "separated magnifying-glass task icon",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 9,
+      "click_count": 4,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "第一处转折",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 20,
+              "name": "TextBox 20",
+              "text": "金樽清酒斗十千， 玉盘珍羞直万钱。",
+              "kind": "text"
+            },
+            {
+              "shape_id": 26,
+              "name": "TextBox 26",
+              "text": "宴席上升",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "第二处转折",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 21,
+              "name": "TextBox 21",
+              "text": "停杯投箸不能食， 拔剑四顾心茫然。",
+              "kind": "text"
+            },
+            {
+              "shape_id": 27,
+              "name": "TextBox 27",
+              "text": "停杯拔剑下沉",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "现实阻隔",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 22,
+              "name": "TextBox 22",
+              "text": "欲渡黄河冰塞川， 将登太行雪满山。",
+              "kind": "text"
+            },
+            {
+              "shape_id": 28,
+              "name": "TextBox 28",
+              "text": "冰塞川、雪满山更沉",
+              "kind": "text"
+            },
+            {
+              "shape_id": 29,
+              "name": "TextBox 29",
+              "text": "现实阻隔具体可感",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 24,
+              "name": "TextBox 24",
+              "text": "情感曲线一：",
+              "kind": "text"
+            },
+            {
+              "shape_id": 25,
+              "name": "TextBox 25",
+              "text": "由盛转沉",
+              "kind": "text"
+            },
+            {
+              "shape_id": 7,
+              "name": "separated sword illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 8,
+              "name": "separated snowy mountain illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 6,
+              "name": "separated banquet illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 23,
+              "name": "TextBox 23",
+              "text": "冰雪阻塞、山路难行， 将理想与现实的矛盾 具体呈现，可感可触。",
+              "kind": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 10,
+      "click_count": 4,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "情感回升",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 19,
+              "name": "TextBox 19",
+              "text": "情感曲线二：典故带来回升",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "两个典故",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 2,
+              "name": "separated fisherman-at-river landscape",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 14,
+              "name": "separated seated fisherman icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 15,
+              "name": "separated rising sun icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 20,
+              "name": "TextBox 20",
+              "text": "姜尚垂钓",
+              "kind": "text"
+            },
+            {
+              "shape_id": 21,
+              "name": "TextBox 21",
+              "text": "伊尹梦日",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "共同指向",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 22,
+              "name": "TextBox 22",
+              "text": "共同指向等待时机",
+              "kind": "text"
+            },
+            {
+              "shape_id": 23,
+              "name": "TextBox 23",
+              "text": "困境中仍有希望",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 3,
+              "name": "separated hopeful boat landscape",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 16,
+              "name": "separated hourglass icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 17,
+              "name": "separated sprouting plant icon",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 11,
+      "click_count": 4,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "再跌与骤升",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 13,
+              "name": "TextBox 13",
+              "text": "情感曲线三：再跌与骤升",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "追问未来",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 14,
+              "name": "TextBox 14",
+              "text": "多歧路，今安在",
+              "kind": "text"
+            },
+            {
+              "shape_id": 17,
+              "name": "TextBox 17",
+              "text": "追问未来",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "理想回应",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 8,
+              "name": "Right sailing ship",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 15,
+              "name": "TextBox 15",
+              "text": "长风破浪会有时",
+              "kind": "text"
+            },
+            {
+              "shape_id": 16,
+              "name": "TextBox 16",
+              "text": "直挂云帆济沧海",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 6,
+              "name": "Left wooden signpost",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 7,
+              "name": "Flowing-robed traveler",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 5,
+              "name": "Curved red-to-gold upward arrow",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 12,
+      "click_count": 6,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "全诗脉搏",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 37,
+              "name": "TextBox 37",
+              "text": "全诗朗读",
+              "kind": "text"
+            },
+            {
+              "shape_id": 39,
+              "name": "TextBox 39",
+              "text": "读出跳荡的脉搏",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "宴席升与不能食沉",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 40,
+              "name": "TextBox 40",
+              "text": "宴席升",
+              "kind": "text"
+            },
+            {
+              "shape_id": 41,
+              "name": "TextBox 41",
+              "text": "不能食沉",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "冰塞雪满更沉",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 42,
+              "name": "TextBox 42",
+              "text": "冰塞雪满更沉",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "垂钓梦日回升",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 43,
+              "name": "TextBox 43",
+              "text": "垂钓梦日回升",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "purpose": "多歧路与云帆",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 44,
+              "name": "TextBox 44",
+              "text": "多歧路再跋",
+              "kind": "text"
+            },
+            {
+              "shape_id": 45,
+              "name": "TextBox 45",
+              "text": "云帆济海骤升",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 6,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 38,
+              "name": "TextBox 38",
+              "text": "：",
+              "kind": "text"
+            },
+            {
+              "shape_id": 6,
+              "name": "Separated banquet scene illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 7,
+              "name": "Separated overturned wine cup and chopsticks illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 11,
+              "name": "Separated sailing ship and rough waves illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 9,
+              "name": "Separated fisherman and willow lake illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 10,
+              "name": "Separated mountain signpost illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 8,
+              "name": "Separated snowy mountains and waterfall illustration",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 13,
+      "click_count": 4,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "诗艺问题",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 16,
+              "name": "TextBox 16",
+              "text": "诗艺问题：",
+              "kind": "text"
+            },
+            {
+              "shape_id": 17,
+              "name": "TextBox 17",
+              "text": "浪漫主义如何形成",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "语言与想象",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 18,
+              "name": "TextBox 18",
+              "text": "热情奔放的语言",
+              "kind": "text"
+            },
+            {
+              "shape_id": 19,
+              "name": "TextBox 19",
+              "text": "瑰丽的想象",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "夸张与张力",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 20,
+              "name": "TextBox 20",
+              "text": "夸张的手法",
+              "kind": "text"
+            },
+            {
+              "shape_id": 21,
+              "name": "TextBox 21",
+              "text": "理想与现实的张力",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 12,
+              "name": "robed poet raising a cup",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 8,
+              "name": "maroon brush badge",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 3,
+              "name": "top irregular tan brush-stroke label band",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 9,
+              "name": "ochre mountain badge",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 4,
+              "name": "second irregular tan brush-stroke label band",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 13,
+              "name": "sailing boat on the waves",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 10,
+              "name": "maroon wave badge",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 5,
+              "name": "third irregular tan brush-stroke label band",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 15,
+              "name": "black ceramic wine vessel",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 11,
+              "name": "ochre scales badge",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 6,
+              "name": "fourth irregular tan brush-stroke label band",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 14,
+              "name": "low table setting with food and cup",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 14,
+      "click_count": 7,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "象征隐喻",
+          "effect": "wipe",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 32,
+              "name": "TextBox 32",
+              "text": "象征隐喻",
+              "kind": "text"
+            },
+            {
+              "shape_id": 33,
+              "name": "TextBox 33",
+              "text": "冰塞川·雪满山",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "用典",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 34,
+              "name": "TextBox 34",
+              "text": "用典",
+              "kind": "text"
+            },
+            {
+              "shape_id": 35,
+              "name": "TextBox 35",
+              "text": "垂钓碧溪·梦日边",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "对比落差",
+          "effect": "appear",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 36,
+              "name": "TextBox 36",
+              "text": "对比落差",
+              "kind": "text"
+            },
+            {
+              "shape_id": 37,
+              "name": "TextBox 37",
+              "text": "盛宴与不能食",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "反复反问",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 38,
+              "name": "TextBox 38",
+              "text": "反复反问",
+              "kind": "text"
+            },
+            {
+              "shape_id": 39,
+              "name": "TextBox 39",
+              "text": "行路难·今安在",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "purpose": "夸张想象",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 40,
+              "name": "TextBox 40",
+              "text": "夸张想象",
+              "kind": "text"
+            },
+            {
+              "shape_id": 41,
+              "name": "TextBox 41",
+              "text": "长风破浪·云帆济沧海",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 6,
+          "purpose": "鉴赏链条",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 46,
+              "name": "TextBox 46",
+              "text": "诗句",
+              "kind": "text"
+            },
+            {
+              "shape_id": 48,
+              "name": "TextBox 48",
+              "text": "效果",
+              "kind": "text"
+            },
+            {
+              "shape_id": 50,
+              "name": "TextBox 50",
+              "text": "情感",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 7,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 2,
+              "name": "Separated snowy mountains and waterfall",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 4,
+              "name": "Separated fisherman lake scene",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 42,
+              "name": "TextBox 42",
+              "text": "浪漫",
+              "kind": "text"
+            },
+            {
+              "shape_id": 3,
+              "name": "Separated banquet scene",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 5,
+              "name": "Separated misty mountain and waves",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 43,
+              "name": "TextBox 43",
+              "text": "主义",
+              "kind": "text"
+            },
+            {
+              "shape_id": 9,
+              "name": "Separated standing scholar",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 6,
+              "name": "Separated sailing ship and waves",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 7,
+              "name": "Separated red and gold ink swoosh",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 44,
+              "name": "TextBox 44",
+              "text": "手法",
+              "kind": "text"
+            },
+            {
+              "shape_id": 45,
+              "name": "TextBox 45",
+              "text": "→",
+              "kind": "text"
+            },
+            {
+              "shape_id": 47,
+              "name": "TextBox 47",
+              "text": "→",
+              "kind": "text"
+            },
+            {
+              "shape_id": 49,
+              "name": "TextBox 49",
+              "text": "→",
+              "kind": "text"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 15,
+      "click_count": 5,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "证据链练习",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 30,
+              "name": "TextBox 30",
+              "text": "证据链练习：",
+              "kind": "text"
+            },
+            {
+              "shape_id": 31,
+              "name": "TextBox 31",
+              "text": "把术语说成鉴赏",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "手法",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 32,
+              "name": "TextBox 32",
+              "text": "诗句使用了……",
+              "kind": "text"
+            },
+            {
+              "shape_id": 33,
+              "name": "TextBox 33",
+              "text": "手法",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "内容与效果",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 34,
+              "name": "TextBox 34",
+              "text": "写出了……",
+              "kind": "text"
+            },
+            {
+              "shape_id": 35,
+              "name": "TextBox 35",
+              "text": "内容",
+              "kind": "text"
+            },
+            {
+              "shape_id": 36,
+              "name": "TextBox 36",
+              "text": "造成了……",
+              "kind": "text"
+            },
+            {
+              "shape_id": 37,
+              "name": "TextBox 37",
+              "text": "效果",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "情感落点",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 38,
+              "name": "TextBox 38",
+              "text": "表现了……",
+              "kind": "text"
+            },
+            {
+              "shape_id": 39,
+              "name": "TextBox 39",
+              "text": "情感",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 26,
+              "name": "TextBox 26",
+              "text": "1",
+              "kind": "text"
+            },
+            {
+              "shape_id": 27,
+              "name": "TextBox 27",
+              "text": "2",
+              "kind": "text"
+            },
+            {
+              "shape_id": 11,
+              "name": "Separated traditional sailing boat and wave spray",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 12,
+              "name": "Separated red-brown wine jar",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 28,
+              "name": "TextBox 28",
+              "text": "3",
+              "kind": "text"
+            },
+            {
+              "shape_id": 29,
+              "name": "TextBox 29",
+              "text": "4",
+              "kind": "text"
+            },
+            {
+              "shape_id": 13,
+              "name": "Separated porcelain tea cup",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 9,
+              "name": "Separated landscape scroll and ledge",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 16,
+      "click_count": 5,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "酿酒隐喻",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 29,
+              "name": "TextBox 29",
+              "text": "诗心：这杯酒为什么",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "原料与酵母",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 12,
+              "name": "maroon brush behind 原料",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 13,
+              "name": "maroon brush behind 酵母",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 19,
+              "name": "TextBox 19",
+              "text": "原料",
+              "kind": "text"
+            },
+            {
+              "shape_id": 20,
+              "name": "TextBox 20",
+              "text": "酵母",
+              "kind": "text"
+            },
+            {
+              "shape_id": 25,
+              "name": "TextBox 25",
+              "text": "失意和现实阻隔",
+              "kind": "text"
+            },
+            {
+              "shape_id": 26,
+              "name": "TextBox 26",
+              "text": "不甘沉沦的自信",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "工艺与成品",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 14,
+              "name": "maroon brush behind 工艺",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 15,
+              "name": "maroon brush behind 成品",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 21,
+              "name": "TextBox 21",
+              "text": "工艺",
+              "kind": "text"
+            },
+            {
+              "shape_id": 22,
+              "name": "TextBox 22",
+              "text": "成品",
+              "kind": "text"
+            },
+            {
+              "shape_id": 27,
+              "name": "TextBox 27",
+              "text": "浪漫主义",
+              "kind": "text"
+            },
+            {
+              "shape_id": 28,
+              "name": "TextBox 28",
+              "text": "理想信念之酒",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "诗心结论",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 30,
+              "name": "TextBox 30",
+              "text": "烈",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 8,
+              "name": "first-card mountain landscape",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 16,
+              "name": "painted process arrow 1",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 9,
+              "name": "second-card sprouting seedling",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 17,
+              "name": "painted process arrow 2",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 10,
+              "name": "third-card ink waves and brush",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 18,
+              "name": "painted process arrow 3",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 23,
+              "name": "seated ancient poet holding a cup",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 24,
+              "name": "sailing ship with masts and sails",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 17,
+      "click_count": 7,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "品鉴卡任务",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 23,
+              "name": "TextBox 23",
+              "text": "完成你的",
+              "kind": "text"
+            },
+            {
+              "shape_id": 24,
+              "name": "TextBox 24",
+              "text": "诗歌品鉴卡",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "原料：失意",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 14,
+              "name": "large red-cloth wine jar",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 25,
+              "name": "TextBox 25",
+              "text": "原料：",
+              "kind": "text"
+            },
+            {
+              "shape_id": 26,
+              "name": "TextBox 26",
+              "text": "失意",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "酵母：自信",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 15,
+              "name": "porcelain vase with bamboo",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 27,
+              "name": "TextBox 27",
+              "text": "酵母：",
+              "kind": "text"
+            },
+            {
+              "shape_id": 28,
+              "name": "TextBox 28",
+              "text": "自信",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "工艺：浪漫主义手法",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 20,
+              "name": "cooking pot and fire",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 29,
+              "name": "TextBox 29",
+              "text": "工艺：",
+              "kind": "text"
+            },
+            {
+              "shape_id": 30,
+              "name": "TextBox 30",
+              "text": "浪漫主义手法",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "purpose": "成品：理想信念之酒",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 22,
+              "name": "amber wine bowl",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 31,
+              "name": "TextBox 31",
+              "text": "成品：",
+              "kind": "text"
+            },
+            {
+              "shape_id": 32,
+              "name": "TextBox 32",
+              "text": "理想信念之酒",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 6,
+          "purpose": "个性表达",
+          "effect": "appear",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 33,
+              "name": "TextBox 33",
+              "text": "这杯酒苦在……烈在……留下……",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 7,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 18,
+              "name": "wooden tray of ingredients",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 19,
+              "name": "bowl of flour",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 34,
+              "name": "TextBox 34",
+              "text": "酒",
+              "kind": "text"
+            },
+            {
+              "shape_id": 21,
+              "name": "small red-cloth earthen jar",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 16,
+              "name": "small porcelain wine cup",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 17,
+              "name": "wheat and beans foreground decoration",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 18,
+      "click_count": 4,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "展示评价",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 17,
+              "name": "TextBox 17",
+              "text": "展示评价：把诗意带走",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "评价标准",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 18,
+              "name": "TextBox 18",
+              "text": "能用诗句说明转折",
+              "kind": "text"
+            },
+            {
+              "shape_id": 19,
+              "name": "TextBox 19",
+              "text": "能把手法和效果连起来",
+              "kind": "text"
+            },
+            {
+              "shape_id": 20,
+              "name": "TextBox 20",
+              "text": "能用自己的语言表达诗心",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "展示品鉴卡",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 21,
+              "name": "TextBox 21",
+              "text": "展示2至3份品鉴卡",
+              "kind": "text"
+            },
+            {
+              "shape_id": 22,
+              "name": "TextBox 22",
+              "text": "诗歌品鉴卡",
+              "kind": "text"
+            },
+            {
+              "shape_id": 23,
+              "name": "TextBox 23",
+              "text": "诗歌品鉴卡",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 14,
+              "name": "watercolor sailing ship",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 10,
+              "name": "scroll pictogram badge",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 5,
+              "name": "first beige brush strip",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 11,
+              "name": "brush pictogram badge",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 6,
+              "name": "second beige brush strip",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 9,
+              "name": "three blank poem appreciation cards",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 7,
+              "name": "third beige brush strip",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 12,
+              "name": "wine pictogram badge",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 25,
+              "name": "TextBox 16",
+              "text": "酒",
+              "kind": "text"
+            },
+            {
+              "shape_id": 8,
+              "name": "fourth beige brush strip",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 13,
+              "name": "group pictogram badge",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 16,
+              "name": "watercolor tea cup",
+              "text": "",
+              "kind": "shape"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 19,
+      "click_count": 5,
+      "groups": [
+        {
+          "order": 1,
+          "purpose": "作业与迁移",
+          "effect": "fade",
+          "trigger": "onClick",
+          "objects": [
+            {
+              "shape_id": 11,
+              "name": "TextBox 11",
+              "text": "作业与迁移",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 2,
+          "purpose": "背诵与复述",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 7,
+              "name": "Open manuscript and brush illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 8,
+              "name": "Painted red line-chart icon",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 12,
+              "name": "TextBox 12",
+              "text": "背诵并默写《行路难（其一）》",
+              "kind": "text"
+            },
+            {
+              "shape_id": 13,
+              "name": "TextBox 13",
+              "text": "用情感曲线复述全诗",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 3,
+          "purpose": "拓展阅读",
+          "effect": "wipe",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 9,
+              "name": "Stacked dark-blue books illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 14,
+              "name": "TextBox 14",
+              "text": "收集李白与酒有关的诗歌并分类",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 4,
+          "purpose": "鉴赏写作",
+          "effect": "zoom",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 10,
+              "name": "Lined paper and brush illustration",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 15,
+              "name": "TextBox 15",
+              "text": "可选：写100字鉴赏短文",
+              "kind": "text"
+            }
+          ]
+        },
+        {
+          "order": 5,
+          "purpose": "辅助视觉组",
+          "effect": "fade",
+          "trigger": "afterPrevious",
+          "objects": [
+            {
+              "shape_id": 3,
+              "name": "Red ceramic jar badge 1",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 18,
+              "name": "TextBox 18",
+              "text": "1",
+              "kind": "text"
+            },
+            {
+              "shape_id": 4,
+              "name": "Red ceramic jar badge 2",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 19,
+              "name": "TextBox 19",
+              "text": "2",
+              "kind": "text"
+            },
+            {
+              "shape_id": 5,
+              "name": "Red ceramic jar badge 3",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 20,
+              "name": "TextBox 20",
+              "text": "3",
+              "kind": "text"
+            },
+            {
+              "shape_id": 17,
+              "name": "TextBox 17",
+              "text": "李 白 诗",
+              "kind": "text"
+            },
+            {
+              "shape_id": 6,
+              "name": "Red ceramic jar badge 4",
+              "text": "",
+              "kind": "shape"
+            },
+            {
+              "shape_id": 21,
+              "name": "TextBox 21",
+              "text": "4",
+              "kind": "text"
+            },
+            {
+              "shape_id": 16,
+              "name": "TextBox 16",
+              "text": "酒",
+              "kind": "text"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

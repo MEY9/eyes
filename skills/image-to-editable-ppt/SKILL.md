@@ -9,6 +9,29 @@ description: Rebuild slide images, scanned or image-based PPT/PPTX files, and PD
 Use the `editppt` runtime to decompose, reconstruct, validate, and assemble visual slides as editable `.pptx`. Inputs may be single or multiple images, PDF, or image-based PPT/PPTX.
 
 ## References
++
+## Agent B Integration Profile
+
+When invoked after codex-ppt in the education-courseware pipeline:
+
+- Treat the confirmed visual deck, outline, teaching-design handoff, and project constraints as fixed inputs.
+- Reconstruct every page as object-level editable PPTX; do not redesign content or silently reduce the page to a raster image.
+- Keep the user's confirmed OCR source, external API choice, page-worker strategy, and source-image policy; do not ask again for already recorded decisions.
+- The final acceptance requires both structural validation and the complete-decomposition gate below.
+
++
+## Complete Decomposition Invariant
+
+The final deck must reconstruct every visually distinguishable element as an object-level representation. A full-slide screenshot, full-slide PNG/JPG, or “full-slide background plus editable text” is never an acceptable final-page fallback. The source page image is a temporary visual reference only.
+
+Before reconstruction, each page must have an element inventory and object mapping recording object id, category, source-pixel bounds, slide bounds, z-order, rotation, opacity, source/crop, representation, editability, and validation result. Do not omit small, faint, background, or decorative elements.
+
+Inventory every visible category: background fills and gradients; paper/noise/grid/watercolor textures; background, midground and foreground scenery; overlays, tint blocks, glows, vignettes and borders; all text (titles, subtitles, headings, body, quotations, annotations, labels, page numbers, prompts, questions, answers, buttons, legends, axis labels, table text, formulas, symbols and readable image text); text font/size/weight/color/spacing/alignment/wrapping/rotation/stroke/shadow/opacity/margins; rectangles, rounded rectangles, circles, ellipses, arcs, sectors, triangles, polygons, freeform/Bezier paths, stars, bursts, clouds, brackets, callouts, tags, badges, ribbons, cards, panels, containers, buttons and frames; straight/dashed/dotted/curved/bent lines, connectors, arrows, endpoints, underlines, dividers, timelines, flow lines, axes and gridlines; fills, gradients, patterns, outlines, corner radii, shadows, glows, soft edges, reflections, bevel/3D, rotation and crop; photos, illustrations, people, animals, plants, buildings, objects, scenes, characters, gestures, stickers, icons, logos, emblems, flags, maps, QR codes, screenshots, evidence images, textbook images, AI assets, textures and decorations with crop/mask/transparency/color/shadow/outline/occlusion; flowcharts, structures, relationships, mind maps, concepts, cycles, ladders, paths, timelines, comparisons, quadrants, funnels, pyramids, card/tag/icon groups and visual metaphors; chart plots, axes, ticks, grids, data marks, labels, legends, units, annotations; table frames, rows, columns, cells, merges, headers, fills, borders, icons and comments; complex-visual sublayers; video/audio/poster/play/link/HTML/offline entries; grouping, nesting, alignment, distribution, relative position, overlap, crop frame, page edge, bleed, animation, triggers, notes and navigation.
+
+Complex photos, illustrations, and textures may remain as precisely cropped independent image objects only when truly indivisible at the requested editability level. Any text, shape, line, label, color block, icon, table, chart, or decoration over or inside such an image must still be separated. Record the exact non-editable scope and reason; never retain a large composite image containing multiple separable page elements.
+
+Workers must inventory and segment first; OCR and manually verify all readable text; rebuild backgrounds, fills, borders, lines, arrows, diagrams, tables and simple geometry with native PowerPoint objects; separate complex visual assets individually; restore coordinates, scale, z-order, opacity, crop, color and style; render and compare; then randomly select, move, hide, resize and edit representative objects. An unregistered large full-slide raster or a composite raster carrying separable elements is a hard validation failure.
+
 
 Each rule in this skill has exactly one authoritative home; the other files point to it instead of restating it.
 
@@ -17,6 +40,7 @@ Each rule in this skill has exactly one authoritative home; the other files poin
 - `references/cli-helper.md`: CLI install check (Pre-Run Check), command tree, and command syntax examples. Read it when deciding which `editppt` command to call.
 - `references/manifest-schema.md`: the single home for JSON field contracts of deck/page/image artifacts — required manifest fields, positioned-object coordinates, `validation.json`, and `page_result.json` shapes. Read it when writing or validating any run/page file.
 - `references/page-decision-tree.md`: the single source of truth for page object decisions — background handling, foreground asset separation, native shapes, formulas, text-hints usage, the final self-check, and the fix-versus-warning split. Read its common decision boundaries first, then the sections relevant to the page inventory; the page prompt provides the reading route.
+- `references/animation-postprocessing.md`: the authoritative contract for optional post-reconstruction PPTX animation — semantic grouping, effect selection, trigger rules, animation manifest fields, and structural/playback QA.
 
 ## Entry Contract
 
@@ -140,6 +164,8 @@ Deck-level structural QA at this stage:
 - Media hashes match manifest provenance.
 - Speaker notes hashes match.
 - There is no invalid full-slide source raster plus editable text overlay pattern.
+
+If Agent B supplies an animation plan, run the optional animation post-processing phase only after `finalize` succeeds. Read `references/animation-postprocessing.md`, apply the plan to the finalized editable PPTX, write the animation manifest beside the project outputs, and rerun package/slide-count/object-target validation. Animation post-processing must never modify the reconstruction manifests or replace editable objects with a full-slide raster.
 
 The final reply must report the final PPTX path and validation result.
 
