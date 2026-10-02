@@ -1,0 +1,4 @@
+interface:
+  display_name: "PPT 动画视频"
+  short_description: "将可编辑课件按逻辑生成完整竖版动画视频"
+  default_prompt: "使用 $ppt-animation-video，将已完成的可编辑课件按动画清单生成完整竖版动画视频。保留中文文字，加入页码、演示卡片下方进度条和低音量授权背景音乐，不添加说明性叠字。"
