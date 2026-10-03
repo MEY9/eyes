@@ -56,7 +56,11 @@ Agent A 把同一个 `deck_id` 写入 `lesson_packet.json` 和 `pipeline_state.j
 
 ### 4.2 微信公众号文章
 
-公开链接可以读取时，保存：
+公开链接优先调用已安装的 `$read-wechat-articles` Skill，不要先走浏览器自动化或其他公众号发布 Skill。该 Skill 使用其自带的标准库脚本读取公开的 `https://mp.weixin.qq.com/` 文章，并返回 UTF-8 JSON。
+
+Agent A 调用后必须检查 JSON 中的 `title`、`content` 是否非空，并核对 `author`、`published_at`、`url` 和 `images` 字段。将本次调用的完整 JSON 原样保存为 `source_materials/wechat_article.json`，再从中提取教学设计内容；Skill 本身不写中间文件，来源归档由 Agent A 完成。
+
+从 JSON 中保存并整理：
 
 - 标题、公众号、作者、发布时间；
 - 原文链接；
@@ -66,7 +70,7 @@ Agent A 把同一个 `deck_id` 写入 `lesson_packet.json` 和 `pipeline_state.j
 
 原文与改写稿分开保存。不要把评论区、推荐文章、导航和广告当成教学设计内容。文章内资源默认没有可商用授权，进入资源说明。
 
-如果页面需要登录、验证码、订阅权限或无法完整读取，不猜测缺失内容；保存可读取部分，并请求用户提供正文、截图、PDF、导出文件或替代链接。
+如果 `$read-wechat-articles` 报错、正文为空、页面需要登录/验证码/订阅权限，或正文疑似不完整，不猜测缺失内容；记录失败信息并请求用户提供正文、截图、PDF、导出文件或替代链接。不能把标题、摘要或搜索结果当作全文交给下游。
 
 ### 4.3 图片、扫描件和截图
 
