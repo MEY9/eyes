@@ -1,6 +1,6 @@
 ---
 name: ppt-animation-video
-description: Create a full-length vertical animation video from Agent B's completed editable PowerPoint deck and semantic animation manifest, preserving Chinese text, revealing objects by teaching logic, adding page numbers, a progress bar, and appropriately controlled background music, preferably from user-provided Xu Song, Wang Sulong, or Jay Chou audio. Use after image-to-editable-ppt reconstruction and PPTX animation QA; do not use for authoring the deck itself.
+description: Create a full-length vertical animation video from Agent B's completed editable PowerPoint deck and semantic animation manifest, preserving Chinese text, revealing objects by teaching logic, adding page numbers, a progress bar, and appropriately controlled turn-of-the-millennium background music. Use after image-to-editable-ppt reconstruction and PPTX animation QA; do not use for authoring the deck itself.
 ---
 
 # PPT 动画视频
@@ -103,9 +103,9 @@ Agent A 教学设计
 
 ### 5. 添加背景音乐
 
-背景音乐优先使用用户提供或本机已有的许嵩、汪苏泷、周杰伦音乐。三位歌手是本流程的音乐偏好，不要求自动搜索或下载某一首指定歌曲；如果项目中有多首，按课堂气质、旋律干扰度和完整视频时长选择最合适的一首。歌词较多的歌曲也可以使用，但必须明显降低音量，不能盖过课件文字和讲解。
+背景音乐优先使用千禧年前后、约 1998—2005 年间的音乐，形成自然的年代感和怀旧氛围。筛选重点是旋律清晰、情绪积极或舒缓、节拍不过分抢注意力，并适合教育课件的完整播放时长；不限定歌手或具体曲目。用户提供或本机已有的音频优先使用，如果有多首，按课程气质、旋律干扰度和页面节奏选择最合适的一首。歌词较多的歌曲也可以使用，但必须明显降低音量，不能盖过课件文字和讲解。
 
-本流程面向用户指定的非商业课件演示，不因缺少商业授权字段而自动阻断制作；仍需记录音频来自用户提供、本机已有或项目资源的事实。不得主动抓取、破解或下载来源不明的音频，也不得把音乐凭据写入 SQLite、日志或 Git。若指定歌手的音频不存在，使用项目已有的合适背景音乐并在 QA 中记录，不伪造歌曲来源。
+本流程面向用户指定的非商业课件演示，不因缺少商业授权字段而自动阻断制作；仍需记录音频来自用户提供、本机已有或项目资源的事实。不得主动抓取、破解或下载来源不明的音频，也不得把音乐凭据写入 SQLite、日志或 Git。若没有千禧年前后的合适音频，使用项目已有的最接近风格的背景音乐并在 QA 中记录，不伪造歌曲年代、曲名或来源。
 
 将音乐循环或裁剪到完整视频时长：
 
@@ -116,7 +116,7 @@ Agent A 教学设计
 - 音乐是背景，不把音乐做成视频主角；
 - 输出必须同时包含视频流和音频流。
 
-在 `resources/` 保存实际使用的音频文件，并在音乐记录中写明歌手、曲名（如已知）、来源类别、文件名、增益、淡入淡出和是否发生 ducking。用户未提供音频时，不为了满足歌手偏好而擅自联网下载。
+在 `resources/` 保存实际使用的音频文件，并在音乐记录中写明大致年代、歌手、曲名（如已知）、来源类别、文件名、增益、淡入淡出和是否发生 ducking。用户未提供音频时，不为了满足年代偏好而擅自联网下载。
 
 ### 6. 合成和验收
 
