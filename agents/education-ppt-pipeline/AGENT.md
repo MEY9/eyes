@@ -49,6 +49,18 @@ Agent B 不重新编写教学设计，不把教材 PDF 直接转换成 PPT，不
 
 用户已经明确授权的外部 API、页数、课时、是否使用源图片和是否直接继续，不重复询问。只有缺失信息会实质改变教学策略、课时、交付格式、外部处理范围或安全边界时才暂停。
 
+### SQLite 协调目录
+
+Agent B 是本流水线的编排者，负责为一次课件运行建立稳定的 `deck_id`，并让 Agent A、Agent HTML、codex-ppt、image-to-editable-ppt 和 ppt-animation-video 使用同一个本机 SQLite catalog。默认位置为 `${CODEX_PPT_HOME:-~/.codex-ppt-skill}/catalog.sqlite3`，具体命令和 schema 以 `skills/ppt-pipeline-catalog/SKILL.md` 为准。
+
+- 项目文件和 Git 是内容事实来源；SQLite 只记录路径、哈希、阶段、版本、来源、运行和审批关系。
+- 所有下游阶段必须携带同一个 `deck_id`；风格使用 `style_id@version`；每个 skill 的运行使用自己的 `run_id`。
+- Agent B 在项目建立时登记 deck，在每个阶段登记 run 和 artifact，并在 artifact 已存在且 QA 通过后才把阶段标记为 `passed`。
+- codex-ppt 只登记风格候选、Style Lock、样张、视觉稿和视觉版 PPTX；image-to-editable-ppt 只登记对象重建和可编辑 PPTX；ppt-animation-video 只登记动画视频、音乐、字体修复和视频 QA。
+- 样张批准只能把风格标记为 `locked`。完整 PPT、可编辑 PPTX、动画/视频（如有）通过 QA 且用户确认完整课件无问题后，Agent B 才能登记 `complete_deck_approval` 和 `style_promotion`，把风格写入系统库。
+- 数据库不可用时不得伪造成功；保留项目文件和 `working/catalog_snapshot.json`，修复或恢复 catalog 后再补登记。
+- API key、OCR token、密码和完整私密教学内容不得写入数据库、快照、日志或 Git。
+
 ## 4. 正式课堂课件标准
 
 默认交付正式课堂课件，而不是精简视觉稿。
@@ -133,6 +145,8 @@ HTML分支通过门禁前，还必须确认单文件HTML实际离线打开、核
 
 建立项目目录，保存教学设计、来源、资源、临时文件和输出文件。锁定课题、课时、模板、视觉方向、图片来源策略和生图 API。
 
+初始化 SQLite catalog，登记 `deck_id`、项目路径、课题、学科、年级和课时；读取 Agent A 的 `lesson_packet.json`、`pipeline_state.json` 和已有 catalog 记录，不根据目录名临时生成多个 ID。
+
 门禁：教学设计交接包完整，课时与格式要求明确；`lesson_packet.json`、`pipeline_state.json`、来源审计和版权清单可读取且没有冲突。
 
 ### 阶段 1：课件大纲
@@ -158,6 +172,8 @@ HTML分支通过门禁前，还必须确认单文件HTML实际离线打开、核
 
 从 GitHub 借鉴的项目只作为候选风格来源和方法参考。必须先记录来源、借鉴点和适配理由，再收敛为本课件唯一的 `style_brief` 与 `style_lock`。样张确认只代表本次课件可以进入批量生成，不代表风格已经写入系统风格库。
 
+把候选风格登记为 `candidate`，样张确认后登记为 `locked`，并将 `style_id@version` 链接到当前 `deck_id`。风格来源、样张路径、哈希和审批证据必须同时写入项目文件与 catalog。
+
 优先遵循当前项目已经确认的后端。用户明确选择外部 API 时，直接沿用该 API，不重复要求切换内置后端；一次项目内保持后端稳定。
 
 只在需要确认且用户尚未授权时确认样张、风格或重大视觉方向。用户已经批准或明确要求直接继续时，记录批准事实，不重复提问。
@@ -173,6 +189,8 @@ HTML分支通过门禁前，还必须确认单文件HTML实际离线打开、核
 - 固定已确认的图片后端，不让 worker 随意换后端；
 - 生成 speech.md；
 - 组装视觉版 PPTX。
+
+调用 codex-ppt 时传入 `deck_id`、`style_id@version`、`catalog_db` 和当前 `run_id`。codex-ppt 完成后，Agent B 检查 catalog 中的视觉稿 artifact、QA 结果和阶段状态，再把同一组 ID 交给 image-to-editable-ppt。
 
 codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 
@@ -203,6 +221,8 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 记录 manifest、页面验证、对象映射、图片层范围和不可编辑原因；
 - 每页通过 validation.json 后才能 record；
 - 所有页面 recorded 后才能 finalize。
+
+调用 image-to-editable-ppt 时传入同一个 `deck_id`、`style_id@version` 和新的 `editable_rebuild` `run_id`。每页 `validation.json`、`page_result.json` 和最终可编辑 PPTX 都要登记为 artifact；只有 finalize 成功后，Agent B 才能把该阶段标记为 `passed`。
 
 元素清单、对象判断、图片分离、验证字段和返修规则以 image-to-editable-ppt skill 及其 references 为唯一技术权威，Agent B 不重复维护第二套清单。
 
@@ -263,6 +283,8 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 
 视频输出、字体修复记录、音乐来源、授权说明和 QA 结果必须写入当前课件项目目录，并在最终交付报告中列出。
 
+同时登记 `animation_qa` 和 `video` run。ppt-animation-video 不得修改 style 状态，也不得提前触发风格入库；它只向 Agent B 返回可验证的 artifact 和 QA 结果。
+
 ### 阶段 8：最终验收与交付
 
 执行 editppt run finalize，检查：
@@ -317,6 +339,7 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 完整竖版动画视频、背景音乐文件、音乐授权说明和视频 QA 记录；
 - 页面 manifest、preview、validation 和 page_result；
 - lesson_packet.json、pipeline_state.json、source_audit.md、rights_manifest.md 和 content_traceability.csv；
+- `working/catalog_snapshot.json` 和 catalog 中对应的 `deck_id`、阶段、artifact、审批与风格链接；
 - AI 赋能清单、资源来源和版权说明；
 - 用户确认完整课件后生成的 `style/` 风格快照和 `deck_spec.json` 中的 `style_library_record`；
 - handoff_to_B.md 或最终交付记录。

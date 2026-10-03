@@ -40,6 +40,7 @@ When this skill is invoked by Agent B for the confirmed education-courseware pip
 - If the user or project has already authorized a backend, style, sample, page count, source-image policy, or external API, record that decision and do not ask for it again. Keep one backend throughout the run.
 - Every AI video, AI material, HTML interaction, or AI-assisted task must be represented in the outline and slide content with its teaching goal, teacher action, student action, duration, verification, and offline fallback.
 - A successful visual deck is not complete until the downstream editable reconstruction and final validation pass.
+- When invoked by Agent B, use the shared `ppt-pipeline-catalog` skill. Read the same `deck_id`, `style_id@version`, `catalog_db`, and `run_id` from the handoff; register style candidates, Style Lock, approved samples, visual artifacts, and QA before returning control to Agent B.
 
 
 Prefer the built-in image generation/editing tool. Use `scripts/image_gen.py` only when the built-in backend is unavailable, lacks a required capability, or the user explicitly asks for API/CLI mode.
@@ -100,6 +101,7 @@ Do not mark a step complete from chat alone; use real files or script-recorded s
    - For multi-page decks, make and review a same-ratio thumbnail board first when feasible. Use it to check page-role rhythm, density, whitespace, and layout variation; do not pass it downstream as a final slide image.
    - For a formal classroom deck, generate three representative samples after outline, style, and backend are confirmed: a cover or opening page, a normal teaching page, and an activity/practice/feedback page. Do not generate the full deck until the sample set is approved.
    - After approval, record `sample_generation_method` and `approved_style_references` in `deck_spec.json` so jobs and subagents inherit the same path and the complete style system.
+   - Register the sample set as `style_sample_approval`; keep the style `locked` for this deck only. Do not promote a system style here.
 
 6. Create the project directory.
    - Before initializing folders or assembling files, read `docs/project-assembly-and-reporting.md`.
@@ -133,6 +135,7 @@ Do not mark a step complete from chat alone; use real files or script-recorded s
 12. Report the result.
     - Use the final report checklist in `docs/project-assembly-and-reporting.md`.
     - Include paths, slide count, backend used, recorded-result status, and any limitations or blockers.
+    - Return `deck_id`, `style_id@version`, `run_id`, catalog database path, and the recorded artifact/QA status to Agent B.
 
 13. Promote the confirmed PPT style.
     - After the user confirms the complete deck is acceptable, read `docs/style-library.md` and extract the reusable PPT visual system from the final approved pages, not from one isolated image.
@@ -170,6 +173,7 @@ Subagents must not edit `outline.md`, `deck_spec.json`, other slide jobs, `origi
 - `docs/style-system-and-source-selection.md`: main-style system, GitHub source evaluation, asset-production order, and style-lock records for education decks.
 - `docs/style-lock-and-review.md`: Style Lock fields, style isolation, thumbnail-first production, sample review, and targeted revision/versioning.
 - `docs/style-library.md`: post-approval PPT style promotion, project snapshots, reusable style records, source provenance, and versioning.
+- `skills/ppt-pipeline-catalog/SKILL.md`: shared SQLite catalog, identifiers, stage ownership, artifact registration, approval gates, and recovery rules.
 - `docs/visual-quality-contract.md`: representative sample set, typography restriction, page scorecard, contact-sheet QA, and repair policy.
 - `docs/user-supplied-assets.md`: strict handling for required source assets.
 - `docs/slide-generation-and-subagents.md`: jobs, dispatch, result recording, blockers, provenance.

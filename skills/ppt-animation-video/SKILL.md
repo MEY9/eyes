@@ -9,6 +9,15 @@ description: Create a full-length vertical animation video from Agent B's comple
 
 本技能是 Agent B 的后处理技能。输入是已经完成对象级重建、动画分组和动画 QA 的可编辑 PPTX；输出是用于展示或发布的竖版 MP4。它不负责教学设计、课件大纲、视觉稿生成或 PPTX 对象重建。
 
+## SQLite Catalog 协同
+
+调用时沿用 Agent B 传入的 `deck_id`、`style_id@version` 和 `catalog_db`，为 PPTX 动画结构 QA 建立 `animation_qa` run，为视频生成建立 `video` run。读取 catalog 中已通过的 `editable_rebuild` artifact，不根据文件名新建课件身份。
+
+- 在动画结构 QA、字体修复、音乐资源和 MP4 输出完成后，分别登记 artifact、哈希和验证证据。
+- 只有视频和动画 QA 结果完整，才把对应 run 标记为 `passed`；失败时保留日志并返回 Agent B。
+- 本技能不修改 Style Lock、风格版本或用户最终审批状态，也不触发风格入库。
+- API key、音乐下载凭据和其他秘密不得写入 SQLite 或项目快照。
+
 固定链路：
 
 Agent A 教学设计
@@ -151,5 +160,8 @@ Agent B 在动画 PPTX 后处理和结构 QA 通过后调用本技能。调用�
 - 课题名和总页数；
 - 输出比例；
 - 当前项目的资源、字体和输出目录。
+- `deck_id`、`style_id@version`、`catalog_db` 和 animation/video 的 `run_id`。
 
 Agent B 接收本技能的输出后，必须把视频路径、视频规格、音乐来源、字体修复记录和验证结果写入最终交付记录。视频生成失败时，不得把静态幻灯片或无文字版本当作成功结果；应保留错误日志并返修字体、渲染或合成步骤。
+
+同时把可编辑 PPTX、动画清单、字体修复记录、音乐授权、MP4 和 `video_qa.md` 登记到共享 catalog，并把 `deck_id`、两个 run_id 和 artifact 列表返回给 Agent B。完整课件用户确认后，风格入库仍由 Agent B 执行。

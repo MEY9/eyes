@@ -22,3 +22,11 @@ tmp/
 .codex-local/
 .idea/
 .vscode/
+
+# PPT pipeline SQLite runtime state
+*.sqlite3
+*.sqlite3-wal
+*.sqlite3-shm
+*.db
+*.db-wal
+*.db-shm

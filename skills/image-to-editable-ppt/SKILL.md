@@ -19,6 +19,16 @@ When invoked after codex-ppt in the education-courseware pipeline:
 - Keep the user's confirmed OCR source, external API choice, page-worker strategy, and source-image policy; do not ask again for already recorded decisions.
 - The final acceptance requires both structural validation and the complete-decomposition gate below.
 
+### SQLite Catalog Integration
+
+When Agent B invokes this skill, receive the same `deck_id`, `style_id@version`, `catalog_db`, and an `editable_rebuild` `run_id` from the visual-deck handoff. Read the catalog record before preparing pages; do not create a new deck or style identity from the folder name.
+
+- Register the reconstruction run before dispatching page workers.
+- Register each page's `validation.json` and `page_result.json` as artifacts after the page passes validation; a failed page must not be recorded as passed.
+- Register the finalized editable PPTX and deck-level validation before marking `editable_rebuild` as `passed`.
+- Return the same identifiers and artifact paths to Agent B. Do not change Style Lock status or promote a system style.
+- If the catalog is unavailable, preserve the run directory and report a catalog blocker; do not claim the reconstruction stage passed.
+
 +
 ## Complete Decomposition Invariant
 
@@ -41,6 +51,7 @@ Each rule in this skill has exactly one authoritative home; the other files poin
 - `references/manifest-schema.md`: the single home for JSON field contracts of deck/page/image artifacts — required manifest fields, positioned-object coordinates, `validation.json`, and `page_result.json` shapes. Read it when writing or validating any run/page file.
 - `references/page-decision-tree.md`: the single source of truth for page object decisions — background handling, foreground asset separation, native shapes, formulas, text-hints usage, the final self-check, and the fix-versus-warning split. Read its common decision boundaries first, then the sections relevant to the page inventory; the page prompt provides the reading route.
 - `references/animation-postprocessing.md`: the authoritative contract for optional post-reconstruction PPTX animation — semantic grouping, effect selection, trigger rules, animation manifest fields, and structural/playback QA.
+- `ppt-pipeline-catalog`: the shared SQLite catalog for `deck_id`, `style_id@version`, `run_id`, artifacts, approvals, and cross-skill provenance.
 
 ## Entry Contract
 
@@ -92,6 +103,8 @@ editppt prepare <input...>
 
 After this completes, there must be a run directory, `deck_manifest.json`, `page_jobs.json`, `notes_manifest.json`, and each page must have `source.png` plus `page_request.json`.
 
+Before page dispatch, record the `editable_rebuild` run and link the incoming visual PPTX, origin images, Style Lock reference, and OCR outputs as catalog artifacts.
+
 Prepare also writes per-page text hints. Whenever `editppt doctor` or prepare reports that no PaddleOCR token is configured (offline fallback), ask the user once before dispatching any page: a free token from https://aistudio.baidu.com/account/accessToken stored via `editppt config --paddle-ocr-token <token>` makes the hints content-aware and noticeably improves text fidelity, and `editppt run hints <run>` regenerates the current run's hints in place. Tell the user the free personal quota is currently more than enough for this skill — applying is risk-free with no extra cost. Wait for their choice; if they decline or want to proceed, continue with the offline hints and do not ask again.
 
 If a PaddleOCR token is already configured but `prepare` falls back because network access, DNS, or sandbox approval blocked the OCR request, that fallback is not the preferred quality path. Request network approval with the justification described in the Entry Contract and rerun `editppt run hints <run>` before page reconstruction. If the approval system rejects the OCR request, ask the user for explicit authorization before continuing: explain that PaddleOCR is used to correct text boxes, font sizes, and size groups, and that using it makes reconstructed PPT text sizing much more stable. Continue with `builtin-ink` only after the user declines OCR, after an approved OCR attempt fails for a real service/tool reason, or when the user asked for local-only/confidential handling.
@@ -134,6 +147,8 @@ editppt run record <run> --page <page_id> --agent-id <id>
 
 This command validates `page.pptx` against `manifest.json` before recording. It fails if positioned objects are missing source-pixel coordinates, if the manifest cannot independently rebuild the page, or if `validation.json` does not contain top-level `passed: true` — a failed page is never recorded.
 
+After `record` succeeds, register that page's `validation.json`, `page_result.json`, and page-level PPTX under the shared catalog run. Do not register rejected or incomplete pages as passed.
+
 For a rejected record or page-local validation issue, read the failure evidence and have the current page owner repair only the affected artifacts, then refresh the validation report using the page validation example in `references/cli-helper.md` and record again. In single-page local mode the parent is that owner; in multi-page mode send the repair to the existing worker. Do not reset a reachable owner merely because validation failed, and do not regenerate compliant assets to fix an unrelated manifest or table error.
 
 Reset is for a page that needs a replacement execution: explicit terminal-state evidence (`terminated`, `failed`, `archived`, or `not found`), user cancellation, or repeated failed reachability checks with no page-local progress. A long-running worker is not lost. After fixing the prerequisite that prevented execution, use:
@@ -157,6 +172,8 @@ editppt run finalize <run>
 ```
 
 `finalize` treats each recorded `pages/page_NNN/manifest.json` as the authoritative source: it rebuilds the final deck from page manifests in page order, then validates the resulting PPTX. `page.pptx` remains a page-level deliverability artifact for record-time checks.
+
+After `finalize` succeeds, register the final editable PPTX and deck-level validation, then mark the shared `editable_rebuild` run as `passed`. Only Agent B can advance the pipeline to animation QA or final style promotion.
 
 Deck-level structural QA at this stage:
 
