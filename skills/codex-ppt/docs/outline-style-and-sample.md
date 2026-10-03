@@ -1,6 +1,6 @@
 # Outline, Style, And Sample
 
-Read this before writing or updating `outline.md`, offering visual styles, using files from `references/`, or generating/approving the sample slide.
+Read this before writing or updating `outline.md`, offering visual styles, using files from `references/`, or generating/approving the sample slide. For education decks, also read `style-system-and-source-selection.md` before selecting or generating a main style.
 
 If the user asks to save a finished deck style or a user-supplied image/PDF/PPT/PPTX style for future reuse, read `style-library.md`.
 
@@ -21,7 +21,7 @@ Show the outline to the user for confirmation and wait for approval before movin
 
 Stop after writing the outline draft. At this point, report the `outline.md` path, slide count, required source images and their slide mapping, and that no slide images or PPTX have been generated yet. Do not proceed to `deck_spec.json`, `speech.md`, prompt preparation, style selection, backend selection, or sample generation until the user approves the outline.
 
-If the user approved a sample slide, record that approved `slide_XX.png` path as the deck-level style reference. Later slide prompts and subagent handoffs should include it as a style-only reference so each page keeps the same palette, typography mood, density, texture, and visual identity without copying the sample's exact layout.
+If the user approved sample slides, record their `slide_XX.png` paths as `approved_style_references`. Later slide prompts and subagent handoffs should include the complete sample set as style-only references so each page keeps the same palette, ordinary typography, density, texture, and visual identity without copying any sample's exact layout.
 
 Recommended structure:
 
@@ -59,7 +59,7 @@ For PDF/PPT/PPTX style references, do not infer the visual system from document 
 
 When extracting style from reference material, separate content reuse from style reuse. Unless the user explicitly asks to reuse the source content, treat the provided image/PDF/PPT/PPTX as a style reference only.
 
-If the user has not provided a clear style, prefer a multiple-choice question: offer 2-3 concrete style directions and mark one as your recommendation. Each style option should briefly specify:
+If the user has not provided a clear style, prefer a multiple-choice question: offer 2-3 concrete style directions and mark one as your recommendation. After selection, convert the choice into one `Style Lock`; see `docs/style-lock-and-review.md`. Each style option should briefly specify:
 
 - Color palette
 - Layout system
@@ -110,28 +110,31 @@ C. 数据仪表盘风：指标卡、图表感布局，适合数据密集型报�
 你选哪个？也可以指定要调整的配色、布局或插画方向，或者上传一张喜欢的 PPT 风格图片让我参考。
 ```
 
-## Generate One Sample Slide For Approval
+## Generate A Representative Sample Set For Approval
 
-After the outline, style, and image backend are confirmed, generate exactly one sample slide image before full production.
+After the outline, style, and image backend are confirmed, generate a representative sample set before full production. For a formal classroom deck, use three final sample pages: cover/opening, normal teaching, and activity/practice/feedback. Select actual pages from the approved outline so the samples test real content rather than placeholder text.
+
+For multi-page decks, make a same-ratio thumbnail board before the representative samples when feasible. Use it to review the overall rhythm, density, whitespace, and page-role variation. The board is a planning artifact only; it is not assembled into the PPT and is not passed to `image-to-editable-ppt` as a slide.
 
 Sample slide requirements:
 
 - Use the confirmed style description.
 - Prefer a representative content slide over the cover when possible.
-- Demonstrate the intended deck rhythm: the sample should show how the chosen style adapts to a real content page, not just a generic fixed template.
-- Save it directly as the intended final slide filename, such as `{base_dir}/{deck_name}/origin_image/slide_08.png`. In CLI/API fallback mode, use `scripts/image_gen.py generate --out` for that exact path.
-- Show the sample image to the user.
-- Ask the user to confirm the visual style, typography, layout density, and Chinese text quality.
+- Demonstrate the intended deck rhythm: the sample set must show how the chosen style adapts to different page roles, not just a generic fixed template.
+- Save each sample directly as its intended final slide filename, such as `{base_dir}/{deck_name}/origin_image/slide_01.png`, `slide_05.png`, and `slide_10.png`. In CLI/API fallback mode, use `scripts/image_gen.py generate --out` for each exact path.
+- Show the complete sample set together so the user can compare style identity and layout variation.
+- Ask the user to confirm the visual style, ordinary font legibility, layout density, teaching hierarchy, page-role variation, Chinese text quality, and whether any sample needs regeneration.
 
-Do not generate the full deck until the user approves the sample slide. If the user requests changes, revise the style description and regenerate that same `slide_XX.png` file first. Once approved, keep that file as the final slide for its page. Do not create `sample_slide.png` in `origin_image/`, because the assembly step is designed around final `slide_XX` filenames.
+Do not generate the full deck until the user approves the complete sample set. If the user requests changes, revise the style description and regenerate the affected sample pages first. Once approved, keep each sample as the final slide for its page. Do not create `sample_slide.png` in `origin_image/`, because the assembly step is designed around final `slide_XX` filenames. If the user explicitly authorizes a one-sample exception, record the reason in `deck_spec.json`.
 
-After the sample slide is approved, record the sample generation method in `deck_spec.json` before preparing full-deck jobs. This is the contract the parent passes to subagents so they use the same image-generation path as the sample, not a cheaper local rendering path. Include at least:
+After the sample set is approved, record the sample generation method and `approved_style_references` in `deck_spec.json` before preparing full-deck jobs. This is the contract the parent passes to subagents so they use the same image-generation path and shared visual system as the samples, not a cheaper local rendering path. Include at least:
 
 - `backend_used`: the confirmed backend label, such as `built-in image tool` or `scripts/image_gen.py`.
 - `tool_name`: the actual tool or command used, such as `image_gen`, `image_generate`, or `scripts/image_gen.py`.
 - `mode`: `generate` or `edit`.
 - `prompt_source`: where the approved sample prompt came from.
 - `size`, `quality`, and model/config details when the backend exposes them.
-- `approved_sample_path`: the approved `origin_image/slide_XX.png` path.
+- `approved_sample_paths`: the approved sample paths, one for each representative page role.
+- `approved_style_references`: the same paths with role labels and `match shared style only; do not copy layout or content` fidelity.
 - `input_context_preparation`: how local source/style images were made available, such as `view_image` for built-in mode.
 - `handoff_rule`: subagents must use the same backend/tool/mode and return a blocker if that path is unavailable.

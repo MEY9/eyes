@@ -1,6 +1,6 @@
 # Backend Selection
 
-Read this before confirming the image backend or generating the first sample slide.
+Read this before confirming the image backend or generating the representative sample set.
 
 This skill supports two image backends:
 
@@ -25,13 +25,13 @@ If CLI/API fallback is selected, read `cli-api-fallback.md` before generating im
 Built-in backend:
 
 ```text
-我检查到当前环境可调用内置图片生成工具（Codex 通常是 image_gen，OpenClaw 通常是 image_generate），因此准备优先用内置工具生成样张，不切到本地 API/CLI fallback。可以开始生成 1 页样张吗？
+我检查到当前环境可调用内置图片生成工具（Codex 通常是 image_gen，OpenClaw 通常是 image_generate），因此准备优先用内置工具生成代表性样张组，不切到本地 API/CLI fallback。可以开始生成封面/导入页、普通讲授页和活动/练习页样张吗？
 ```
 
 CLI/API fallback:
 
 ```text
-我检查后没有可用的内置图片生成工具，或内置工具缺少本页必需能力，因此准备使用本地 API/CLI fallback 生成样张，读取 ~/.codex-ppt-skill/.env 中的 OPENAI_BASE_URL / CODEX_PPT_IMAGE_MODEL 配置。可以开始生成 1 页样张吗？
+我检查后没有可用的内置图片生成工具，或内置工具缺少本页必需能力，因此准备使用本地 API/CLI fallback 生成样张组，读取 ~/.codex-ppt-skill/.env 中的 OPENAI_BASE_URL / CODEX_PPT_IMAGE_MODEL 配置。可以开始生成封面/导入页、普通讲授页和活动/练习页样张吗？
 ```
 
-Wait for confirmation before generating the sample slide. If the user questions the backend, resolve that before continuing.
+Wait for confirmation before generating the representative sample set. If the user questions the backend, resolve that before continuing.

@@ -20,6 +20,10 @@ Use this output structure:
 ├── deck_spec.json
 ├── outline.md
 ├── speech.md
+├── qa/
+│   ├── slide_XX_review.json
+│   ├── deck_contact_sheet.png
+│   └── deck_review.md
 └── {deck_name}.pptx
 ```
 
@@ -41,6 +45,9 @@ Before assembling the PPT, inspect every slide image. Check:
 - Visual style is consistent across slides.
 - No page number appears unless the user requested one.
 - Important elements do not overlap.
+- Text uses ordinary readable fonts only; no artistic, calligraphic, brush, decorative, handwritten, or distorted lettering.
+- `qa/slide_XX_review.json` records the page score and any repair decision.
+- `qa/deck_contact_sheet.png` and `qa/deck_review.md` confirm the complete deck rhythm and layout variation.
 
 If a slide has severe text or layout issues, regenerate it with a more constrained prompt. If a slide is mostly correct but has a localized issue, use the selected backend's edit capability when available. In CLI/API fallback mode, use `scripts/image_gen.py edit --image {slide_path} --prompt ... --out {new_slide_path}` and replace the final slide only after validating the edited output.
 
@@ -138,7 +145,9 @@ Report:
 - Confirm which image backend was used and that every non-sample slide result was recorded with `record_slide_result.py`.
 - Confirm that speaker notes from `speech.md` were written into the PPT, if applicable
 - Any slides that were regenerated, blocked, or still have known limitations
-- If the deck's style is custom or noticeably adapted (extracted from user references, tuned during sampling, or otherwise not an unmodified built-in style), end with a one-sentence tip that the style can be saved to the personal style library for future reuse, for example: "如果你喜欢这套风格，可以说「保存这个风格」，我会把它存入个人风格库（`~/.codex-ppt-skill/references/`），以后可以直接复用，更新 skill 也不会丢失。" If the user agrees, read `docs/style-library.md`. Skip this tip when the deck used an unmodified built-in style.
+- The page-level QA directory and whole-deck contact-sheet review result
+- The project-local `style/` snapshot path and `style_library_record` status when the complete deck has been confirmed by the user. The system style record must be content-neutral and must not contain the deck's teaching text or private data.
+- If the user has not yet confirmed the complete deck, report that style promotion is pending; sample approval alone is not sufficient.
 
 ## Prompting Principles
 

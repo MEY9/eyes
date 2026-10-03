@@ -10,6 +10,7 @@ Agent B 接收 Agent A 的教学设计交接包，制作正式课堂课件，并
 
 教材 / 教参
 → Agent A 教学设计
+→ lesson_packet.json / pipeline_state.json
 → Agent B 课件大纲
 → codex-ppt 生成高质量视觉稿
 → image-to-editable-ppt 完全拆解重建
@@ -74,6 +75,10 @@ Agent B 不重新编写教学设计，不把教材 PDF 直接转换成 PPT，不
 - change_log.md；
 - ai_assets_manifest.md；
 - handoff.md；
+- lesson_packet.json；
+- source_audit.md；
+- rights_manifest.md；
+- pipeline_state.json；
 - source_materials/、resources/、html_embeds/ 中的实际资源。
 
 检查：
@@ -82,6 +87,7 @@ Agent B 不重新编写教学设计，不把教材 PDF 直接转换成 PPT，不
 - 教学目标、重点、难点、活动、提问和评价完整；
 - 原文、轻量改写和新增内容边界清楚；
 - AI 赋能有教学目标、教师动作、学生动作、时长、核验和备用方案。
+- `lesson_packet.json` 与 DOCX、Markdown、handoff.md 的课题、课时、目标和 AI 赋能一致。
 
 如果交接包缺失、课时冲突或存在重大事实/价值问题，退回 Agent A；不在 B 阶段隐瞒或重写。
 
@@ -119,13 +125,15 @@ Agent A 的 HTML 任务
 
 Agent B 必须读取 html_embeds/ 下的实际产物和 embed-spec.json，不能只依据文字说明声称“已嵌入”。B 不直接伪造 HTML，也不把普通超链接当成嵌入；目标环境不能真正运行时，必须保留静态备用并记录限制。HTML 页面是教学过程中的一个专门课堂节点，不能替代整节课的讲解、练习、反馈和总结。
 
+HTML分支通过门禁前，还必须确认单文件HTML实际离线打开、核心交互可用、正确/错误/重置反馈可用、预览图和静态备用存在，并读取 HTML 生成的 `runtime-check.json`。
+
 ## 7. 标准工作流与门禁
 
 ### 阶段 0：接收和锁定输入
 
 建立项目目录，保存教学设计、来源、资源、临时文件和输出文件。锁定课题、课时、模板、视觉方向、图片来源策略和生图 API。
 
-门禁：教学设计交接包完整，课时与格式要求明确。
+门禁：教学设计交接包完整，课时与格式要求明确；`lesson_packet.json`、`pipeline_state.json`、来源审计和版权清单可读取且没有冲突。
 
 ### 阶段 1：课件大纲
 
@@ -139,6 +147,7 @@ Agent B 必须读取 html_embeds/ 下的实际产物和 embed-spec.json，不能
 - 视觉构想与布局角色；
 - 必须使用的素材；
 - AI 赋能和静态备用；
+- `content_id`：对应的教学内容、课堂问题、活动、AI任务或作业编号；
 - 与前后页的关系。
 
 门禁：大纲覆盖正式课堂流程；页数不是为了视觉简洁而压缩；AI 页面和课堂节点明确。
@@ -146,6 +155,8 @@ Agent B 必须读取 html_embeds/ 下的实际产物和 embed-spec.json，不能
 ### 阶段 2：视觉方向和后端
 
 确定主色、字体气质、插画/图示语言、页面密度、构图变化和投影可读性。
+
+从 GitHub 借鉴的项目只作为候选风格来源和方法参考。必须先记录来源、借鉴点和适配理由，再收敛为本课件唯一的 `style_brief` 与 `style_lock`。样张确认只代表本次课件可以进入批量生成，不代表风格已经写入系统风格库。
 
 优先遵循当前项目已经确认的后端。用户明确选择外部 API 时，直接沿用该 API，不重复要求切换内置后端；一次项目内保持后端稳定。
 
@@ -157,7 +168,7 @@ Agent B 必须读取 html_embeds/ 下的实际产物和 embed-spec.json，不能
 
 - 读取已确认的大纲和相关 reference；
 - 建立 deck_spec.json、逐页 prompt、slide_jobs.json 和状态记录；
-- 样张通过或已获当前请求授权后，按页生成 origin_image/slide_XX.png；
+- 代表性样张组通过或已获当前请求授权后，按页生成 origin_image/slide_XX.png；正式课堂默认验证封面/导入页、普通讲授页、活动/练习/反馈页三类样张；
 - 有可用多 Agent 时，一页一个 worker；
 - 固定已确认的图片后端，不让 worker 随意换后端；
 - 生成 speech.md；
@@ -175,6 +186,7 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - AI 页面、互动入口和静态备用；
 - 必须使用的素材、来源和版权说明；
 - 无关 logo、水印、错误页码和事实错误。
+- `content_id` 是否能回溯到 `lesson_packet.json`，页面是否覆盖对应教学任务。
 
 严重问题返修该页，不牵连已通过页面。
 
@@ -264,8 +276,31 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 动画清单、动画结构校验和播放验证结果完整；
 - 动画视频、视频规格、页码与进度条检查、音乐来源和授权记录完整；
 - AI 赋能、资源、静态备用和讲稿路径完整。
+- `content_traceability.csv` 已覆盖教学重点、问题、活动、AI任务和作业；
+- `rights_manifest.md` 中的资源许可、替换方案和最终使用范围已核对；
+- `pipeline_state.json` 的所有适用阶段均为 `passed`，阻塞项为空。
 
-## 8. 固定交付物
+## 8. 完整课件确认后的风格入库
+
+本流程是 PPT 生产流程，不把单张图片当作最终风格。只有完整幻灯片、可编辑 PPTX、动画（如有）和视频（如有）全部完成 QA，并且用户明确确认“没问题”“确认”或同等意思后，才执行风格入库。
+
+入库动作默认包含两份：
+
+- 项目快照：当前课件目录下的 `style/`，保存 `style-lock.yaml`、`style-guide.md`、`prompt-rules.md`、`page-role-rules.md`、代表性样张、缩略图板、GitHub 来源记录和用户确认记录；
+- 系统风格库：`${CODEX_PPT_HOME:-~/.codex-ppt-skill}/references/{style_name}.md`，保存与具体课题、诗句、教材内容和私人信息无关的可复用 PPT 视觉系统。可选的样张副本放在同一目录下的 `style-samples/{style_id}/`，仅作为视觉参考和 QA 依据。
+
+风格入库必须遵循 `skills/codex-ppt/docs/style-library.md`：
+
+- `candidate` 和 `locked` 只能表示本次课件的中间状态；完整课件用户确认后才标记为 `verified` 或 `approved`；
+- 风格文件必须包含色彩、字体、网格、页面角色、插画/图示规则、禁止项、提示词规则、GitHub 来源和版本号；
+- 不保存本课件的原文、具体诗句、页面正文、学生姓名、项目私密信息或不可复用的临时素材；
+- 同名风格已有版本时不覆盖旧版本，按语义版本号建立新版本，并在项目 `style/approval.md` 中记录继承关系；
+- 在 `deck_spec.json` 中记录 `style_library_record`，至少包含风格 ID、版本、项目快照路径、系统库路径、最终确认时间和确认依据；
+- 以后制作 PPT 时可以直接按“使用 `{style_name}@{version}`”调用，先加载风格系统，再根据本次大纲选择页面构图，不能把旧课件整套版式复制过来。
+
+如果用户明确表示不保存，本阶段只保留项目内的临时风格快照，不写入系统风格库。
+
+## 9. 固定交付物
 
 项目目录至少包含：
 
@@ -281,12 +316,14 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 动画后处理脚本、动画清单和动画 QA 记录；
 - 完整竖版动画视频、背景音乐文件、音乐授权说明和视频 QA 记录；
 - 页面 manifest、preview、validation 和 page_result；
+- lesson_packet.json、pipeline_state.json、source_audit.md、rights_manifest.md 和 content_traceability.csv；
 - AI 赋能清单、资源来源和版权说明；
+- 用户确认完整课件后生成的 `style/` 风格快照和 `deck_spec.json` 中的 `style_library_record`；
 - handoff_to_B.md 或最终交付记录。
 
 最终报告只说明：文件路径、课时、页数、后端、AI 赋能页面、可编辑验收结果、独立图片层及限制。
 
-## 9. 停止条件
+## 10. 停止条件
 
 以下情况必须暂停并说明证据：
 

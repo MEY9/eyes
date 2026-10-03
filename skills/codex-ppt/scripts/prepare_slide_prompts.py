@@ -129,7 +129,36 @@ def _sample_generation_method(spec: Dict[str, Any], *, base_dir: Path) -> Option
     for key in ("approved_sample_path", "sample_slide_path", "sample_output_path"):
         if isinstance(method.get(key), str):
             method[key] = _resolve_image_path(method[key], base_dir=base_dir)
+    if isinstance(method.get("approved_sample_paths"), list):
+        method["approved_sample_paths"] = [
+            _resolve_image_path(value, base_dir=base_dir)
+            if isinstance(value, str)
+            else value
+            for value in method["approved_sample_paths"]
+        ]
     return method
+
+
+def _style_references(spec: Dict[str, Any], *, base_dir: Path) -> List[Dict[str, Any]]:
+    raw = spec.get("approved_style_references")
+    if raw is None:
+        legacy = spec.get("approved_style_reference")
+        raw = [] if legacy is None else [legacy]
+    if not isinstance(raw, list):
+        _die("approved_style_references must be a list when present.")
+    references: List[Dict[str, Any]] = []
+    for index, entry in enumerate(raw, start=1):
+        if not isinstance(entry, dict):
+            _die(f"approved_style_references[{index}] must be an object.")
+        reference = dict(entry)
+        path = reference.get("path")
+        if not isinstance(path, str) or not path.strip():
+            _die(f"approved_style_references[{index}] is missing path.")
+        reference["path"] = _resolve_image_path(path, base_dir=base_dir)
+        reference.setdefault("role", "approved sample slide style reference")
+        reference.setdefault("fidelity", "match shared style only; do not copy layout or content")
+        references.append(reference)
+    return references
 
 
 def _method_backend_label(method: Optional[Dict[str, Any]]) -> Optional[str]:
@@ -183,14 +212,19 @@ def _build_prompt(
     deck: Dict[str, Any],
     slide: Dict[str, Any],
     number: int,
-    global_style_reference: Optional[Dict[str, Any]],
+    global_style_references: List[Dict[str, Any]],
     base_dir: Path,
 ) -> str:
     title = str(slide.get("title") or f"Slide {number}").strip()
     style = deck.get("style", {})
+    style_system = {
+        key: deck.get(key)
+        for key in ("style_source_records", "style_brief", "asset_plan", "style_lock_status")
+        if deck.get(key) not in (None, "", [], {})
+    }
+    style_lock = deck.get("style_lock") or style.get("style_lock")
     images: List[Dict[str, Any]] = []
-    if global_style_reference:
-        images.append(global_style_reference)
+    images.extend(global_style_references)
     images.extend(_slide_images(slide, slide_number=number, base_dir=base_dir))
     required_background = {
         key: value
@@ -212,6 +246,8 @@ def _build_prompt(
         _format_block("Deck Goal", deck.get("goal")),
         _format_block("Required Background", required_background),
         _format_block("Global Style", style),
+        _format_block("Style System", style_system),
+        _format_block("Style Lock", style_lock),
     ]
 
     if images:
@@ -239,12 +275,13 @@ def _build_prompt(
         ]
     )
 
-    if global_style_reference:
+    if global_style_references:
         prompt_parts.append(
             "## Style Reference Rule\n"
-            "Use Image 1 as the approved sample-slide style reference. Match its palette, "
-            "typography mood, density, texture, and overall visual identity. Do not copy "
-            "its exact layout unless this slide's layout explicitly asks for it.\n"
+            "Use all approved sample-slide images as style references. Extract the shared "
+            "palette, ordinary typography, density, texture, illustration language, and "
+            "visual identity across the references. Do not copy any reference's exact "
+            "layout or content unless this slide's layout explicitly asks for it.\n"
         )
 
     if images:
@@ -260,6 +297,7 @@ def _build_prompt(
         "## Universal Constraints\n"
         "- The final image itself must contain the title and key points.\n"
         "- Render Chinese text exactly and legibly; avoid garbled characters.\n"
+        "- Use ordinary readable Chinese fonts only; no artistic, calligraphic, brush, decorative, handwritten, or distorted lettering.\n"
         "- Keep the confirmed deck style consistent while varying layout by slide role.\n"
         "- No watermark, unrelated logo, or extra slide number.\n"
     )
@@ -270,12 +308,11 @@ def _job_images(
     slide: Dict[str, Any],
     *,
     number: int,
-    global_style_reference: Optional[Dict[str, Any]],
+    global_style_references: List[Dict[str, Any]],
     base_dir: Path,
 ) -> List[Dict[str, Any]]:
     images: List[Dict[str, Any]] = []
-    if global_style_reference:
-        images.append(global_style_reference)
+    images.extend(global_style_references)
     images.extend(_slide_images(slide, slide_number=number, base_dir=base_dir))
     return images
 
@@ -307,13 +344,66 @@ def _write_template(path: Path) -> None:
             "name": "手绘技术解释风",
             "visual_direction": "clean hand-drawn technical explainer",
             "color_palette": "white background, black marker lines, pale yellow highlights",
-            "typography": "large readable Chinese headings, compact handwritten annotations",
+            "typography": "large readable Chinese headings, compact ordinary Chinese labels",
         },
-        "approved_style_reference": {
-            "path": "/absolute/path/to/approved-sample-slide.png",
-            "role": "approved sample slide style reference",
-            "fidelity": "match style only; do not copy layout or content",
+        "style_lock": {
+            "name": "本次课件主风格名称",
+            "visual_dna": {
+                "mood": "整体情绪和时代媒介感",
+                "palette": "主色、辅助色、强调色、中性色及使用比例",
+                "line_and_texture": "线稿、纸张、颗粒、阴影和边缘处理",
+                "illustration_language": "人物、场景、道具和图示的共同画法",
+                "composition_rhythm": "留白、区块、视线和页面节奏",
+            },
+            "typography": {
+                "language": "Chinese",
+                "font_mood": "普通、清晰、适合投影阅读",
+                "hierarchy": "标题、正文、标签的相对层级",
+                "text_density_limit": "单页文字密度上限",
+                "forbidden": ["艺术字", "书法体", "毛笔体", "装饰体", "手写体", "变形字"],
+            },
+            "layout_rules": {
+                "safe_margins": "安全边距",
+                "grid": "网格和对齐规则",
+                "cover_rule": "封面与内页的差异",
+                "page_role_variation": "导入、讲授、活动、练习、总结等页面如何变化",
+            },
+            "decoration_and_assets": {
+                "reusable_elements": "边框、图标、纹理、人物和道具",
+                "allowed_decoration": "允许的装饰",
+                "negative_constraints": "禁止的装饰、标识和时代错置",
+            },
+            "status": "draft",
         },
+        "thumbnail_board": {
+            "path": "/absolute/path/to/qa/thumbnail_board.png",
+            "status": "pending",
+            "review_notes": "Check page-role rhythm, density, whitespace, and layout variation before full generation.",
+        },
+        "style_source_records": [],
+        "style_brief": {
+            "fixed_visual_identity": "Describe the stable palette, line, texture, character, scene, icon, and typography system.",
+            "variable_by_teaching_function": "Describe which composition and visual metaphor may vary by page role.",
+        },
+        "asset_plan": [],
+        "style_lock_status": "draft",
+        "approved_style_references": [
+            {
+                "path": "/absolute/path/to/approved-cover-slide.png",
+                "role": "approved cover sample style reference",
+                "fidelity": "match shared style only; do not copy layout or content",
+            },
+            {
+                "path": "/absolute/path/to/approved-content-slide.png",
+                "role": "approved teaching-page sample style reference",
+                "fidelity": "match shared style only; do not copy layout or content",
+            },
+            {
+                "path": "/absolute/path/to/approved-activity-slide.png",
+                "role": "approved activity-page sample style reference",
+                "fidelity": "match shared style only; do not copy layout or content",
+            },
+        ],
         "slides": [
             {
                 "number": 1,
@@ -401,12 +491,7 @@ def main() -> int:
     prompts_dir.mkdir(parents=True, exist_ok=True)
     (out_dir / "origin_image").mkdir(parents=True, exist_ok=True)
 
-    global_style_reference = spec.get("approved_style_reference")
-    if global_style_reference is not None and not isinstance(global_style_reference, dict):
-        _die("approved_style_reference must be an object when present.")
-    if global_style_reference and isinstance(global_style_reference.get("path"), str):
-        global_style_reference = dict(global_style_reference)
-        global_style_reference["path"] = _resolve_image_path(global_style_reference["path"], base_dir=spec_dir)
+    global_style_references = _style_references(spec, base_dir=spec_dir)
 
     sample_generation_method = _sample_generation_method(spec, base_dir=spec_dir)
     max_concurrent_slides = args.max_concurrent_slides
@@ -424,24 +509,31 @@ def main() -> int:
 
     for fallback, slide, number in numbered_slides:
         use_style_reference = bool(slide.get("use_approved_style_reference", True))
-        slide_style_reference = global_style_reference if use_style_reference else None
+        slide_style_references = global_style_references if use_style_reference else []
         prompt = _build_prompt(
             deck=spec,
             slide=slide,
             number=number,
-            global_style_reference=slide_style_reference,
+            global_style_references=slide_style_references,
             base_dir=spec_dir,
         )
-        images = _job_images(slide, number=number, global_style_reference=slide_style_reference, base_dir=spec_dir)
+        images = _job_images(slide, number=number, global_style_references=slide_style_references, base_dir=spec_dir)
         job = {
             "slide": number,
             "title": slide.get("title", f"Slide {number}"),
             "prompt": prompt,
             "out": f"slide_{number:02d}.png",
             "input_images": images,
+            "approved_style_references": slide_style_references,
             "requires_context_images": bool(images),
             "expected_backend": selected_backend,
             "sample_generation_method": sample_generation_method,
+            "style_system": {
+                key: spec.get(key)
+                for key in ("style_source_records", "style_brief", "asset_plan", "style_lock_status")
+                if spec.get(key) not in (None, "", [], {})
+            },
+            "style_lock": spec.get("style_lock") or spec.get("style", {}).get("style_lock"),
             "generation_contract": {
                 "must_use_selected_image_backend": True,
                 "must_match_sample_generation_method": bool(sample_generation_method),
@@ -489,6 +581,14 @@ def main() -> int:
         "deck_name": spec.get("deck_name"),
         "selected_backend": selected_backend,
         "sample_generation_method": sample_generation_method,
+        "approved_style_references": global_style_references,
+        "thumbnail_board": spec.get("thumbnail_board"),
+        "style_system": {
+            key: spec.get(key)
+            for key in ("style_source_records", "style_brief", "asset_plan", "style_lock_status")
+            if spec.get(key) not in (None, "", [], {})
+        },
+        "style_lock": spec.get("style_lock") or spec.get("style", {}).get("style_lock"),
         "max_concurrent_slides": max_concurrent_slides,
         "slides": slide_job_entries,
         "updated_at": now_iso(),

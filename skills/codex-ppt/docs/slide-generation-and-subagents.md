@@ -6,7 +6,7 @@ Read this before full-deck image generation, preparing slide jobs, dispatching s
 
 Generate one image per slide with the selected image backend. Every final `slide_XX.png` must be produced by the built-in image tool or by `scripts/image_gen.py`; programmatic rendering or hybrid text overlay is not acceptable for slide image creation.
 
-After the outline, visual style, image backend, and sample slide have all been approved, create final downstream artifacts if they do not already exist:
+After the outline, visual style, image backend, and representative sample set have all been approved, create final downstream artifacts if they do not already exist:
 
 - `deck_spec.json`
 - `prompts/slide_XX.json`
@@ -14,7 +14,7 @@ After the outline, visual style, image backend, and sample slide have all been a
 
 Do not create these final downstream artifacts before outline approval. If the user explicitly asks for pre-approval planning files, use `.draft.` filenames and synchronize them after approval.
 
-`deck_spec.json` must include `sample_generation_method` copied from the approved sample before `prepare_slide_prompts.py` is run. The helper copies that method into each `prompts/slide_XX.json` and into `slide_jobs.json`, so workers can see the exact backend, tool, mode, image context preparation, and output constraints used for the approved sample.
+`deck_spec.json` must include `sample_generation_method` copied from the approved sample set and `approved_style_references` before `prepare_slide_prompts.py` is run. The helper copies that method and all style references into each `prompts/slide_XX.json` and into `slide_jobs.json`, so workers can see the exact backend, tool, mode, image context preparation, and shared visual system used by the approved samples.
 
 Before full production, create structured per-slide image jobs. Prefer the bundled deterministic helper:
 
@@ -114,17 +114,18 @@ Avoid generating every slide as the same three-card layout. For each slide, choo
   "constraints": [
     "The final image itself must contain the title and key points.",
     "All text must be readable and correctly spelled.",
+    "Use ordinary readable Chinese fonts only; no artistic, calligraphic, brush, decorative, handwritten, or distorted lettering.",
     "Keep the confirmed style consistent with the rest of the deck.",
     "No watermark, no unrelated logo, no extra slide number."
   ]
 }
 ```
 
-If preparing prompts manually instead of using `prepare_slide_prompts.py`, still save each full slide job under `{base_dir}/{deck_name}/prompts/slide_XX.json` before generation. The saved job must include `prompt`, `out`, and `input_images`, including any deck-level approved sample slide style reference and all slide-level source images with explicit role labels.
+If preparing prompts manually instead of using `prepare_slide_prompts.py`, still save each full slide job under `{base_dir}/{deck_name}/prompts/slide_XX.json` before generation. The saved job must include `prompt`, `out`, and `input_images`, including all deck-level approved sample style references and all slide-level source images with explicit role labels.
 
 ## Parallel Slide Generation With Subagents
 
-After the user approves the sample slide and full-deck generation is authorized, slide subagents are mandatory whenever the current runtime can spawn them. Use one subagent per remaining slide image job. Do not generate the remaining deck sequentially merely for convenience. If subagents cannot be spawned, stop at the dispatch step and report a blocker instead of producing a lower-quality sequential deck.
+After the user approves the sample set and full-deck generation is authorized, slide subagents are mandatory whenever the current runtime can spawn them. Use one subagent per remaining slide image job. Do not generate the remaining deck sequentially merely for convenience. If subagents cannot be spawned, stop at the dispatch step and report a blocker instead of producing a lower-quality sequential deck.
 
 Use the slide state scripts as the dispatch contract: the main agent spawns workers, then records dispatch and result state. A slide is not considered dispatched or complete until the relevant script records it.
 
@@ -133,10 +134,10 @@ Parent agent responsibilities:
 - Own `outline.md`, `deck_spec.json`, `prompts/`, `origin_image/`, QA, `speech.md`, and final PPT assembly.
 - Run `prepare_slide_prompts.py` or otherwise write full per-slide JSON jobs and `slide_jobs.json` before delegation.
 - Run `slide_job_status.py` to see dispatch slots and pending slide ids before each batch.
-- Ensure the approved sample slide is included in every non-sample job as a style-only input image when available.
+- Ensure the complete approved sample set is included in every non-sample job as style-only input images when available.
 - Ensure every dispatched slide job is self-contained. If a slide summarizes, compares, continues, or refers to deck-wide concepts, put the required concepts into `deck_context` or the slide's `local_context` before running `prepare_slide_prompts.py`.
-- Ensure `sample_generation_method` is present in `deck_spec.json`, every `prompts/slide_XX.json`, and `slide_jobs.json`; it must describe the exact backend/tool/mode used to generate the approved sample.
-- If the approved sample slide already exists and should not be regenerated, mark that slide in `deck_spec.json` with `sample_approved: true` or `approved_sample: true` before running `prepare_slide_prompts.py`; the helper records it as `accepted` when the final image file exists.
+- Ensure `sample_generation_method` and `approved_style_references` are present in `deck_spec.json`, every `prompts/slide_XX.json`, and `slide_jobs.json`; they must describe the exact backend/tool/mode and shared visual system used to generate the approved sample set.
+- If an approved sample slide already exists and should not be regenerated, mark that slide in `deck_spec.json` with `sample_approved: true` or `approved_sample: true` before running `prepare_slide_prompts.py`; the helper records it as `accepted` when the final image file exists.
 - In built-in `image_gen` mode, ensure every slide-level required local source image has already been inspected with `view_image` before any delegated job that depends on it.
 - In CLI/API fallback mode, ensure each JSON job lists the required source images and that the selected CLI path can use them; if the CLI path cannot attach input images for a slide, do not delegate that slide as a text-only replacement for the asset.
 - Spawn subagents with exactly one slide job each, up to `dispatch_slots_available`.
@@ -150,7 +151,7 @@ Subagent responsibilities:
 - Use the selected image backend only; do not switch between built-in image generation and CLI/API fallback.
 - Follow the `sample_generation_method` from the assigned job. Use the same tool family, generation/edit mode, image context preparation, and model/config details that produced the approved sample.
 - Generate the final slide candidate by calling the selected image generation backend. Do not create final slide images with local drawing, HTML/SVG/canvas screenshots, Pillow, python-pptx/PptxGenJS layouts, or manually composited text/image overlays.
-- Treat the approved sample slide as style reference only.
+- Treat all approved sample slides as style references only; do not copy their exact layouts or content.
 - Treat any required source images as strict input assets and preserve their content according to the prompt.
 - Inspect the generated candidate for text quality, style consistency, required-image inclusion, and layout issues before returning it.
 - Return only the selected original generated image path, the backend used, and a one-sentence QA note.
@@ -182,7 +183,7 @@ Result recording:
   --agent-id <agent id> \
   --backend-used "built-in image tool" \
   --selected-source /absolute/path/to/generated/slide_02.png \
-  --qa-note "Text readable; style matches the approved sample."
+  --qa-note "Text readable; ordinary fonts used; style matches the approved sample set and the page role."
 ```
 
 Blocker recording:
@@ -213,7 +214,7 @@ Final slide image naming rules:
 
 - Rename final slide images strictly by slide order: `slide_01.png`, `slide_02.png`, `slide_03.png`, ...
 - Use zero-padded two-digit numbers for normal decks.
-- The approved sample slide should already have the correct `slide_XX.png` filename and should be reused directly.
+- Approved sample slides should already have their correct `slide_XX.png` filenames and should be reused directly.
 - Keep rejected variants, drafts, or reference images out of `origin_image/`. If you need to preserve them, place them in the project root or a separate `drafts/` directory.
 - Before assembling, verify every expected `slide_XX.png` exists in `origin_image/`, there are no missing or extra final slide images, and `slide_job_status.py` shows all non-sample slide jobs as `recorded`.
 

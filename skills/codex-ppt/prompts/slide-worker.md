@@ -1,6 +1,6 @@
 # Slide Worker Prompt
 
-Use this template when dispatching a slide subagent after the sample slide is approved and full-deck generation is authorized.
+Use this template when dispatching a slide subagent after the representative sample set is approved and full-deck generation is authorized.
 
 ```text
 Generate slide <N> for this codex-ppt deck.
@@ -9,17 +9,19 @@ Deck dir: <absolute deck dir>
 Slide job file: <absolute deck dir>/prompts/slide_<NN>.json
 Output target owned by parent: <absolute deck dir>/origin_image/slide_<NN>.png
 Selected image backend: <built-in image tool OR CLI/API fallback>
-Sample generation method copied from the approved sample:
+Sample generation method copied from the approved sample set:
 - backend_used: <exact backend label recorded by parent>
 - tool_name: <image_gen OR image_generate OR scripts/image_gen.py>
 - mode: <generate OR edit>
 - model/config: <model, size, quality, or "built-in default" if not exposed>
 - prompt_source: <approved sample prompt source>
 - input_context_preparation: <how local images were made visible or attached>
-- approved_sample_path: <absolute path to approved origin_image/slide_XX.png>
+- approved_sample_paths: <absolute paths to the approved cover/opening, teaching, and activity/practice sample pages>
 - handoff_rule: use this same backend/tool/mode; return a blocker if unavailable
 Input images already prepared by the parent:
-- <absolute path> - approved sample slide style reference; match style only, do not copy layout
+- <absolute path> - approved cover/opening sample style reference; match shared style only, do not copy layout
+- <absolute path> - approved teaching-page sample style reference; match shared style only, do not copy layout
+- <absolute path> - approved activity/practice sample style reference; match shared style only, do not copy layout
 - <absolute path> - strict input asset; preserve labels/data/arrows/content
 
 Read the JSON job file, then follow its `prompt` field exactly. Use the selected image backend and the recorded sample generation method only.
@@ -40,7 +42,8 @@ Do not edit slide job files, origin_image, speech.md, or assemble the PPT.
 
 Before returning, visually check:
 - Chinese text is readable and not garbled
-- style matches the approved sample slide
+- all Chinese text uses ordinary readable fonts; no artistic, calligraphic, brush, decorative, handwritten, or distorted lettering
+- style matches the approved sample set while using a page-role-appropriate composition
 - required source images are visibly included and not replaced by a similar redraw
 - no overlapping or truncated important content
 
