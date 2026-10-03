@@ -67,7 +67,7 @@ ai_type：HTML
 - Agent B 已确定的主风格和页面规格；
 - 用户对运行设备、教师操作、投影方式和备用方案的明确要求。
 
-不要求重新读取整本教材，也不根据缺失字段猜测教学事实。若项目启用了 `ppt-pipeline-catalog`，必须沿用 `deck_id`，为本次 HTML 任务建立独立的 HTML run；只能登记自己的产物，不能修改 Agent B 的最终课件、风格记录或审批状态。
+不要求重新读取整本教材，也不根据缺失字段猜测教学事实。若项目启用了 `ppt-pipeline-catalog`，必须沿用 `deck_id`，为本次 HTML 任务建立独立的 HTML run；只能登记自己的产物，不能修改 Agent B 的最终课件、风格记录或审批状态。Agent B 只要发现 `required=true` 且 `ai_type=HTML` 的任务，就必须实际触发本 Agent；不能因为大纲已经写了互动页，或已经生成一张静态视觉稿，就跳过本流程。
 
 ## 4. 强制阶段门禁
 
@@ -149,6 +149,7 @@ html_embeds/ai-html-XX/
   fallback-static.png
   embed-spec.json
   runtime-check.json
+  task-result.json
   README.md
   assets/                  可选，仅放无法内嵌的本地资源
 ```
@@ -200,7 +201,32 @@ html_embeds/ai-html-XX/
 
 记录检查时间、运行环境、浏览器、页面尺寸、是否离线，以及每项检查的状态和证据。至少覆盖：`offline_open`、`interaction`、`correct_feedback`、`incorrect_feedback`、`reset`、`chinese_rendering`、`layout_overflow`、`asset_integrity`、`console_errors`、`fallback_available`。
 
-### 5.6 `README.md`
+### 5.6 `task-result.json`
+
+机器可读的任务完成凭证，至少包含：
+
+```json
+{
+  "ai_id": "AI-HTML-01",
+  "ai_type": "HTML互动",
+  "required": true,
+  "status": "qa_passed",
+  "artifacts": {
+    "html": "ai-html-01.html",
+    "preview": "preview.png",
+    "fallback": "fallback-static.png",
+    "embed_spec": "embed-spec.json",
+    "runtime_check": "runtime-check.json"
+  },
+  "runtime_check_status": "passed",
+  "teacher_use": "",
+  "known_limitations": []
+}
+```
+
+`status=qa_passed` 之前不得交给 Agent B 作为完成的 AI 赋能。若 HTML 无法运行，仍应生成静态备用并将任务标记为 `failed`，由 Agent B 决定是否退回 A 或在用户明确同意后改为其他 AI 形式；不能自动把静态截图冒充 HTML 已完成。
+
+### 5.7 `README.md`
 
 只写教师真正需要的信息：课堂环节、预计时长、教师操作、学生操作、讨论节点、重置方法、运行方式、静态备用方式和已知限制。不要写无关的工程宣传文字。
 
@@ -214,6 +240,8 @@ Agent B 收到 HTML 目录后：
 4. 检查文字、比例、交互说明和静态备用是否与课件主风格一致；
 5. 若目标 PPT 或播放环境不能运行 HTML，采用用户认可的备用方式并明确记录，不伪造“已嵌入”；
 6. HTML 页面不能替代整节课的导入、讲解、练习、总结，也不能成为课件页数不足的理由。
+
+Agent B 必须把 `task-result.json` 的状态和所有 artifact 路径写入 `working/ai_task_state.json`。只有 HTML 任务达到 `qa_passed`，并且在正式大纲中有 `ai_id` 页面/环节引用，才允许将其推进为 `integrated`。
 
 Agent HTML 不修改 Agent B 的 PPTX，不代替 Agent B 做全套课件验收；它只提供可被 B 验收的 HTML 交接包。
 

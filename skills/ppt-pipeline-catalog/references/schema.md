@@ -10,6 +10,7 @@ SQLite is the coordination index for the education PPT pipeline. It is not the s
 - `style_sources`: GitHub and other references used to derive a style.
 - `style_samples`: approved sample pages and their hashes.
 - `pipeline_runs`: stage ownership and status for Agent A, Agent B, and downstream skills.
+- `ai_task_state.json`: project-level AI task status and artifact evidence consumed by the `ai_enrichment` gate.
 - `artifacts`: output paths, hashes, role, and stage provenance.
 - `approvals`: sample, final-deck, and style-promotion approvals.
 - `publication_packages`: one multi-platform delivery package linked to a deck and fixed WeChat layout.
@@ -24,3 +25,5 @@ SQLite is the coordination index for the education PPT pipeline. It is not the s
 5. API keys, OCR tokens, prompt secrets, and user private data never enter SQLite.
 6. The database can be rebuilt from project files and exported catalog snapshots.
 7. A `publication_package` does not replace the `video` run and does not promote a style; it only records platform delivery outputs.
+8. `ai_enrichment` must pass before `visual_deck`, `editable_rebuild`, `animation_qa`, `video`, or `publication_package` can be marked `passed`.
+9. Every required AI task has a real artifact/evidence path; an outline label, prompt-only file, or static fallback alone is not completion evidence.

@@ -31,7 +31,7 @@ outputs/                      正式DOCX、PPTX、MP4和最终报告
   "course": {"title": "", "subject": "", "grade": "", "textbook": "", "unit": "", "lesson": "", "hours": 1},
   "source": {"source_audit": "working/source_audit.md", "teaching_design": "working/teaching_design.docx", "teaching_design_source": "source_materials/"},
   "teaching_contract": {"objectives": [], "key_points": [], "difficult_points": [], "must_keep_steps": [], "assessment": [], "homework": []},
-  "ai_empowerment": [{"ai_id": "AI-01", "ai_type": "HTML|AI视频|AI素材|AI辅助任务", "lesson_step": "", "objective": "", "teacher_action": "", "student_action": "", "duration": "", "verification": "", "fallback": "", "resource_path": "", "rights_status": ""}],
+  "ai_tasks": [{"ai_id": "AI-01", "ai_type": "HTML|AI视频|AI素材|AI辅助任务", "required": true, "status": "planned", "execution_owner": "Agent HTML|Agent B", "lesson_step": "", "objective": "", "teacher_action": "", "student_action": "", "duration": "", "verification": "", "fallback": "", "resource_path": "", "rights_status": ""}],
   "constraints": {"formal_document_font": "宋体", "formal_document_size": "五号", "formal_document_color": "黑色", "one_lesson_stays_one_lesson": true},
   "handoff": {"open_questions": [], "change_log": "working/change_log.md", "rights_manifest": "working/rights_manifest.md"}
 }
@@ -40,8 +40,10 @@ outputs/                      正式DOCX、PPTX、MP4和最终报告
 规则：
 
 1. `hours` 由来源和用户确认决定，B不得通过增加页面改变课时。
-2. `ai_empowerment` 至少有一个有效项目，但不要求同时使用 HTML、AI视频和AI素材。
-3. HTML项目只有在实际生成单文件HTML并通过离线验证后，才能把 `resource_path` 标为完成。
+2. `ai_tasks` 至少有一个有效项目，但不要求同时使用 HTML、AI视频和AI素材；只有明确标记为可选的任务才能使用 `required=false`。
+3. AI 任务状态按 `planned → running → artifact_ready → qa_passed → integrated → delivered` 推进；失败使用 `failed`，可选且跳过的任务使用 `not_applicable`。
+4. HTML项目只有在实际生成单文件HTML、预览图、静态备用、`embed-spec.json`、`runtime-check.json` 和 `task-result.json` 并通过离线验证后，才能把状态推进到 `qa_passed`。
+5. `ai_enrichment` 未通过前，不能进入视觉稿、可编辑重建、动画、视频或发布阶段。
 4. 无法确认的来源、事实、版权或课堂安排必须写入 `open_questions`，不能用猜测填充。
 
 ## 3. pipeline_state.json
@@ -55,7 +57,7 @@ outputs/                      正式DOCX、PPTX、MP4和最终报告
   "stages": {
     "source_reading": {"status": "pending", "evidence": []},
     "agent_a": {"status": "pending", "evidence": []},
-    "html": {"status": "not_applicable", "evidence": []},
+    "ai_enrichment": {"status": "pending", "evidence": [], "tasks": []},
     "agent_b_outline": {"status": "pending", "evidence": []},
     "visual_draft": {"status": "pending", "evidence": []},
     "editable_rebuild": {"status": "pending", "evidence": []},

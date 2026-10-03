@@ -36,6 +36,7 @@ source_ingest
 → outline
 → style_candidate
 → style_sample_approval
+→ ai_enrichment
 → visual_deck
 → editable_rebuild
 → animation_qa
@@ -52,12 +53,29 @@ Agent A 只负责登记来源和教学设计交接；Agent B 负责登记课件�
 | 组件 | 读取 | 登记 | 不负责 |
 |---|---|---|---|
 | Agent A | 来源、项目、已有 catalog 记录 | teaching_design、source artifact、handoff | 风格入库、PPT 重建 |
-| Agent HTML | Agent A 的 HTML AI 任务 | HTML run、HTML 文件、预览图、静态备用、runtime-check | 改教学设计、改整份 PPT |
+| Agent HTML | Agent A 的 HTML AI 任务 | HTML run、HTML 文件、预览图、静态备用、runtime-check、task-result | 改教学设计、改整份 PPT |
 | Agent B | lesson packet、catalog、Style Lock | deck、outline、style candidate、样张、最终 QA、用户确认、style promotion | 伪造 HTML、替代对象重建 |
 | codex-ppt | deck、outline、style candidate | visual_deck run、样张、origin_image、视觉版 PPTX | 对象级可编辑重建 |
 | image-to-editable-ppt | visual deck、Style Lock、OCR和 catalog | editable_rebuild run、page validation、可编辑 PPTX | 改风格和教学内容 |
 | ppt-animation-video | 可编辑 PPTX、动画清单、catalog | animation/video run、MP4、音乐、字体修复和视频 QA | 生成课件、补做对象重建 |
 | ppt-social-publishing | 通过 QA 的 3:4/9:16 视频母版、教学元数据、catalog | publication_package run、三个手动平台 variant、公众号 API variant、HTML、文案、标签和发布 QA | 改课件内容、重新制作动画视频 |
+
+## AI 任务门禁
+
+`ai_enrichment` 是从教学设计进入正式 PPT 生成前的强制阶段。Agent B 必须从 `lesson_packet.json` 的 `ai_tasks` 读取任务；旧项目可兼容 `ai_empowerment`，但必须先规范化为 `working/ai_task_state.json`。每项任务使用以下状态：
+
+`planned` → `running` → `artifact_ready` → `qa_passed` → `integrated` → `delivered`
+
+失败使用 `failed`；只有明确标为可选且用户允许跳过的任务才能使用 `not_applicable`。`required` 缺省为 `true`，AI 视频只有在明确“可选/不制作”时才可为 `false`。
+
+执行 `ai_enrichment` 时：
+
+- HTML 任务必须由 Agent HTML 实际执行，并交付单文件 HTML、预览图、静态备用、`embed-spec.json`、`runtime-check.json` 和 `task-result.json`；
+- AI 素材任务必须有实际资源文件、提示词、使用页面和静态文字备用，只有提示词不能通过；
+- 必需 AI 视频必须有实际视频和 QA，可选视频可以记录 `not_applicable`；
+- 每个必需任务必须至少关联一个正式课堂页面或明确课堂环节。
+
+使用 `scripts/validate_ai_gate.py` 校验当前项目。校验不通过时，禁止登记 `visual_deck`、`editable_rebuild`、`animation_qa`、`video` 或 `publication_package` 为 `passed`。静态备用是故障回退，不等于必需 AI 任务已完成。
 
 ## 标准命令
 
@@ -119,6 +137,13 @@ python3 "$CATALOG" search-styles --status verified
 
 ```bash
 python3 "$CATALOG" export --deck-id "poetry-xing-lu-nan" --out "working/catalog_snapshot.json"
+```
+
+校验 AI 交接和实际产物：
+
+```bash
+python3 skills/ppt-pipeline-catalog/scripts/validate_ai_gate.py \
+  --project "/absolute/path/to/project/PPT课件/课题"
 ```
 
 ## 风格入库门禁

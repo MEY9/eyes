@@ -129,6 +129,25 @@ Agent B 必须承接 Agent A 的 AI 赋能。AI 赋能必须服务理解、观�
 
 如果 Agent A 没有有效 AI 赋能，B 只补充一项最轻量、最贴合目标的方案，并记录为新增内容；不能用“多生成几张图”代替 AI 赋能。
 
+### AI 任务状态与执行门禁
+
+AI 赋能不是大纲中的装饰性标签，而是必须有产物、证据和页面/环节引用的独立任务。B 读取 `lesson_packet.json` 中的 `ai_tasks`；兼容旧交接包时读取 `ai_empowerment`，并在 `working/ai_task_state.json` 中规范化记录。每项任务至少包含：`ai_id`、`ai_type`、`required`、`status`、`execution_owner`、`teaching_phase`、`resource_path`、`fallback` 和 `evidence`。
+
+任务状态只能按以下方向推进：
+
+`planned` → `running` → `artifact_ready` → `qa_passed` → `integrated` → `delivered`
+
+失败使用 `failed`；只有明确标记为可选且用户允许跳过的任务才能使用 `not_applicable`。A 只交接 `planned`，不能把规划或提示词当作完成。`required` 默认为 `true`；AI 视频只有在交接中明确“可选/不制作”时才可以为 `false`。
+
+样式锁定后、codex-ppt 批量生成前，必须执行 `ai_enrichment` 阶段：
+
+- `ai_type=HTML`：由 Agent B 实际触发 Agent HTML，读取并验证 `html_embeds/<ai_id>/task-result.json`、单文件 HTML、预览图、静态备用、`embed-spec.json` 和 `runtime-check.json`；不能只看到 handoff.md 或一张静态页面就算完成。
+- `ai_type=AI素材`：生成实际可交付素材，并保存中文生成提示词、资源文件、使用页面、来源与静态文字备用；只有提示词没有素材时仍为 `planned` 或 `failed`。
+- `ai_type=AI视频`：只有 `required=true` 才执行生成；可选视频写入 `not_applicable`，不得阻塞课件，但必须记录跳过原因。
+- `ai_type=AI辅助任务`：必须有实际课堂任务、输入材料、教师/学生动作和反馈证据，不能只写“AI辅助”。
+
+`ai_enrichment` 未通过前，不得调用 codex-ppt 批量生成、不得进入 image-to-editable-ppt、动画、视频或发布阶段。所有必需任务必须达到 `integrated` 或 `delivered`；静态备用是故障回退，不是把一个必需 HTML 任务标记为完成的替代物。B 应使用 `ppt-pipeline-catalog` 的 AI 门禁校验命令，并把校验输出保存到 `working/ai_task_gate.json`。
+
 ### HTML 交接分支
 
 当 handoff.md 中存在 ai_type=HTML 互动时，按以下顺序处理：
@@ -149,7 +168,7 @@ HTML分支通过门禁前，还必须确认单文件HTML实际离线打开、核
 
 初始化 SQLite catalog，登记 `deck_id`、项目路径、课题、学科、年级和课时；读取 Agent A 的 `lesson_packet.json`、`pipeline_state.json` 和已有 catalog 记录，不根据目录名临时生成多个 ID。
 
-门禁：教学设计交接包完整，课时与格式要求明确；`lesson_packet.json`、`pipeline_state.json`、来源审计和版权清单可读取且没有冲突。
+门禁：教学设计交接包完整，课时与格式要求明确；`lesson_packet.json`、`pipeline_state.json`、来源审计和版权清单可读取且没有冲突。若存在 `ai_tasks` 或 `ai_empowerment`，每项任务必须进入 `working/ai_task_state.json`，否则退回 Agent A，不得继续。
 
 ### 阶段 1：课件大纲
 
@@ -180,6 +199,12 @@ HTML分支通过门禁前，还必须确认单文件HTML实际离线打开、核
 
 只在需要确认且用户尚未授权时确认样张、风格或重大视觉方向。用户已经批准或明确要求直接继续时，记录批准事实，不重复提问。
 
+### 阶段 2.1：AI 赋能执行与交接
+
+样式锁定后立即执行 `ai_enrichment`。B 为每项 AI 任务登记 catalog run 和任务状态，按 `execution_owner` 调用 Agent HTML、外部 API 或对应资源生成环节。HTML 和素材任务的真实产物必须先通过各自 QA，再把 `resource_path` 写回任务状态和大纲。
+
+门禁：`working/ai_task_gate.json` 为 `ok=true`；所有 `required=true` 的任务均为 `qa_passed` 或 `integrated`；每个任务都有至少一个真实资源/证据路径；可选任务明确为 `not_applicable` 或已完成。任何一个必需任务缺失、仍为 `planned`、只有提示词、只有静态截图或 QA 失败，都必须停止并返回具体任务编号。
+
 ### 阶段 3：codex-ppt 视觉稿
 
 调用 codex-ppt：
@@ -204,9 +229,11 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 中文文字、截断、乱码、投影可读性；
 - 风格一致性和布局变化；
 - AI 页面、互动入口和静态备用；
+- AI 任务状态、实际资源、页面引用和静态备用与 `ai_task_gate.json` 一致；
 - 必须使用的素材、来源和版权说明；
 - 无关 logo、水印、错误页码和事实错误。
 - `content_id` 是否能回溯到 `lesson_packet.json`，页面是否覆盖对应教学任务。
+- 每个必需 AI 任务是否至少对应一个正式课堂页面或明确课堂环节，且不是只有说明文字。
 
 严重问题返修该页，不牵连已通过页面。
 
@@ -320,6 +347,7 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 动画视频、视频规格、页码与进度条检查、音乐来源和授权记录完整；
 - 多平台发布包、3:4/9:16 平台映射、公众号固定排版、三个手动复制文案、公众号草稿/发布结果和五个标签检查完整；
 - AI 赋能、资源、静态备用和讲稿路径完整。
+- `working/ai_task_state.json` 和 `working/ai_task_gate.json` 存在；所有必需 AI 任务均已达到 `integrated` 或 `delivered`，没有遗留 `planned`、`running`、`failed` 或未解释的 `not_applicable`。
 - `content_traceability.csv` 已覆盖教学重点、问题、活动、AI任务和作业；
 - `rights_manifest.md` 中的资源许可、替换方案和最终使用范围已核对；
 - `pipeline_state.json` 的所有适用阶段均为 `passed`，阻塞项为空。
@@ -378,6 +406,7 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 课时、教材版本、模板或交付格式冲突；
 - 必须使用的素材缺失或授权不明；
 - 生图后端不可用；
+- 必需 AI 任务未通过 `ai_enrichment` 门禁，或 Agent HTML/AI 素材实际产物、运行 QA、静态备用和页面引用缺失；
 - 多页没有可用 page worker；
 - 页面或最终 PPTX 校验失败；
 - 视觉稿与教学设计严重不一致；

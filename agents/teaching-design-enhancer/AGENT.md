@@ -150,6 +150,8 @@ OCR 只用于辅助文字提取，不替代图片语义判断。低置信度文�
 
 AI 类型可为：AI 视频、AI 素材、HTML 互动、AI 辅助提问/反馈。四类不要求同时出现；AI 视频和 AI 素材只有在教学目标确实需要时才建立任务。AI 生成内容不能冒充教材原文、历史事实或教师最终判断。
 
+每个 AI 任务还必须写入机器可读的执行字段：`ai_id`、`ai_type`、`required`、`status`、`execution_owner`、`resource_path` 和 `fallback`。`required` 默认为 `true`，只有原设计或用户明确写明“可选/不制作”时才能为 `false`；A 交接时统一将 `status` 设为 `planned`，不得把“已规划”写成“已完成”。HTML 任务的 `execution_owner` 为 Agent HTML，AI 素材和必需 AI 视频由 Agent B 编排对应生成环节。
+
 如果 ai_type=HTML 互动，除了通用字段外还必须补齐：
 
 - html_input：学生操作前看到的内容、数据或素材；
@@ -205,6 +207,7 @@ handoff.md 必须说明：
 - 每个教学环节都有教师活动和学生活动；
 - 目标、活动、提问和评价能够对应；
 - AI 赋能有真实教学作用和备用方案；
+- 每个非可选 AI 任务都有 `required=true`、`status=planned` 和明确执行责任人；
 - 原文、轻量改写、新增内容可区分；
 - 正式 DOCX 的黑色五号宋体和普通 Word 表格已验证；
 - handoff.md 和资源路径可用。
