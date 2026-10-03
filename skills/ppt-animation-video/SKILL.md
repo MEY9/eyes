@@ -1,6 +1,6 @@
 ---
 name: ppt-animation-video
-description: Create a full-length vertical animation video from Agent B's completed editable PowerPoint deck and semantic animation manifest, preserving Chinese text, revealing objects by teaching logic, adding page numbers, a progress bar, and low-volume licensed background music. Use after image-to-editable-ppt reconstruction and PPTX animation QA; do not use for authoring the deck itself.
+description: Create a full-length vertical animation video from Agent B's completed editable PowerPoint deck and semantic animation manifest, preserving Chinese text, revealing objects by teaching logic, adding page numbers, a progress bar, and appropriately controlled background music, preferably from user-provided Xu Song, Wang Sulong, or Jay Chou audio. Use after image-to-editable-ppt reconstruction and PPTX animation QA; do not use for authoring the deck itself.
 ---
 
 # PPT 动画视频
@@ -103,20 +103,20 @@ Agent A 教学设计
 
 ### 5. 添加背景音乐
 
-自动从网络选择适合教学课件的轻柔、无歌词、低干扰音乐。优先使用：
+背景音乐优先使用用户提供或本机已有的许嵩、汪苏泷、周杰伦音乐。三位歌手是本流程的音乐偏好，不要求自动搜索或下载某一首指定歌曲；如果项目中有多首，按课堂气质、旋律干扰度和完整视频时长选择最合适的一首。歌词较多的歌曲也可以使用，但必须明显降低音量，不能盖过课件文字和讲解。
 
-- CC0 / Public Domain；
-- 明确允许视频和商业使用的免版税来源；
-- 有清晰作者、来源和许可页面的音源。
-
-不得直接使用来源和授权不明的热门音乐。下载音频到项目 `resources/`，同时保存授权记录，至少包括音乐名、作者、来源 URL、许可类型和下载文件名。
+本流程面向用户指定的非商业课件演示，不因缺少商业授权字段而自动阻断制作；仍需记录音频来自用户提供、本机已有或项目资源的事实。不得主动抓取、破解或下载来源不明的音频，也不得把音乐凭据写入 SQLite、日志或 Git。若指定歌手的音频不存在，使用项目已有的合适背景音乐并在 QA 中记录，不伪造歌曲来源。
 
 将音乐循环或裁剪到完整视频时长：
 
-- 音量作为背景，不盖过画面内容，默认约为原音量的 10%～15%；
-- 开头和结尾使用短淡入、淡出；
-- 视频没有旁白时仍保持克制，不把背景音乐做成主角；
+- 初始音乐增益默认降低约 18～24 dB，最终以听感和响度检查为准；
+- 无旁白页面保持约 10%～15% 的存在感；有旁白、重点文字或互动反馈时自动压低约 4～8 dB；
+- 音乐峰值建议不超过 -3 dBFS，避免削波、刺耳和手机外放失真；
+- 开头使用约 0.8 秒淡入，结尾使用约 1.2 秒淡出；切页或重要结论处避免突然换歌或强节拍撞击；
+- 音乐是背景，不把音乐做成视频主角；
 - 输出必须同时包含视频流和音频流。
+
+在 `resources/` 保存实际使用的音频文件，并在音乐记录中写明歌手、曲名（如已知）、来源类别、文件名、增益、淡入淡出和是否发生 ducking。用户未提供音频时，不为了满足歌手偏好而擅自联网下载。
 
 ### 6. 合成和验收
 
@@ -145,11 +145,11 @@ working/make_xiaohongshu_video.swift
 working/patch_render_fonts.py                 # 仅在需要时
 working/video_qa.md
 resources/<背景音乐文件>
-resources/<背景音乐授权说明>
+resources/<背景音乐来源与处理说明>
 outputs/<课题>_课件动画_<比例>.mp4
 ```
 
-脚本可以按本机环境改写，但必须保留以下不变量：使用可编辑 PPTX 状态、语义组顺序、完整时长、中文字体保真、页码、演示卡片下方进度条、低音量授权音乐和最终验证。
+脚本可以按本机环境改写，但必须保留以下不变量：使用可编辑 PPTX 状态、语义组顺序、完整时长、中文字体保真、页码、演示卡片下方进度条、适当控制音量的背景音乐和最终验证。
 
 ## Agent B 调用规则
 
@@ -164,6 +164,6 @@ Agent B 在动画 PPTX 后处理和结构 QA 通过后调用本技能。调用�
 
 Agent B 接收本技能的输出后，必须把视频路径、视频规格、音乐来源、字体修复记录和验证结果写入最终交付记录。视频生成失败时，不得把静态幻灯片或无文字版本当作成功结果；应保留错误日志并返修字体、渲染或合成步骤。
 
-同时把可编辑 PPTX、动画清单、字体修复记录、音乐授权、MP4 和 `video_qa.md` 登记到共享 catalog，并把 `deck_id`、两个 run_id 和 artifact 列表返回给 Agent B。完整课件用户确认后，风格入库仍由 Agent B 执行。
+同时把可编辑 PPTX、动画清单、字体修复记录、音乐来源与处理记录、MP4 和 `video_qa.md` 登记到共享 catalog，并把 `deck_id`、两个 run_id 和 artifact 列表返回给 Agent B。完整课件用户确认后，风格入库仍由 Agent B 执行。
 
 视频阶段结束后，如果用户要发布到多个平台，交给 `ppt-social-publishing` 继续处理。该技能读取本技能生成的 3:4 和 9:16 母版，只做平台目录分发、微信公众号固定排版、文案和标签，不在视频阶段混入平台文案或公众号 HTML。
