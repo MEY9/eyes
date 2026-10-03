@@ -12,6 +12,8 @@ SQLite is the coordination index for the education PPT pipeline. It is not the s
 - `pipeline_runs`: stage ownership and status for Agent A, Agent B, and downstream skills.
 - `artifacts`: output paths, hashes, role, and stage provenance.
 - `approvals`: sample, final-deck, and style-promotion approvals.
+- `publication_packages`: one multi-platform delivery package linked to a deck and fixed WeChat layout.
+- `publication_variants`: per-platform ratio, video/HTML/copy paths, tags, status, and provenance.
 
 ## Invariants
 
@@ -21,3 +23,4 @@ SQLite is the coordination index for the education PPT pipeline. It is not the s
 4. A style version is never silently overwritten.
 5. API keys, OCR tokens, prompt secrets, and user private data never enter SQLite.
 6. The database can be rebuilt from project files and exported catalog snapshots.
+7. A `publication_package` does not replace the `video` run and does not promote a style; it only records platform delivery outputs.

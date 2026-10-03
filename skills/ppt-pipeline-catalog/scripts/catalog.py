@@ -19,7 +19,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 SCHEMA = """
 PRAGMA foreign_keys = ON;
@@ -137,6 +137,41 @@ CREATE TABLE IF NOT EXISTS approvals (
     approved_at TEXT NOT NULL,
     FOREIGN KEY(deck_id) REFERENCES decks(deck_id) ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS publication_packages (
+    package_id TEXT PRIMARY KEY,
+    deck_id TEXT NOT NULL,
+    status TEXT NOT NULL,
+    layout_id TEXT,
+    metadata_json TEXT NOT NULL DEFAULT '{}',
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    FOREIGN KEY(deck_id) REFERENCES decks(deck_id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS publication_variants (
+    variant_id TEXT PRIMARY KEY,
+    package_id TEXT NOT NULL,
+    platform TEXT NOT NULL,
+    status TEXT NOT NULL,
+    ratio TEXT,
+    video_path TEXT,
+    html_path TEXT,
+    markdown_path TEXT,
+    copy_path TEXT,
+    tags_json TEXT NOT NULL DEFAULT '[]',
+    metadata_json TEXT NOT NULL DEFAULT '{}',
+    created_at TEXT NOT NULL,
+    updated_at TEXT NOT NULL,
+    UNIQUE(package_id, platform),
+    FOREIGN KEY(package_id) REFERENCES publication_packages(package_id) ON DELETE CASCADE
+);
+
+CREATE INDEX IF NOT EXISTS idx_publication_packages_deck
+    ON publication_packages(deck_id, updated_at);
+
+CREATE INDEX IF NOT EXISTS idx_publication_variants_package
+    ON publication_variants(package_id, platform);
 """
 
 
@@ -276,6 +311,55 @@ def cmd_approval(args: argparse.Namespace) -> None:
     print(approval_id)
 
 
+def cmd_publication(args: argparse.Namespace) -> None:
+    now = utc_now()
+    metadata = read_json(args.metadata_file)
+    with connect(args.db) as conn:
+        require_deck(conn, args.deck_id)
+        if not args.platform:
+            conn.execute(
+                """INSERT INTO publication_packages(package_id, deck_id, status, layout_id,
+                   metadata_json, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?)
+                   ON CONFLICT(package_id) DO UPDATE SET status=excluded.status,
+                   layout_id=COALESCE(excluded.layout_id, publication_packages.layout_id),
+                   metadata_json=excluded.metadata_json, updated_at=excluded.updated_at""",
+                (args.package_id, args.deck_id, args.status, args.layout_id,
+                 json_text(metadata), now, now),
+            )
+            print(args.package_id)
+            return
+
+        package = conn.execute(
+            "SELECT deck_id FROM publication_packages WHERE package_id = ?",
+            (args.package_id,),
+        ).fetchone()
+        if package is None:
+            raise SystemExit(f"unknown package_id: {args.package_id}; register the package first")
+        if package["deck_id"] != args.deck_id:
+            raise SystemExit(f"package {args.package_id} belongs to another deck")
+        variant_id = args.variant_id or f"{args.package_id}-{args.platform}"
+        try:
+            tags = json.loads(args.tags_json or "[]")
+        except json.JSONDecodeError as exc:
+            raise SystemExit(f"invalid --tags-json: {exc}") from exc
+        if not isinstance(tags, list):
+            raise SystemExit("--tags-json must be a JSON array")
+        conn.execute(
+            """INSERT INTO publication_variants(variant_id, package_id, platform, status,
+               ratio, video_path, html_path, markdown_path, copy_path, tags_json,
+               metadata_json, created_at, updated_at) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+               ON CONFLICT(package_id, platform) DO UPDATE SET status=excluded.status,
+               ratio=excluded.ratio, video_path=excluded.video_path, html_path=excluded.html_path,
+               markdown_path=excluded.markdown_path, copy_path=excluded.copy_path,
+               tags_json=excluded.tags_json, metadata_json=excluded.metadata_json,
+               updated_at=excluded.updated_at""",
+            (variant_id, args.package_id, args.platform, args.status, args.ratio,
+             args.video_path, args.html_path, args.markdown_path, args.copy_path,
+             json_text(tags), json_text(metadata), now, now),
+        )
+    print(variant_id)
+
+
 def cmd_register_style(args: argparse.Namespace) -> None:
     style_key = f"{args.style_id}@{args.version}"
     status = args.status
@@ -351,6 +435,16 @@ def cmd_export(args: argparse.Namespace) -> None:
         for table in ("decks", "pipeline_runs", "artifacts", "approvals"):
             rows = conn.execute(f"SELECT * FROM {table} WHERE deck_id = ?", (args.deck_id,)).fetchall()
             result[table] = [dict(row) for row in rows]
+        result["publication_packages"] = [dict(row) for row in conn.execute(
+            "SELECT * FROM publication_packages WHERE deck_id = ? ORDER BY created_at",
+            (args.deck_id,),
+        ).fetchall()]
+        result["publication_variants"] = [dict(row) for row in conn.execute(
+            """SELECT pv.* FROM publication_variants pv
+               JOIN publication_packages pp ON pp.package_id = pv.package_id
+               WHERE pp.deck_id = ? ORDER BY pv.package_id, pv.platform""",
+            (args.deck_id,),
+        ).fetchall()]
         result["styles"] = [dict(row) for row in conn.execute(
             """SELECT s.* FROM styles s JOIN deck_styles ds ON ds.style_key=s.style_key
                WHERE ds.deck_id = ? ORDER BY s.style_id, s.version""", (args.deck_id,)
@@ -411,6 +505,21 @@ def build_parser() -> argparse.ArgumentParser:
     approval.add_argument("--note")
     approval.add_argument("--approved-at")
 
+    publication = sub.add_parser("publication")
+    publication.add_argument("--deck-id", required=True)
+    publication.add_argument("--package-id", required=True)
+    publication.add_argument("--variant-id")
+    publication.add_argument("--platform", choices=["xiaohongshu", "douyin", "weixin_channels", "wechat_official_account"])
+    publication.add_argument("--status", required=True, choices=["pending", "running", "passed", "failed", "skipped"])
+    publication.add_argument("--layout-id")
+    publication.add_argument("--ratio")
+    publication.add_argument("--video-path")
+    publication.add_argument("--html-path")
+    publication.add_argument("--markdown-path")
+    publication.add_argument("--copy-path")
+    publication.add_argument("--tags-json")
+    publication.add_argument("--metadata-file")
+
     style = sub.add_parser("register-style")
     style.add_argument("--style-id", required=True)
     style.add_argument("--name", required=True)
@@ -448,6 +557,7 @@ def main() -> int:
         "run": cmd_run,
         "artifact": cmd_artifact,
         "approval": cmd_approval,
+        "publication": cmd_publication,
         "register-style": cmd_register_style,
         "link-style": cmd_link_style,
         "search-styles": cmd_search_styles,

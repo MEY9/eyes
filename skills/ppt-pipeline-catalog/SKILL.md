@@ -5,7 +5,7 @@ description: Coordinate education PPT agents and skills with a local SQLite cata
 
 # PPT Pipeline Catalog
 
-这是 Agent A、Agent B、codex-ppt、image-to-editable-ppt、HTML 和 ppt-animation-video 共用的轻量协调层。它只保存索引、状态和来源关系，不替代 Git、课件项目文件、风格包或最终 PPTX。
+这是 Agent A、Agent B、codex-ppt、image-to-editable-ppt、HTML、ppt-animation-video 和 ppt-social-publishing 共用的轻量协调层。它只保存索引、状态和来源关系，不替代 Git、课件项目文件、风格包或最终 PPTX。
 
 ## 核心原则
 
@@ -40,6 +40,7 @@ source_ingest
 → editable_rebuild
 → animation_qa
 → video
+→ publication_package
 → complete_deck_approval
 → style_promotion
 ```
@@ -56,6 +57,7 @@ Agent A 只负责登记来源和教学设计交接；Agent B 负责登记课件�
 | codex-ppt | deck、outline、style candidate | visual_deck run、样张、origin_image、视觉版 PPTX | 对象级可编辑重建 |
 | image-to-editable-ppt | visual deck、Style Lock、OCR和 catalog | editable_rebuild run、page validation、可编辑 PPTX | 改风格和教学内容 |
 | ppt-animation-video | 可编辑 PPTX、动画清单、catalog | animation/video run、MP4、音乐、字体修复和视频 QA | 生成课件、补做对象重建 |
+| ppt-social-publishing | 通过 QA 的 3:4/9:16 视频母版、教学元数据、catalog | publication_package run、平台 variant、公众号 HTML、文案、标签和发布 QA | 改课件内容、重新制作动画视频 |
 
 ## 标准命令
 
@@ -89,6 +91,22 @@ python3 "$CATALOG" approval \
   --stage style_sample_approval \
   --status approved \
   --evidence-path "/absolute/path/to/approval.md"
+
+python3 "$CATALOG" publication \
+  --deck-id "poetry-xing-lu-nan" \
+  --package-id "publish-poetry-xing-lu-nan-001" \
+  --status passed \
+  --layout-id "wechat-education-warm-paper@1.0"
+
+python3 "$CATALOG" publication \
+  --deck-id "poetry-xing-lu-nan" \
+  --package-id "publish-poetry-xing-lu-nan-001" \
+  --platform xiaohongshu \
+  --status passed \
+  --ratio "3:4" \
+  --video-path "/absolute/path/to/video_3x4.mp4" \
+  --copy-path "/absolute/path/to/copy.txt" \
+  --tags-json '["#语文教学", "#课堂课件", "#AI教育", "#小学语文", "#教学设计"]'
 ```
 
 查询风格：
