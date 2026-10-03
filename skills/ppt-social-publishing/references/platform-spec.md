@@ -7,7 +7,7 @@
 | xiaohongshu | 3:4 | 1080×1440 | 3:4 MP4 | `video_3x4.mp4`, `copy.txt` |
 | douyin | 9:16 | 1080×1920 | 9:16 MP4 | `video_9x16.mp4`, `copy.txt` |
 | weixin_channels | 9:16 | 1080×1920 | 9:16 MP4 | `video_9x16.mp4`, `copy.txt` |
-| wechat_official_account | article | mobile-safe | teaching metadata | `article.html`, `article.md`, `copy.txt` |
+| wechat_official_account | article | mobile-safe | teaching metadata + video | `article.html`, `article.md`, `copy.txt`, `wechat_video.mp4`, `publish_result.json` |
 
 ## publication_manifest.json
 

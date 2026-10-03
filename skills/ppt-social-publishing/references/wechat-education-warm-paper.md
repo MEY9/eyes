@@ -18,16 +18,19 @@
 ```text
 article
 └── header.course-meta
-    ├── p.subject-line       教材、年级、册次
-    ├── h1.lesson-summary    50字以内摘要
-    └── p.brand-line         精研AI教育，接顶制
-└── section.tags
-    └── span.tag × 5
-└── figure.cover             可选，使用已验收封面资源
-└── footer.source-note       可选，仅在用户明确需要时显示来源
+    ├── h1.article-title     课题名
+    ├── p.section-label      【教学设计总结内容】
+    ├── p.subject-line       教材、年级、册次、50字以内摘要
+    ├── p.brand-line         精研AI教育，接顶制
+    └── p.tags               五个标签
+└── section.course-video
+    ├── p.section-label      【教学课件视频】
+    └── iframe.video_iframe  公众号视频播放器节点
+└── figure.cover             公众号草稿封面，使用已验收封面资源
+└── footer.source-note       不默认显示
 ```
 
-当前用户要求“文案只写”时，省略 `cover` 和 `source-note`，只输出 `course-meta` 与 `tags`。不得把 PPT 制作说明、技能名、平台名或内部路径渲染到文章中。
+当前用户要求的公众号草稿固定保留两个区块和视频播放器；不显示 PPT 制作说明、技能名、平台名或内部路径。其他三个平台的 `copy.txt` 仍只保留三行文案，不带这两个区块标题。
 
 ## HTML 实现要求
 

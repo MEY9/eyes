@@ -56,7 +56,7 @@ Agent B 是本流水线的编排者，负责为一次课件运行建立稳定的
 - 项目文件和 Git 是内容事实来源；SQLite 只记录路径、哈希、阶段、版本、来源、运行和审批关系。
 - 所有下游阶段必须携带同一个 `deck_id`；风格使用 `style_id@version`；每个 skill 的运行使用自己的 `run_id`。
 - Agent B 在项目建立时登记 deck，在每个阶段登记 run 和 artifact，并在 artifact 已存在且 QA 通过后才把阶段标记为 `passed`。
-- codex-ppt 只登记风格候选、Style Lock、样张、视觉稿和视觉版 PPTX；image-to-editable-ppt 只登记对象重建和可编辑 PPTX；ppt-animation-video 只登记动画视频、音乐、字体修复和视频 QA；ppt-social-publishing 只登记四个平台发布 variant、公众号 HTML、文案、标签和发布 QA。
+- codex-ppt 只登记风格候选、Style Lock、样张、视觉稿和视觉版 PPTX；image-to-editable-ppt 只登记对象重建和可编辑 PPTX；ppt-animation-video 只登记动画视频、音乐、字体修复和视频 QA；ppt-social-publishing 只登记三个手动平台 variant、一个公众号 API variant、公众号 HTML、文案、标签和发布 QA。
 - 样张批准只能把风格标记为 `locked`。完整 PPT、可编辑 PPTX、动画/视频（如有）通过 QA 且用户确认完整课件无问题后，Agent B 才能登记 `complete_deck_approval` 和 `style_promotion`，把风格写入系统库。
 - 数据库不可用时不得伪造成功；保留项目文件和 `working/catalog_snapshot.json`，修复或恢复 catalog 后再补登记。
 - API key、OCR token、密码和完整私密教学内容不得写入数据库、快照、日志或 Git。
@@ -291,14 +291,15 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 
 固定交付：
 
-- 小红书使用 3:4、1080×1440 完整动画视频；
-- 抖音和微信视频号使用 9:16、1080×1920 完整动画视频；
-- 微信公众号生成固定排版 `wechat-education-warm-paper` 的单文件 HTML，同时保留 Markdown 备份；
-- 四个平台各有一个独立 `copy.txt`，每个文件只有三行：教材/年级/上或下册/50 字以内摘要、固定品牌句“精研AI教育，接顶制”、恰好五个标签；
-- 不添加“预览”“正式课堂”“逻辑动画版”“小红书竖屏预览”等说明性文字，不添加额外营销段落；
-- 公众号 HTML 与复制文案逐字一致，使用内联 CSS、移动端安全宽度，不依赖外部字体、CDN 或脚本。
+- 小红书使用 3:4、1080×1440 完整动画视频，生成手动发布包；
+- 抖音和微信视频号使用 9:16、1080×1920 完整动画视频，生成手动发布包；
+- 微信公众号调用官方 API，生成固定排版 `wechat-education-warm-paper` 的文章；
+- 公众号正文固定包含“【教学设计总结内容】”和“【教学课件视频】”两个区块。前者显示教材、年级、册次、50 字以内摘要、固定品牌句“精研AI教育，接顶制”和五个标签，后者显示公众号视频播放器；
+- 公众号自动链路为：上传封面 → 上传课件视频 → 创建草稿 → 回读确认视频节点 → 按 `WECHAT_MP_PUBLISH_MODE` 提交正式发布；
+- 三个平台手动包的 `copy.txt` 仍只有三行，不添加额外营销段落；公众号文章不出现“预览”“正式课堂”“逻辑动画版”等内部说明；
+- 公众号 API 凭据只从项目 `.env` 或进程环境读取，不进入 Git、SQLite、manifest、HTML、日志或最终回复。
 
-发布阶段必须登记 `publication_package` run、四个平台 variant（未要求的平台可明确标记 skipped）、视频/HTML/Markdown/文案 artifact 和 `publication_qa.md`。`publication_package` 通过后，Agent B 才进入最终交付；发布包不等于用户已经确认完整课件，也不提前触发风格入库。
+发布阶段必须登记 `publication_package` run、三个 manual variant、一个公众号 API variant、视频/HTML/Markdown/文案/发布结果 artifact 和 `publication_qa.md`。`publication_package` 通过后，Agent B 才进入最终交付；发布包不等于用户已经确认完整课件，也不提前触发风格入库。
 
 ### 阶段 8：最终验收与交付
 
@@ -312,7 +313,7 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 独立图片层均有明确来源和不可编辑范围；
 - 动画清单、动画结构校验和播放验证结果完整；
 - 动画视频、视频规格、页码与进度条检查、音乐来源和授权记录完整；
-- 多平台发布包、3:4/9:16 平台映射、公众号固定排版、四份复制文案和五个标签检查完整；
+- 多平台发布包、3:4/9:16 平台映射、公众号固定排版、三个手动复制文案、公众号草稿/发布结果和五个标签检查完整；
 - AI 赋能、资源、静态备用和讲稿路径完整。
 - `content_traceability.csv` 已覆盖教学重点、问题、活动、AI任务和作业；
 - `rights_manifest.md` 中的资源许可、替换方案和最终使用范围已核对；
