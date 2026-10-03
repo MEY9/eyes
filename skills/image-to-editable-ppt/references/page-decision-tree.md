@@ -38,6 +38,13 @@ Build a complete inventory before deciding anything, so that no object's source 
 
 Record visual objects in `visual_inventory`, readable text in `text_inventory`, and decisions in `background_strategy`; record completed checks in `quality_checks`. Field contracts live in `manifest-schema.md`.
 
+### Complete Decomposition Gate
+
+The inventory is complete only when it covers every visible category: background layers; all readable text and text styling; native shapes and their fills/outlines/effects; lines, arrows, connectors and endpoints; photos, illustrations, icons, logos, maps, QR codes and textures with crop/mask/transparency; diagrams, charts and their axes/data/labels/legends; native tables and cell structure; complex visual sublayers; media/interaction objects; grouping, z-order, alignment, rotation and navigation metadata. Record each item in `visual_inventory` or `text_inventory`, and record whether it becomes a native object, an independently cropped image object, or a documented limitation.
+
+A full-slide raster is never a valid final background when it contains separable text, shapes, labels, lines, icons, tables, charts, or decorations. Complex imagery may be an independent image object only after those separable elements are removed or separately rebuilt. Missing or unexplained elements are hard failures, not warnings.
+
+
 ## 1. Background Recognition and Repair
 
 Step 1 decides only the background; do not process foreground assets or text yet. Record the outcome in `background_strategy` (field contract in `manifest-schema.md`), including a `comparison_note` written after comparing the result against the source.

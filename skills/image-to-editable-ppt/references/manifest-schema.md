@@ -196,6 +196,26 @@ Must contain at top level:
 
 `passed` must be a boolean. `editppt run record` only reads top-level `passed` to decide whether the page can enter final assembly. `status: "pass"`, `runtime_validation.passed`, or other nested fields may remain as supplemental information, but they cannot replace top-level `passed`.
 
+### Complete-decomposition validation evidence
+
+For complete-decomposition runs, `validation.json` should also include supplemental evidence without replacing top-level `passed`:
+
+```json
+{
+  "decomposition": {
+    "element_inventory_count": 0,
+    "elements_by_type": {},
+    "full_slide_raster_detected": false,
+    "unresolved_elements": [],
+    "independent_image_layers": [],
+    "random_object_edit_check": true
+  }
+}
+```
+
+`full_slide_raster_detected: true`, an unexplained item in `unresolved_elements`, or a composite image layer containing separable page elements is a hard failure for the complete-decomposition requirement.
+
+
 ## `pages/page_NNN/manifest.json`
 
 Owner: page reconstructor.
@@ -217,6 +237,7 @@ Must contain:
 - `shapes`
 - `images`
 - `asset_provenance`
+- optional `content_traceability`
 - page strategy
 
 `slide`, `content_box`, and `source.width_px/source.height_px` must come from `page_request.json`. All `box_px`, `points_px`, `polygon_px`, and `path_px` point values use `source.png` pixel coordinates; the runtime maps these coordinates into `content_box` instead of stretching them to the whole slide. Coordinate layouts:
@@ -235,6 +256,25 @@ Positioned build object requirements:
 `text_inventory` and `visual_inventory` are only inventories; they do not substitute for positioned `text_boxes`, `images`, `shapes`, and `tables`. The manifest must be sufficient to rebuild the page without reading any custom page script.
 
 Missing coordinates are page-contract violations. The runtime must reject them during `editppt run record` and deck validation because otherwise missing values fall back to default positions such as the top-left corner.
+
+**Content traceability**
+
+When Agent B supplies `content_traceability.csv` or page-level `content_id` values, a page manifest may include:
+
+```json
+{
+  "content_traceability": [
+    {
+      "content_id": "C-01",
+      "object_ids": ["text-title", "shape-card-01"],
+      "animation_group_ids": ["G-01"],
+      "status": "mapped"
+    }
+  ]
+}
+```
+
+This field records the mapping from teaching content to reconstructed objects; it does not replace positioned `text_boxes`, `shapes`, `images`, or `tables`. Missing or unmatched content must be reported in the page validation evidence and cannot be silently omitted from the final delivery report.
 
 **Native tables**
 

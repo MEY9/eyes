@@ -57,7 +57,7 @@ Agent A 只负责登记来源和教学设计交接；Agent B 负责登记课件�
 | codex-ppt | deck、outline、style candidate | visual_deck run、样张、origin_image、视觉版 PPTX | 对象级可编辑重建 |
 | image-to-editable-ppt | visual deck、Style Lock、OCR和 catalog | editable_rebuild run、page validation、可编辑 PPTX | 改风格和教学内容 |
 | ppt-animation-video | 可编辑 PPTX、动画清单、catalog | animation/video run、MP4、音乐、字体修复和视频 QA | 生成课件、补做对象重建 |
-| ppt-social-publishing | 通过 QA 的 3:4/9:16 视频母版、教学元数据、catalog | publication_package run、平台 variant、公众号 HTML、文案、标签和发布 QA | 改课件内容、重新制作动画视频 |
+| ppt-social-publishing | 通过 QA 的 3:4/9:16 视频母版、教学元数据、catalog | publication_package run、三个手动平台 variant、公众号 API variant、HTML、文案、标签和发布 QA | 改课件内容、重新制作动画视频 |
 
 ## 标准命令
 

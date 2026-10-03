@@ -47,10 +47,31 @@ def request_json(method: str, path: str, *, params: Dict[str, str] | None = None
                  files: Dict[str, Tuple[str, Any, str]] | None = None,
                  form_data: Dict[str, str] | None = None) -> Dict[str, Any]:
     root = os.environ.get("WECHAT_API_BASE_URL", API_ROOT).rstrip("/")
-    response = requests.request(method, root + path, params=params, json=json_body,
-                                data=form_data, files=files, timeout=120)
+    request_kwargs: Dict[str, Any] = {
+        "params": params,
+        "timeout": 120,
+    }
+    if files:
+        request_kwargs["data"] = form_data
+        request_kwargs["files"] = files
+    elif json_body is not None:
+        # WeChat's article endpoint has been observed to persist requests'
+        # default ASCII JSON escapes literally. Send real UTF-8 JSON instead.
+        request_kwargs["data"] = json.dumps(
+            json_body, ensure_ascii=False, separators=(",", ":")
+        ).encode("utf-8")
+        request_kwargs["headers"] = {"Content-Type": "application/json"}
+    elif form_data is not None:
+        request_kwargs["data"] = form_data
+    response = requests.request(method, root + path, **request_kwargs)
     response.raise_for_status()
-    payload = response.json()
+    # The WeChat API often labels JSON responses as text/plain without a
+    # charset. Decode the raw bytes as UTF-8 before parsing, otherwise Chinese
+    # text is misread as ISO-8859-1 mojibake during draft verification.
+    try:
+        payload = json.loads(response.content.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        payload = response.json()
     if payload.get("errcode", 0) != 0:
         raise RuntimeError(f"WeChat API error {payload.get('errcode')}: {payload.get('errmsg')}")
     return payload
@@ -88,43 +109,52 @@ def upload_permanent(token: str, file_path: Path, media_type: str,
     return payload["media_id"]
 
 
+def upload_article_image(token: str, file_path: Path) -> str:
+    """Upload an image for direct use in article HTML."""
+    if not file_path.is_file():
+        raise SystemExit(f"file not found: {file_path}")
+    if file_path.stat().st_size >= 1 * 1024 * 1024:
+        raise SystemExit(f"article image must be smaller than 1 MiB: {file_path}")
+    suffix = file_path.suffix.lower()
+    if suffix not in {".jpg", ".jpeg", ".png"}:
+        raise SystemExit(f"article image must be jpg/png: {file_path}")
+    mime = "image/png" if suffix == ".png" else "image/jpeg"
+    with file_path.open("rb") as handle:
+        payload = request_json(
+            "POST",
+            "/cgi-bin/media/uploadimg",
+            params={"access_token": token},
+            files={"media": (file_path.name, handle, mime)},
+            json_body=None,
+            form_data=None,
+        )
+    return payload["url"]
+
+
 def validate_copy(copy_text: str) -> list[str]:
     lines = [line.strip() for line in copy_text.splitlines() if line.strip()]
-    if len(lines) != 3:
-        raise SystemExit("copy.txt must contain exactly three non-empty lines")
+    if len(lines) != 2:
+        raise SystemExit("copy.txt must contain exactly two non-empty lines")
     if not lines[0].startswith("教材：") or "年级：" not in lines[0] or "册" not in lines[0]:
         raise SystemExit("copy.txt first line must contain 教材、年级和上/下册")
-    summary_match = re.findall(r"【([^】]*)】", lines[0])
-    if not summary_match or len(summary_match[-1]) > 50:
-        raise SystemExit("the bracketed teaching summary must be present and <= 50 Chinese characters")
     if len(lines[0]) > 120:
         raise SystemExit("copy.txt first line is unexpectedly long")
     if lines[1] != "精研AI教育，接顶制":
         raise SystemExit("copy.txt second line must be 精研AI教育，接顶制")
-    tags = lines[2].split()
-    if len(tags) != 5 or any(not tag.startswith("#") for tag in tags):
-        raise SystemExit("copy.txt third line must contain exactly five #tags")
     return lines
 
 
-def build_article(title: str, lines: Iterable[str], video_id: str) -> str:
-    summary, brand, tags = [html.escape(item) for item in lines]
-    safe_video_id = html.escape(video_id, quote=True)
-    video_src = (
-        "https://mp.weixin.qq.com/mp/readtemplate?t=pages/video_player_tmpl"
-        f"&action=mpvideo&auto=0&vid={safe_video_id}"
+def build_article(lines: Iterable[str], image_urls: Iterable[str] = ()) -> str:
+    summary, brand = [html.escape(item) for item in lines]
+    slides = "\n".join(
+        f'  <p style="margin:16px 0 0;"><img src="{html.escape(url, quote=True)}" '
+        'style="display:block;width:100%;height:auto;" /></p>'
+        for url in image_urls
     )
     return f'''<section style="background:#FBF8F2;padding:24px 20px;color:#20252B;line-height:1.8;font-size:16px;">
-  <h1 style="font-size:22px;line-height:1.4;margin:0 0 20px;color:#20252B;">{html.escape(title)}</h1>
-  <p style="margin:0 0 12px;color:#5C8D83;font-weight:700;">【教学设计总结内容】</p>
   <p style="margin:0 0 8px;">{summary}</p>
   <p style="margin:0 0 8px;">{brand}</p>
-  <p style="margin:0 0 24px;color:#5C8D83;">{tags}</p>
-  <p style="margin:0 0 12px;color:#5C8D83;font-weight:700;">【教学课件视频】</p>
-  <iframe class="video_iframe rich_pages" data-vidtype="2" data-mpvid="{safe_video_id}"
-    allowfullscreen="" frameborder="0" data-ratio="0.5625" data-w="1080"
-    style="width:100%;border:0;display:block;"
-    src="{video_src}"></iframe>
+{slides}
 </section>'''
 
 
@@ -175,8 +205,9 @@ def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--title", required=True)
     parser.add_argument("--copy-file", required=True, type=Path)
-    parser.add_argument("--video", required=True, type=Path)
     parser.add_argument("--cover", required=True, type=Path)
+    parser.add_argument("--slides-dir", required=True, type=Path,
+                        help="Directory containing ordered slide_*.jpg/png images")
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
     parser.add_argument("--mode", choices=["draft", "publish"],
@@ -189,12 +220,11 @@ def main() -> int:
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     if args.dry_run:
-        video_id = "wxv_dry_run"
-        article = build_article(args.title, lines, video_id)
+        article = build_article(lines)
         (args.output_dir / "article.html").write_text(article, encoding="utf-8")
         (args.output_dir / "article.md").write_text(
-            "【教学设计总结内容】\n\n" + "\n".join(lines) +
-            "\n\n【教学课件视频】\n", encoding="utf-8")
+            "\n".join(lines) +
+            "\n", encoding="utf-8")
         print(json.dumps({"status": "dry_run", "article_path": str(args.output_dir / "article.html")}, ensure_ascii=False))
         return 0
 
@@ -202,28 +232,35 @@ def main() -> int:
     app_secret = require_env("WECHAT_MP_APPSECRET", "WECHAT_APP_SECRET")
     token = get_access_token(app_id, app_secret)
     cover_id = upload_permanent(token, args.cover, "thumb")
-    video_id = upload_permanent(token, args.video, "video", {
-        "title": args.title[:64],
-        "introduction": lines[0][:120],
-    })
-    article = build_article(args.title, lines, video_id)
+    slide_paths = sorted(
+        [*args.slides_dir.glob("slide_*.jpg"), *args.slides_dir.glob("slide_*.jpeg"),
+         *args.slides_dir.glob("slide_*.png")],
+        key=lambda path: int(re.search(r"slide_(\d+)", path.stem).group(1))
+        if re.search(r"slide_(\d+)", path.stem) else path.stem,
+    )
+    if not slide_paths:
+        raise SystemExit(f"no slide images found in {args.slides_dir}")
+    slide_urls = [upload_article_image(token, path) for path in slide_paths]
+    article = build_article(lines, slide_urls)
     (args.output_dir / "article.html").write_text(article, encoding="utf-8")
     (args.output_dir / "article.md").write_text(
-        "【教学设计总结内容】\n\n" + "\n".join(lines) +
-        "\n\n【教学课件视频】\n", encoding="utf-8")
+        "\n".join(lines) +
+        "\n", encoding="utf-8")
 
     draft_id = add_draft(token, args.title, article, cover_id, lines[0])
     draft = get_draft(token, draft_id)
     draft_text = json.dumps(draft, ensure_ascii=False)
-    if "教学课件视频" not in draft_text or video_id not in draft_text:
-        raise RuntimeError("draft verification failed: WeChat did not retain the teaching video node")
+    if "精研AI教育，接顶制" not in draft_text or "教材：" not in draft_text:
+        raise RuntimeError("draft verification failed: WeChat did not retain the Chinese article text")
+    if slide_paths and draft_text.count("<img") < len(slide_paths):
+        raise RuntimeError("draft verification failed: WeChat did not retain all slide images")
 
     result: Dict[str, Any] = {
         "status": "draft_created",
         "draft_media_id": draft_id,
         "article_path": str(args.output_dir / "article.html"),
         "cover_media_id": cover_id,
-        "video_media_id": video_id,
+        "slide_count": len(slide_paths),
     }
     if args.mode == "publish":
         submitted = publish(token, draft_id)

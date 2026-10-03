@@ -25,6 +25,9 @@ Hard rules (reminders; authoritative details remain in the references):
 4. Execute the recorded image backend contract, including built-in first, valid result import, and permitted fallback events — manifest-schema.md's image_backend contract.
 5. Structural validation never waives object-source rules — page-decision-tree.md "Common Failure Mode: False Progress".
 
+6. Complete decomposition is mandatory: build the full visual/text inventory before writing the manifest; do not use a full-slide raster as the final page background; separate every readable text, shape, line, icon, table, chart, label, decoration, and independently meaningful image; document every remaining independent image object and its non-editable scope.
+
+
 Recovery: read any previous validation failure before editing. Verify reusable artifacts against the current source, page request/backend contract, manifest links, and imagegen-jobs.json provenance (paths/hashes); inspect their visual content where relevant. Reuse compliant artifacts and repair only failed or dependent parts. Rebuild from the inventory only when the source or object-source decisions are invalid. Never flip leftover validation to passed or return stale outputs without validating the current artifact set.
 
 Execution:

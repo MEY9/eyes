@@ -81,7 +81,7 @@ Do not mark a step complete from chat alone; use real files or script-recorded s
 
 1. Understand the source content.
    - Identify topic, audience, goal, page count, style/brand constraints, and sections to include or exclude.
-   - If no page count is specified, choose a practical count. Typical decks are 8-12 slides.
+   - If no page count is specified, derive a practical count from the outline's teaching actions, audience, density, and time. There is no fixed slide count and no default of 19 slides; never inherit the previous deck's count merely for implementation convenience.
 
 2. Plan the deck outline.
    - Before writing or updating `outline.md`, read `docs/workflow-gates-and-progress.md` and `docs/outline-style-and-sample.md`.

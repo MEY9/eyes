@@ -57,6 +57,8 @@ Each rule in this skill has exactly one authoritative home; the other files poin
 
 These parent-level rules are stated once here; page-level rules live in the references above and are not restated in this file.
 
+Slide count is always dynamic: derive it from the prepared input and `deck_manifest.json`/`page_jobs.json`, preserve the input order, and validate against that recorded count. Do not assume 19 pages or any other fixed number in reconstruction, animation handoff, or finalization.
+
 - The `editppt` CLI is a required runtime surface. If `editppt --help` fails, install it first by following the Pre-Run Check in `references/cli-helper.md` before doing anything else.
 - First run `editppt prepare <input...>` to create a run directory. After that, all key state transitions are advanced only through `editppt` commands; never hand-write run/page state JSON. This keeps run state deterministic and resumable.
 - Multi-page inputs are rebuilt by dispatched page workers. A run with exactly one page is rebuilt by the parent agent in local page-reconstructor mode after `editppt run dispatch --local` claims that page. If no subagent capability is available for a multi-page run, stop and report this to the user; do not degrade into parent-agent reconstruction for multi-page input.

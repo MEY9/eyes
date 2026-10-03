@@ -1,40 +1,38 @@
 ---
 name: ppt-social-publishing
-description: Package Agent B's completed education PPT animation for manual publishing to Xiaohongshu, Douyin, and WeChat Channels, while automatically creating and optionally publishing a fixed-layout WeChat Official Account article through the official HTTP API.
+description: Package Agent B's approved education PPT animation for manual publishing to Xiaohongshu, Douyin, and WeChat Channels, and create or publish a fixed-layout WeChat Official Account article containing the complete PPT slide images.
 ---
 
-# 教育课件多平台发布包
+# 教育课件发布 Skill
 
-## 定位
+## 边界
 
-这是 Agent B 在 `ppt-animation-video` 完成之后调用的发布技能。它不制作教学设计、不改写 PPT 内容、不重新渲染动画，也不代替视频技能生成动画状态。它把已验收的完整课件视频和教学设计元数据整理成三个手动发布包，并通过微信公众号官方 HTTP API 自动创建公众号草稿，按配置自动提交正式发布。
+本 Skill 只负责已验收课件的发布包装与公众号投递，不负责教学设计、PPT 制作、动画规划、视频生成或内容改写。
 
-固定平台：
+固定分工：
 
-| 平台 | 交付比例 | 交付物 |
-|---|---|---|
-| 小红书 | 3:4，1080×1440 | 完整动画 MP4、复制文案、五个标签，手动发布 |
-| 抖音 | 9:16，1080×1920 | 完整动画 MP4、复制文案、五个标签，手动发布 |
-| 微信视频号 | 9:16，1080×1920 | 完整动画 MP4、复制文案、五个标签，手动发布 |
-| 微信公众号 | 固定移动端文章排版 | 官方 API 自动创建草稿并按模式发布 |
+- 小红书：生成 3:4 视频和复制文案，用户手动发布。
+- 抖音：生成 9:16 视频和复制文案，用户手动发布。
+- 微信视频号：生成 9:16 视频和复制文案，用户手动发布。
+- 微信公众号：官方 HTTP API 创建图文草稿；正文放完整 PPT 幻灯片图片，不放课件视频。
 
-视频比例由本技能从已经完成的两个母版分发，不重新裁切课件主体。若某一比例缺失，退回 `ppt-animation-video`，不得用静态页面或低清截图冒充。
+公众号正式发布必须满足账号权限；收到 `48001` 时停止，不重复提交，不把草稿标记为已发布。
 
 ## 输入门禁
 
-调用前必须存在并通过检查：
+开始前必须确认：
 
-- Agent B 已确认的完整可编辑 PPTX；
-- `ppt-animation-video` 已通过 QA 的 3:4 和 9:16 视频母版，或用户明确只要求其中一个平台视频；
-- `lesson_packet.json`、教学设计或等价元数据，能够确定教材、年级、上/下册、教学重难点和教学过程；
-- 视频没有“预览”“正式课堂”“逻辑动画版”“小红书竖屏预览”等说明性叠字；
-- 同一个 `deck_id`、`style_id@version`、`catalog_db` 和发布阶段 `run_id`。
+- Agent B 已验收的完整可编辑 PPTX；
+- 已验收的课件视频母版（仅用于三个手动视频平台）；
+- 教学设计或 `lesson_packet.json`，能够确定教材、年级、上/下册、课题和教学重点；
+- 最终幻灯片图片，按 `slide_01.png` 或 `slide_01.jpg` 形式编号；
+- 公众号封面图片；
+- 项目 `.env` 中的 `WECHAT_MP_APPID`、`WECHAT_MP_APPSECRET`；
+- `.env` 已被 Git 忽略。
 
-缺少教学元数据时，不猜教材、年级、册次或重难点；保留失败记录并退回 Agent B。
+缺少教材、年级、册次或教学重点时，不猜测，退回 Agent B/A。
 
-## 固定工作流
-
-### 1. 建立发布包
+## 固定发布包
 
 在课件项目目录建立：
 
@@ -53,24 +51,14 @@ outputs/social/
     ├── article.html
     ├── article.md
     ├── copy.txt
-    ├── wechat_video.mp4
     └── publish_result.json
-working/publication_manifest.json
-working/publication_qa.md
 ```
 
-发布包必须记录源视频路径、复制方式、文件哈希、画面比例、总时长、页数、字体/音乐来源、固定排版版本和生成时间。不得把 API key、token 或密码写入 manifest。
+发布 manifest 记录源文件路径、哈希、比例、页数、时长、字体/音乐来源、排版版本和 `run_id`，不得写入 AppSecret、token 或 access_token。
 
-### 2. 分发视频
+## 三个平台手动文案
 
-- 小红书只使用 3:4 母版；不得把 9:16 母版硬裁切成 3:4。
-- 抖音和微信视频号只使用 9:16 母版；不得从 3:4 母版拉伸。
-- 保留完整课件播放时长、封面首帧、页码、进度条、中文文字、动画顺序和背景音乐。
-- 平台文件只改变容器命名和发布目录，不改变教学内容；如平台编码要求重新封装，必须在 `publication_qa.md` 记录前后规格。
-
-### 3. 生成平台文案
-
-每个平台单独生成一个 `copy.txt`，内容只能是以下三部分，不添加标题、引导语、表情、免责声明或额外介绍：
+小红书、抖音、微信视频号的 `copy.txt` 必须是 UTF-8 三行纯文本：
 
 ```text
 教材：xxx，年级：xxx，x册，【根据教学重难点和教学过程提取的50字以内摘要】
@@ -78,73 +66,91 @@ working/publication_qa.md
 #标签1 #标签2 #标签3 #标签4 #标签5
 ```
 
-约束：
+摘要来自教学设计，不扩展教材没有的结论；标签必须恰好五个。括号或大括号中的用户话语是写作要求，不原样复制进文案。三个平台分别生成独立文案，但不改变三行结构。
 
-- 第一行教材、年级和上/下册必须来自教学设计或交接包；
-- 方括号内摘要只提取本课教学重难点和教学过程，不扩展教材没有的结论，最多 50 个汉字；
-- 第二行固定为“精研AI教育，接顶制”，不得改写；
-- 第三行必须恰好五个中文标签，标签与本课教材、年级、知识点或 AI 课堂实践有关，不重复、不使用泛化营销词堆砌；
-- 三个手动平台和公众号均生成独立文案文件，允许摘要和标签根据平台语境微调，但不得改变上述三行结构；
-- 最终回复或交付清单中，每个平台文案都放在独立代码块内，方便复制。
+## 公众号文章规则
 
-### 4. 生成微信公众号固定排版和自动发布
+公众号文章使用固定主题 `wechat-education-warm-paper`，文章标题只使用真实课题名，例如 `《行路难（其一）》`，不得添加“课件幻灯片”“预览”“正式课堂”等说明性后缀。
 
-微信公众号采用固定布局 `wechat-education-warm-paper`，不是每篇文章重新选择主题。技术基线参考 GitHub 上的公众号排版与官方 API 投递方案：使用内联 CSS、移动端安全宽度、图片/视频资源检查和可复制 HTML；视觉上收敛为教育暖纸感，不复制项目代码。
+正文直接从课程信息开始，不显示以下内容：
 
-必须阅读并遵循：
+- `【教学设计总结内容】`；
+- `【教学课件视频】`；
+- 任何标签；
+- “课件幻灯片”等制作说明；
+- 技能名、平台名、内部路径或营销话术。
 
-- [references/wechat-education-warm-paper.md](references/wechat-education-warm-paper.md)：固定视觉与 DOM 契约；
-- [references/platform-spec.md](references/platform-spec.md)：三个手动平台和公众号 API 发布规格、文件命名和验收字段。
-- [references/wechat-auto-publish.md](references/wechat-auto-publish.md)：官方 API、视频节点、凭据、草稿回读和自动发布流程。
-
-HTML 要求：
-
-- 单文件，可离线打开；CSS 内联，不依赖外部字体、JS、CDN 或远程脚本；
-- 正文使用移动端安全宽度，黑色或深灰文字，留白充足，教育内容优先；
-- 正文固定显示“【教学设计总结内容】”区块：教材、年级、册次、50 字以内摘要、固定品牌句和五个标签；
-- 正文固定显示“【教学课件视频】”区块，并写入公众号视频播放器节点；
-- 不出现“预览”“正式课堂”“逻辑动画版”或技能说明；
-- 如果插入封面或视频缩略图，必须引用项目中已经验收的资源并记录路径；不能为了排版重新生成图片；
-- HTML 与 Markdown 文本一致，HTML 预览和微信粘贴结果分别验收。
-
-公众号自动发布必须调用 `scripts/publish_wechat_official.py`：
+正文只包含：
 
 ```text
-生成 article.html/article.md
-→ 上传公众号封面永久素材
-→ 上传公众号课件视频素材
-→ 创建 draft/add 草稿
-→ draft/get 回读，确认视频节点和两块正文存在
-→ WECHAT_MP_PUBLISH_MODE=publish 时提交 freepublish/submit
-→ 轮询 freepublish/get 并保存 publish_result.json
+教材：xxx，年级：xxx，x册，根据用户话语、教学重点和教学过程提炼的摘要
+精研AI教育，接顶制
 ```
 
-如果视频超过公众号官方素材上限，先生成公众号专用压缩视频，不修改小红书、抖音或视频号母版。视频节点回读失败时停止，不把只有文字或链接的文章标记为成功。
+用户括号或大括号中的内容是对 Codex 的要求，必须理解后改写为自然摘要，不把括号本身或指令性文字放进正文。
 
-### 5. QA 和登记
+随后按页序插入全部 PPT 幻灯片图片。公众号正文图片必须通过 `media/uploadimg` 上传后使用返回 URL，不得直接引用本地路径、GitHub URL、CDN 或 base64。每张 JPG/PNG 小于 1 MiB；缺图、乱序或上传失败时停止。
 
-检查：
+公众号文章不自动上传或嵌入课件视频。视频只进入微信视频号手动发布包。
 
-1. 三个平台手动发布目录齐全，适用的视频母版存在，比例和分辨率正确；
-2. 每个 `copy.txt` 只有规定的三行结构，摘要不超过 50 个汉字，标签恰好五个；
-3. 微信公众号 HTML 离线打开无外链依赖，移动端正文不横向溢出，包含两个固定区块；
-4. 视频仍包含封面、完整页数、中文文字、页码、进度条、动画和音频流；
-5. 任何平台都没有说明性叠字或不属于课件的宣传角标；
-6. 公众号 `draft/get` 回读成功；若配置自动发布，还要有最终发布状态和文章 URL；
-7. 生成 `publication_qa.md`，记录检查结果、失败项和修复证据。
+## 公众号 API 流程
 
-使用 `ppt-pipeline-catalog` 为一次发布包登记 `publication_package` run、三个 manual variant、一个 `wechat_official_account` API variant、HTML/Markdown/copy/video/publish-result artifact；不要把发布包状态写回 `video` run。发布包完成不等于完整课件风格入库，风格入库仍等待用户确认完整课件。
+必须调用 `scripts/publish_wechat_official.py`：
 
-## 与 Agent B 的调用关系
+```text
+读取 .env
+→ 获取 access_token
+→ 上传封面永久素材 thumb
+→ 上传全部幻灯片到 media/uploadimg
+→ 生成内联 CSS article.html/article.md
+→ draft/add 创建图文草稿
+→ draft/get 回读中文正文和全部图片数量
+→ mode=publish 时才调用 freepublish/submit
+→ 轮询 freepublish/get
+→ 保存 publish_result.json
+```
 
-Agent B 的顺序固定为：
+脚本要求：
+
+- JSON 请求使用 UTF-8 原文发送，不使用会被公众号错误保存的 `\\uXXXX` 字面转义；
+- API 返回即使标为 `text/plain`，也先按 UTF-8 原始字节解析；
+- 不打印或保存密钥、access_token；
+- 草稿回读必须确认教材文本、固定品牌句和全部 `<img>` 节点；
+- 只有 `publish_status=0` 才能标记为已发布；
+- `40164` 记录为 IP 白名单问题；`48001` 记录为账号发布权限问题；
+- 发布失败保留草稿 ID 和错误信息，不盲目重复提交。
+
+首次接入或权限未确认时使用 `--mode draft`。用户明确要求正式发布且权限已确认后才使用 `--mode publish`。
+
+## QA
+
+发布前检查：
+
+1. 三个手动平台的视频比例正确：小红书 3:4，抖音和微信视频号 9:16；
+2. 三个平台文案各三行，摘要不超过 50 个汉字，标签恰好五个；
+3. 公众号文章标题只是真实课题名，无说明性后缀；
+4. 公众号正文无标签、无视频节点、无 `【教学设计总结内容】` 和 `【教学课件视频】`；
+5. 公众号正文图片数量等于当前 PPT 实际页数；页数从当前课件的幻灯片文件或发布 manifest 枚举，顺序正确，全部来自微信 `uploadimg` URL；不得继承上一套课件的 19 页或任何固定页数；
+6. 中文显示正常，无 `\\uXXXX`、`ã...` 等编码异常；
+7. HTML 无外链 CSS/JS、无本地路径、无横向溢出；
+8. `draft/get` 回读通过后，才允许正式发布；
+9. 将结果写入 `publication_qa.md` 和 `publish_result.json`，不写入任何凭据。
+
+详细排版与 API 约束见：
+
+- [references/wechat-education-warm-paper.md](references/wechat-education-warm-paper.md)
+- [references/platform-spec.md](references/platform-spec.md)
+- [references/wechat-auto-publish.md](references/wechat-auto-publish.md)
+
+## 与 Agent B 的关系
 
 ```text
 image-to-editable-ppt
-→ 动画规划与 PPTX 后处理
-→ ppt-animation-video（生成 3:4、9:16 母版）
-→ ppt-social-publishing（三个平台手动包 + 微信公众号 API 发布）
-→ Agent B 最终交付与用户确认
+→ PPTX 动画规划与后处理
+→ ppt-animation-video（生成三个手动平台需要的视频母版）
+→ ppt-social-publishing
+   ├── 小红书 / 抖音 / 微信视频号：手动发布包
+   └── 微信公众号：完整幻灯片图文草稿或正式发布
 ```
 
-Agent B 调用本技能时至少传入：可编辑 PPTX、两个视频母版、教学设计/lesson packet、项目输出目录、公众号封面路径、`deck_id`、`style_id@version`、`catalog_db` 和 `run_id`。小红书、抖音、微信视频号只生成手动发布包；微信公众号调用官方 API。若用户只要求某个平台，仍保留统一 manifest，但只生成被要求的平台 variant。
+公众号分支不要求视频母版；三个手动视频平台仍要求对应比例母版。发布包完成不等于风格入库，风格入库仍等待用户确认。

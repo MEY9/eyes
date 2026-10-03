@@ -1,63 +1,69 @@
-# 微信公众号自动发布适配
+# 微信公众号图文自动发布适配
 
-## 采用方案
+## 适用范围
 
-本项目不安装完整的第三方公众号 MCP 或浏览器自动化栈，而是使用官方 HTTP API 的最小适配器。GitHub 参考了：
+本适配器只负责通过微信公众号官方 HTTP API 创建/发布图文文章。当前文章由两部分组成：课程摘要文字和完整 PPT 幻灯片图片。课件视频不进入公众号正文，交给微信视频号手动发布。
 
-- [white0dew/wechat-skill](https://github.com/white0dew/wechat-skill)：把“HTML 排版”和“投递公众号草稿”拆开，适合复用现有固定主题；
-- [xihe-lab/wechat-mp-mcp-server](https://github.com/xihe-lab/wechat-mp-mcp-server)：覆盖官方素材上传、草稿管理、发布提交和发布状态查询；
-- [obsidian-wechat-skill](https://github.com/anbulang/obsidian-wechat-skill)：记录了公众号文章内嵌视频的 `video_iframe` 兼容思路。
+## 正文契约
 
-当前实现为项目自己的 Python 脚本 `scripts/publish_wechat_official.py`，使用 `requests` 调用官方接口，不使用 MCP，不模拟登录，不抓取 Cookie。
-
-## 固定草稿结构
-
-文章正文只保留两个区块：
+正文可见文字只有：
 
 ```text
-【教学设计总结内容】
-教材：xxx，年级：xxx，x册，【50字以内摘要】
+教材：xxx，年级：xxx，x册，根据用户话语、教学重点和教学过程提炼的摘要
 精研AI教育，接顶制
-#标签1 #标签2 #标签3 #标签4 #标签5
-
-【教学课件视频】
-公众号视频播放器
 ```
 
-脚本会把课程视频上传为公众号视频素材，然后在正文中写入带 `data-mpvid` 的公众号视频 iframe。创建草稿后必须调用 `draft/get` 回读，确认“教学课件视频”和视频 ID 仍在正文中；回读失败时禁止继续发布。
+正文不出现 `【教学设计总结内容】`、`【教学课件视频】`、标签、“课件幻灯片”、预览、正式课堂、技能名、平台名或内部路径。文章标题只使用真实课题名。
+
+图片按 PPT 页序插入：
+
+```html
+<img src="https://mmbiz.qpic.cn/..." style="display:block;width:100%;height:auto;" />
+```
+
+图片 URL 必须来自 `media/uploadimg`，不能使用本地路径、外链 CDN、GitHub URL 或 base64。每张 JPG/PNG 必须小于 1 MiB。
 
 ## API 链路
 
 ```text
-获取 access_token
-→ 上传封面永久素材 thumb
-→ 上传课件视频永久素材 video
-→ draft/add 创建图文草稿
-→ draft/get 回读校验视频节点
-→ freepublish/submit 提交发布（仅 mode=publish）
-→ freepublish/get 轮询最终状态
+GET /cgi-bin/token
+→ POST /cgi-bin/material/add_material?type=thumb
+→ POST /cgi-bin/media/uploadimg（每张幻灯片一次）
+→ POST /cgi-bin/draft/add
+→ POST /cgi-bin/draft/get
+→ 可选 POST /cgi-bin/freepublish/submit
+→ 可选 POST /cgi-bin/freepublish/get
 ```
 
-草稿正文 HTML 必须使用内联 CSS；封面必须是公众号永久素材；视频必须是 MP4。官方 API 的视频素材上限按 10 MiB 预检，超过时在 Agent B 阶段先生成 `resources/wechat_video.mp4` 压缩副本，不能上传失败后把完整视频假装发布成功。正文还需满足公众号 HTML 大小和字符数限制。
+`draft/get` 必须验证：
 
-## 凭据与运行模式
+- 教材信息存在；
+- `精研AI教育，接顶制` 存在；
+- 图片节点数等于输入幻灯片数；
+- 正文没有视频节点、标签或禁止的说明性文字；
+- 中文是正常字符，不是 `\\uXXXX` 或 `ã...`。
 
-凭据只从当前项目 `.env` 或进程环境读取，不进入 Git、SQLite、manifest、HTML、日志或返回消息：
+## 编码要求
 
-```text
-WECHAT_MP_APPID=...
-WECHAT_MP_APPSECRET=...
-WECHAT_MP_PUBLISH_MODE=publish
+微信公众号部分 API 会返回 `text/plain`，不能依赖 `response.json()` 的自动字符集推断。读取响应时优先使用：
+
+```python
+payload = json.loads(response.content.decode("utf-8"))
 ```
 
-`WECHAT_MP_PUBLISH_MODE=publish` 表示草稿回读校验通过后自动提交正式发布；设置为 `draft` 时只创建草稿并返回 `draft_media_id`。首次接入或权限不确定时先用 `--dry-run`，再用 `draft`，确认账号具备权限后才启用 `publish`。
+发送 JSON 时使用 UTF-8 原文：
 
-脚本只打印和保存 `draft_media_id`、`publish_id`、`article_id` 和文章 URL，不打印 access token 或 AppSecret。
+```python
+body = json.dumps(payload, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+requests.post(url, data=body, headers={"Content-Type": "application/json"})
+```
 
-## 失败处理
+不要把 `\\uXXXX` 转义串当作文章内容发送。
 
-- `40164`：检查公众号后台 IP 白名单；
-- `48001`：检查账号认证状态和草稿/发布权限；
-- 视频超过 10 MiB：用 FFmpeg 生成公众号专用压缩副本；
-- `draft/get` 中缺少视频节点：停止，不调用 `freepublish/submit`，改走公众号后台编辑器或修复视频节点；
-- 发布状态为失败、审核拒绝或超时：保留草稿 ID、发布 ID 和错误响应，登记 catalog 为 failed，不重复盲目提交。
+## 权限与失败
+
+- `40164`：当前 API 出口 IP 不在公众号白名单；停止并报告微信返回的 IP。
+- `48001`：账号没有对应 API 权限或认证状态不满足；草稿可保留，但不得标记为正式发布。
+- `draft/get` 图片数量不一致：停止，不提交正式发布。
+- 图片超过 1 MiB：先生成公众号专用压缩副本，不修改原始 PPT 图片或其他平台视频。
+- 任何失败都保存无密钥的错误记录和草稿 ID，不输出 AppSecret、access_token 或请求完整 URL。
