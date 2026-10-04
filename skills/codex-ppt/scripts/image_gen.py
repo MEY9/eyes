@@ -289,7 +289,7 @@ def _is_gpt_image_2_model(model: str) -> bool:
 
 def _is_gpt_image_2_5_model(model: str) -> bool:
     return bool(re.search(
-        r"(?:^|/)gpt-image-2\.5-(?:flare|sunburst)(?:-\d{4}-\d{2}-\d{2})?(?:/|$)",
+        r"(?:^|/)gpt-image-2\.5(?:-(?:flare|sunburst))?(?:-\d{4}-\d{2}-\d{2})?(?:/|$)",
         model,
     ))
 

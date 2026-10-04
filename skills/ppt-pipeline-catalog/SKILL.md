@@ -72,10 +72,21 @@ Agent A 只负责登记来源和教学设计交接；Agent B 负责登记课件�
 
 - HTML 任务必须由 Agent HTML 实际执行，并交付单文件 HTML、预览图、静态备用、`embed-spec.json`、`runtime-check.json` 和 `task-result.json`；
 - AI 素材任务必须有实际资源文件、提示词、使用页面和静态文字备用，只有提示词不能通过；
-- 必需 AI 视频必须有实际视频和 QA，可选视频可以记录 `not_applicable`；
+- 必需 AI 视频必须有实际视频和 QA，可选视频可以记录 `not_applicable`。如果用户明确要求“AI 视频最后生成”，可在任务中写明 `execution_phase: post_visual_deck` 和延期原因；预视觉门禁可显式允许该视频保持 `planned`，但最终交付前仍必须取得视频并通过 QA；HTML 和 AI 素材不能使用此例外；
 - 每个必需任务必须至少关联一个正式课堂页面或明确课堂环节。
 
 使用 `scripts/validate_ai_gate.py` 校验当前项目。校验不通过时，禁止登记 `visual_deck`、`editable_rebuild`、`animation_qa`、`video` 或 `publication_package` 为 `passed`。静态备用是故障回退，不等于必需 AI 任务已完成。
+
+预视觉延期门禁只能显式调用：
+
+```bash
+python3 skills/ppt-pipeline-catalog/scripts/validate_ai_gate.py \
+  --project "/absolute/path/to/project/PPT课件/课题" \
+  --allow-deferred-post-visual \
+  --out "working/ai_task_gate.json"
+```
+
+该开关只放行写明 `execution_phase: post_visual_deck` 的用户延期 AI 视频；进入最终交付或发布前必须重新执行普通门禁，且视频达到 `qa_passed`、`integrated` 或 `delivered`。
 
 ## 标准命令
 

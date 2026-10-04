@@ -143,10 +143,21 @@ AI 赋能不是大纲中的装饰性标签，而是必须有产物、证据和�
 
 - `ai_type=HTML`：由 Agent B 实际触发 Agent HTML，读取并验证 `html_embeds/<ai_id>/task-result.json`、单文件 HTML、预览图、静态备用、`embed-spec.json` 和 `runtime-check.json`；不能只看到 handoff.md 或一张静态页面就算完成。
 - `ai_type=AI素材`：生成实际可交付素材，并保存中文生成提示词、资源文件、使用页面、来源与静态文字备用；只有提示词没有素材时仍为 `planned` 或 `failed`。
-- `ai_type=AI视频`：只有 `required=true` 才执行生成；可选视频写入 `not_applicable`，不得阻塞课件，但必须记录跳过原因。
+- `ai_type=AI视频`：默认由 B 编排生成；但用户明确要求“AI 视频放到最后生成”时，视频任务写入 `execution_phase=post_visual_deck`，由用户在即梦生成，B 只负责提示词、参考图、兼容性/风格/内容 QA 和 PPT 嵌入。此时不得把延期当作完成，也不得使用旧视频冒充最终资源。
 - `ai_type=AI辅助任务`：必须有实际课堂任务、输入材料、教师/学生动作和反馈证据，不能只写“AI辅助”。
 
-`ai_enrichment` 未通过前，不得调用 codex-ppt 批量生成、不得进入 image-to-editable-ppt、动画、视频或发布阶段。所有必需任务必须达到 `integrated` 或 `delivered`；静态备用是故障回退，不是把一个必需 HTML 任务标记为完成的替代物。B 应使用 `ppt-pipeline-catalog` 的 AI 门禁校验命令，并把校验输出保存到 `working/ai_task_gate.json`。
+#### AI 视频延期生成与视频槽位
+
+当用户明确要求“AI 视频放到 PPT 幻灯片之后生成”时，AI-VIDEO 任务按两段执行，不得把它理解为删除视频或最后临时加页：
+
+1. 前置规划：Agent B 在大纲中保留 AI 视频对应的正式课堂页，建立 `working/ai_video_slot_spec.json`，登记页码、槽位对象名、16:9 比例、位置、尺寸、静态海报/备用页、替换规则和课堂作用。codex-ppt 先生成完整幻灯片视觉稿；第 2 页或指定页面使用静态备用页完成版式，不使用旧视频或本地临时合成片冒充最终视频。
+2. 可编辑重建：image-to-editable-ppt 必须在同一页保留可识别的视频槽位，至少包括命名的媒体占位对象、静态海报对象和播放提示/边框对象；对象清单和 manifest 要记录其位置、尺寸、裁切、层级与 `AI-VIDEO-01` 的关联。没有视频文件时，不得把槽位删掉或把整页图片当作槽位。
+3. 后置生成：完成视觉稿、可编辑 PPTX 和动画结构 QA 后，Agent B 把最终中文即梦提示词、可选参考图/参考图提示词交给用户。用户生成并提供 MP4 后，B 检查 16:9、H.264/AAC、黑边、水印、乱码、首尾稳定帧、课堂内容和 Style Lock 一致性。
+4. 回填与复核：通过 QA 后，将 MP4 放入既有视频槽位，保持原来的 x/y/width/height、裁切、圆角/边框和页面布局；静态海报继续保留为离线备用。只替换媒体源，不重新设计页面，不新增视频页。然后重新渲染该页并验证 PPTX 可打开、视频对象存在、静态备用仍可用。
+
+AI-VIDEO-01 的状态在视频生成前保持 `planned`，并写入 `execution_phase=post_visual_deck`；视频到达后才推进 `artifact_ready` → `qa_passed` → `integrated`。它与 `ppt-animation-video` 不是同一件事：前者是课堂导入视频资源，后者是完成 PPT 动画后的平台展示视频。
+
+`ai_enrichment` 未通过前，不得调用 codex-ppt 批量生成、不得进入 image-to-editable-ppt、动画、视频或发布阶段。若用户明确把必需 AI 视频延期到最后，可使用 `--allow-deferred-post-visual` 预视觉门禁先完成视觉稿和可编辑 PPTX；该开关只对写明 `execution_phase=post_visual_deck` 的 AI 视频生效，HTML 和 AI 素材仍必须先通过。进入最终交付或发布前，AI 视频必须取得即梦 MP4 并完成 QA。所有其他必需任务必须达到 `integrated` 或 `delivered`；静态备用是故障回退，不是完成证明。
 
 ### HTML 交接分支
 
@@ -197,13 +208,22 @@ HTML分支通过门禁前，还必须确认单文件HTML实际离线打开、核
 
 优先遵循当前项目已经确认的后端。用户明确选择外部 API 时，直接沿用该 API，不重复要求切换内置后端；一次项目内保持后端稳定。
 
-只在需要确认且用户尚未授权时确认样张、风格或重大视觉方向。用户已经批准或明确要求直接继续时，记录批准事实，不重复提问。
+样稿探索固定采用“3 种候选主风格 × 每种 3 张代表页”的比较门禁，不得只生成一种风格或只生成一张封面：
+
+- 每种风格必须生成 3 张同一风格样稿：封面/导入页 1 张、普通讲授页 1 张、活动/实验/反馈页 1 张；合计 9 张样稿。
+- 三种风格必须在视觉语言上有实质差异，例如插画媒介、构图秩序、色彩气质或信息组织方式不同；不能只是换主色或换一个装饰图标。
+- 每组样稿使用同一套本课教学内容切片，保证比较的是风格而不是内容差异；每张样稿都要有逐字准确的中文、普通可读字体、清晰投影层级和页面角色标记。
+- 样稿目录、候选风格记录、每组 3 张图片、缩略图板和比较说明必须保存到项目；每张样稿记录 backend、prompt、style_id、页面角色和生成时间。
+- Agent B 先向用户展示 3 组样稿并等待用户选择；用户确认前不得锁定唯一 Style Lock，不得批量生成完整幻灯片，不得把任意一组样稿当作最终风格。
+- 用户选择后，只把被选风格登记为 `locked`，将另外两组保留为 `rejected-candidate` 或项目草稿，不写入系统可复用风格库；随后才生成完整幻灯片。
+
+只有在用户明确表示已有风格并要求直接沿用时，才可以跳过 3×3 探索，但必须把用户选择记录为本次 Style Lock。除此之外，样稿确认是硬门禁，不得用“用户以前批准过某套课件”代替本课样稿确认。
 
 ### 阶段 2.1：AI 赋能执行与交接
 
 样式锁定后立即执行 `ai_enrichment`。B 为每项 AI 任务登记 catalog run 和任务状态，按 `execution_owner` 调用 Agent HTML、外部 API 或对应资源生成环节。HTML 和素材任务的真实产物必须先通过各自 QA，再把 `resource_path` 写回任务状态和大纲。
 
-门禁：`working/ai_task_gate.json` 为 `ok=true`；所有 `required=true` 的任务均为 `qa_passed` 或 `integrated`；每个任务都有至少一个真实资源/证据路径；可选任务明确为 `not_applicable` 或已完成。任何一个必需任务缺失、仍为 `planned`、只有提示词、只有静态截图或 QA 失败，都必须停止并返回具体任务编号。
+门禁：正常流程要求 `working/ai_task_gate.json` 为 `ok=true`；如果 AI 视频被用户明确延期到最后，使用带 `--allow-deferred-post-visual` 的预视觉门禁，输出中必须明确 `deferred_post_visual=true`，且只有该 AI 视频可以保持 `planned`。任何其他必需任务缺失、仍为 `planned`、只有提示词、只有静态截图或 QA 失败，都必须停止并返回具体任务编号。
 
 ### 阶段 3：codex-ppt 视觉稿
 
@@ -220,6 +240,8 @@ HTML分支通过门禁前，还必须确认单文件HTML实际离线打开、核
 调用 codex-ppt 时传入 `deck_id`、`style_id@version`、`catalog_db` 和当前 `run_id`。codex-ppt 完成后，Agent B 检查 catalog 中的视觉稿 artifact、QA 结果和阶段状态，再把同一组 ID 交给 image-to-editable-ppt。
 
 codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
+
+当 AI-VIDEO-01 被用户明确延期时，第 2 页先使用静态课堂备用页完成整套幻灯片；不得把旧视频或本地临时合成片写成最终视频。收到即梦 MP4 后，再替换第 2 页的海报/视频对象并复核页面风格。
 
 ### 阶段 4：视觉稿 QA
 
@@ -294,9 +316,11 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 在可用环境中用 PowerPoint 实际点击播放检查；没有 PowerPoint 时，至少完成 OOXML 结构校验、压缩包校验和 LibreOffice 页面渲染检查，并明确“未完成 PowerPoint 播放验证”；
 - 发现动画单调、无教学目的、背景运动、点击过密或播放失败时，返修动画规划或后处理，不交付问题版本。
 
-### 阶段 7：动画视频后处理
+### 阶段 7：AI 视频交付与动画视频后处理
 
-动画 PPTX 结构验收通过后，调用 `ppt-animation-video` skill，把可编辑 PPTX 和动画清单转换为完整竖版动画视频。该技能只处理视频后处理，不替代 PPTX 动画和对象级可编辑重建。
+如果项目存在延期的 AI-VIDEO-01，本阶段先把 Agent B 生成的最终中文即梦提示词和可选参考图交给用户。用户返回 MP4 后，B 依据 AI 视频 QA 清单检查 16:9、H.264/AAC、文字/水印/黑边、首尾稳定帧、内容完整性和与 Style Lock 的一致性；通过后将视频作为真实视频对象嵌入对应 PPT 页面，并保留静态海报备用。AI-VIDEO-01 通过后才可进入最终课件交付。
+
+随后，若用户需要社交平台视频，再调用 `ppt-animation-video` skill，把可编辑 PPTX 和动画清单转换为完整竖版动画视频。该技能只处理视频后处理，不替代 PPTX 动画和对象级可编辑重建。
 
 固定要求：
 

@@ -42,6 +42,8 @@ Complex photos, illustrations, and textures may remain as precisely cropped inde
 
 Workers must inventory and segment first; OCR and manually verify all readable text; rebuild backgrounds, fills, borders, lines, arrows, diagrams, tables and simple geometry with native PowerPoint objects; separate complex visual assets individually; restore coordinates, scale, z-order, opacity, crop, color and style; render and compare; then randomly select, move, hide, resize and edit representative objects. An unregistered large full-slide raster or a composite raster carrying separable elements is a hard validation failure.
 
+For a deferred AI video page, preserve the video slot during reconstruction even when the final MP4 is not yet available. Create a named, object-level media placeholder linked to the AI task (for example `AI-VIDEO-01_VIDEO_SLOT`), keep the static poster/fallback as a separate image object, and record the slot's position, size, crop, z-order, aspect ratio, poster path, and replacement rule in the page manifest and the project's `ai_video_slot_spec.json`. Later Agent B replaces only the media source inside this slot with the QA-passed MP4; it must not add a new slide, shift the layout, or replace the page with a full-slide raster. The placeholder, poster, frame, and play cue must remain independently addressable until the final media replacement is verified.
+
 
 Each rule in this skill has exactly one authoritative home; the other files point to it instead of restating it.
 

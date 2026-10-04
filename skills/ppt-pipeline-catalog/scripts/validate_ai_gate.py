@@ -104,7 +104,7 @@ def runtime_ok(path: Path) -> bool:
     return False
 
 
-def validate(project: Path, require_integrated: bool) -> dict[str, Any]:
+def validate(project: Path, require_integrated: bool, allow_deferred_post_visual: bool = False) -> dict[str, Any]:
     packet_path = project / "working" / "lesson_packet.json"
     packet = load_json(packet_path)
     tasks = task_list(packet)
@@ -120,10 +120,16 @@ def validate(project: Path, require_integrated: bool) -> dict[str, Any]:
         current = states.get(ai_id, {})
         required = bool(task.get("required", True))
         status = str(current.get("status", task.get("status", "planned")))
+        deferred_post_visual = (
+            allow_deferred_post_visual
+            and not require_integrated
+            and str(task.get("execution_phase", current.get("execution_phase", ""))) == "post_visual_deck"
+            and str(current.get("defer_reason", task.get("defer_reason", ""))).strip() != ""
+        )
         item_errors: list[str] = []
         if not current:
             item_errors.append("missing ai_task_state entry")
-        if required and status not in allowed:
+        if required and status not in allowed and not deferred_post_visual:
             item_errors.append(f"status={status}, expected one of {sorted(allowed)}")
         if not required and status not in allowed and status != "not_applicable":
             item_errors.append(f"optional task has invalid status={status}")
@@ -147,14 +153,14 @@ def validate(project: Path, require_integrated: bool) -> dict[str, Any]:
             if not find_artifact(paths, {"prompt.txt", "prompt.md", "generation-prompt.txt"}):
                 item_errors.append("missing generation prompt")
         elif "视频" in ai_type or "video" in ai_type:
-            if required and not find_artifact(paths, set(), {".mp4", ".mov", ".webm"}):
+            if required and not deferred_post_visual and not find_artifact(paths, set(), {".mp4", ".mov", ".webm"}):
                 item_errors.append("missing required AI video")
         elif required and not paths:
             item_errors.append("missing evidence/resource path")
 
         if item_errors:
             errors.extend(f"{ai_id}: {error}" for error in item_errors)
-        results.append({"ai_id": ai_id, "required": required, "status": status, "ok": not item_errors, "errors": item_errors})
+        results.append({"ai_id": ai_id, "required": required, "status": status, "deferred_post_visual": deferred_post_visual, "ok": not item_errors, "errors": item_errors})
 
     return {"ok": not errors, "project": str(project), "task_count": len(tasks), "tasks": results, "errors": errors}
 
@@ -163,10 +169,11 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--project", required=True, type=Path)
     parser.add_argument("--require-integrated", action="store_true")
+    parser.add_argument("--allow-deferred-post-visual", action="store_true", help="Allow an explicitly user-deferred required AI video until after visual deck generation")
     parser.add_argument("--out", type=Path)
     args = parser.parse_args()
     try:
-        result = validate(args.project.expanduser().resolve(), args.require_integrated)
+        result = validate(args.project.expanduser().resolve(), args.require_integrated, args.allow_deferred_post_visual)
     except ValueError as exc:
         result = {"ok": False, "errors": [str(exc)]}
     output = json.dumps(result, ensure_ascii=False, indent=2) + "\n"
