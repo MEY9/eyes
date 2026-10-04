@@ -36,8 +36,6 @@ materials/
   textbooks/                    本地教材 PDF，默认不提交远程
 projects/                      具体课程项目
 logs/                           任务记录、复盘和版本决策
-scripts/
-  sync-codex-assets.sh          将仓库 Skill 同步到本机 Codex
 ```
 
 ## 使用方式
@@ -58,17 +56,7 @@ html-courseware
 
 ## 本地与远程同步原则
 
-仓库中的 `agents/` 和 `skills/` 是源文件；本机 Codex skills 目录是运行入口。修改 Skill 后先同步本机，再提交并推送远程：
-
-```bash
-export CODEX_SKILLS_DIR="/Users/sk/.codex/skills"
-./scripts/sync-codex-assets.sh
-git add agents skills products scripts README.md .gitignore
-git commit -m "建立教育PPT产品Agent与Skill"
-git push -u origin main
-```
-
-如果更换电脑，只需要拉取仓库，设置新的 `CODEX_SKILLS_DIR`，再运行同步脚本。
+仓库中的 `agents/` 和 `skills/` 是源文件；ZCode 通过 `.zcode-plugin/plugin.json` 加载本项目能力。修改 Agent 或 Skill 后，先运行对应 QA，再提交并推送远程。旧的单体教育 PPT 产品 Agent、Skill 和同步脚本已经移除。
 
 ## 在 ZCode 中使用
 

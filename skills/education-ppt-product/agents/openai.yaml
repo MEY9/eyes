@@ -1,4 +1,0 @@
-interface:
-  display_name: 教育 PPT 产品 Agent
-  short_description: 从教材 PDF 生成可编辑可售卖的教育视觉课件
-  default_prompt: 请作为教育 PPT 产品 Agent，从教材 PDF 分析开始，依次完成教学目标、页面故事板、视觉系统、AI 图片视频、可选 HTML 互动、质量检查和商品化交付包。全程中文，每次只推进一个阶段。
