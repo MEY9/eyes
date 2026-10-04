@@ -25,13 +25,13 @@ If CLI/API fallback is selected, read `cli-api-fallback.md` before generating im
 Built-in backend:
 
 ```text
-我检查到当前环境可调用内置图片生成工具（Codex 通常是 image_gen，OpenClaw 通常是 image_generate），因此准备优先用内置工具生成代表性样张组，不切到本地 API/CLI fallback。可以开始生成封面/导入页、普通讲授页和活动/练习页样张吗？
+我检查到当前环境可调用内置图片生成工具（Codex 通常是 image_gen，OpenClaw 通常是 image_generate），因此准备优先用内置工具生成三组候选风格样稿，每组包含封面/导入、普通讲授、活动/练习页各一张，并分别打包为风格1.pdf、风格2.pdf、风格3.pdf，不切到本地 API/CLI fallback。可以开始生成三组样稿吗？
 ```
 
 CLI/API fallback:
 
 ```text
-我检查后没有可用的内置图片生成工具，或内置工具缺少本页必需能力，因此准备使用本地 API/CLI fallback 生成样张组，读取 ~/.codex-ppt-skill/.env 中的 OPENAI_BASE_URL / CODEX_PPT_IMAGE_MODEL 配置。可以开始生成封面/导入页、普通讲授页和活动/练习页样张吗？
+我检查后没有可用的内置图片生成工具，或内置工具缺少本页必需能力，因此准备使用本地 API/CLI fallback 生成三组候选风格样稿，读取 ~/.codex-ppt-skill/.env 中的 OPENAI_BASE_URL / CODEX_PPT_IMAGE_MODEL 配置，并分别打包为风格1.pdf、风格2.pdf、风格3.pdf。可以开始生成三组样稿吗？
 ```
 
 Wait for confirmation before generating the representative sample set. If the user questions the backend, resolve that before continuing.

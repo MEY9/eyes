@@ -21,7 +21,7 @@ Show the outline to the user for confirmation and wait for approval before movin
 
 Stop after writing the outline draft. At this point, report the `outline.md` path, slide count, required source images and their slide mapping, and that no slide images or PPTX have been generated yet. Do not proceed to `deck_spec.json`, `speech.md`, prompt preparation, style selection, backend selection, or sample generation until the user approves the outline.
 
-If the user approved sample slides, record their `slide_XX.png` paths as `approved_style_references`. Later slide prompts and subagent handoffs should include the complete sample set as style-only references so each page keeps the same palette, ordinary typography, density, texture, and visual identity without copying any sample's exact layout.
+If the user approved one style package, record its three `slide_XX.png` paths and its `风格N.pdf` path as `approved_style_references` and `approved_style_sample_pdf`. Later slide prompts and subagent handoffs should include the complete approved PNG sample set as style-only references so each page keeps the same palette, ordinary typography, density, texture, and visual identity without copying any sample's exact layout.
 
 Recommended structure:
 
@@ -112,7 +112,7 @@ C. 数据仪表盘风：指标卡、图表感布局，适合数据密集型报�
 
 ## Generate A Representative Sample Set For Approval
 
-After the outline, style, and image backend are confirmed, generate a representative sample set before full production. For a formal classroom deck, use three final sample pages: cover/opening, normal teaching, and activity/practice/feedback. Select actual pages from the approved outline so the samples test real content rather than placeholder text.
+After the outline, style directions, and image backend are confirmed, generate three candidate style packages before full production. Each candidate must contain exactly three final sample pages: cover/opening, normal teaching, and activity/practice/feedback. Select the same actual content slices from the approved outline for all three candidates so the comparison tests visual systems rather than different content.
 
 For multi-page decks, make a same-ratio thumbnail board before the representative samples when feasible. Use it to review the overall rhythm, density, whitespace, and page-role variation. The board is a planning artifact only; it is not assembled into the PPT and is not passed to `image-to-editable-ppt` as a slide.
 
@@ -123,9 +123,10 @@ Sample slide requirements:
 - Demonstrate the intended deck rhythm: the sample set must show how the chosen style adapts to different page roles, not just a generic fixed template.
 - Save each sample directly as its intended final slide filename, such as `{base_dir}/{deck_name}/origin_image/slide_01.png`, `slide_05.png`, and `slide_10.png`. In CLI/API fallback mode, use `scripts/image_gen.py generate --out` for each exact path.
 - Show the complete sample set together so the user can compare style identity and layout variation.
+- Package each candidate's three PNGs as a separate review PDF named `风格1.pdf`, `风格2.pdf`, and `风格3.pdf` using `scripts/assemble_style_sample_pdfs.py`. Keep the source PNGs, prompt files, backend/model record, generation times, contact sheet, and comparison notes. The PDFs are approval packages only and must not be treated as final slide images or sent to `image-to-editable-ppt`.
 - Ask the user to confirm the visual style, ordinary font legibility, layout density, teaching hierarchy, page-role variation, Chinese text quality, and whether any sample needs regeneration.
 
-Do not generate the full deck until the user approves the complete sample set. If the user requests changes, revise the style description and regenerate the affected sample pages first. Once approved, keep each sample as the final slide for its page. Do not create `sample_slide.png` in `origin_image/`, because the assembly step is designed around final `slide_XX` filenames. If the user explicitly authorizes a one-sample exception, record the reason in `deck_spec.json`.
+Do not generate the full deck until the user approves one complete three-slide PDF package. If the user requests changes, revise the style description and regenerate the affected candidate pages first. Once approved, keep the selected samples as style references; they become final slides only when their page roles map to the confirmed outline. Do not create `sample_slide.png` in `origin_image/`, because the assembly step is designed around final `slide_XX` filenames. A one-sample exception is not allowed for this education workflow unless the user explicitly overrides the three-slide PDF requirement and the reason is recorded in `deck_spec.json`.
 
 After the sample set is approved, record the sample generation method and `approved_style_references` in `deck_spec.json` before preparing full-deck jobs. This is the contract the parent passes to subagents so they use the same image-generation path and shared visual system as the samples, not a cheaper local rendering path. Include at least:
 
@@ -135,6 +136,7 @@ After the sample set is approved, record the sample generation method and `appro
 - `prompt_source`: where the approved sample prompt came from.
 - `size`, `quality`, and model/config details when the backend exposes them.
 - `approved_sample_paths`: the approved sample paths, one for each representative page role.
+- `approved_style_sample_pdf`: the approved review package path, such as `working/style-samples-pdf/风格2.pdf`.
 - `approved_style_references`: the same paths with role labels and `match shared style only; do not copy layout or content` fidelity.
 - `input_context_preparation`: how local source/style images were made available, such as `view_image` for built-in mode.
 - `handoff_rule`: subagents must use the same backend/tool/mode and return a blocker if that path is unavailable.

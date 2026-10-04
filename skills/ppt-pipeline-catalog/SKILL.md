@@ -54,7 +54,7 @@ Agent A 只负责登记来源和教学设计交接；Agent B 负责登记课件�
 |---|---|---|---|
 | Agent A | 来源、项目、已有 catalog 记录 | teaching_design、source artifact、handoff | 风格入库、PPT 重建 |
 | Agent HTML | Agent A 的 HTML AI 任务 | HTML run、HTML 文件、预览图、静态备用、runtime-check、task-result | 改教学设计、改整份 PPT |
-| Agent B | lesson packet、catalog、Style Lock | deck、outline、style candidate、样张、最终 QA、用户确认、style promotion | 伪造 HTML、替代对象重建 |
+| Agent B | lesson packet、catalog、Style Lock | deck、outline、style candidate、三组3页样稿 PDF、最终 QA、用户确认、style promotion | 伪造 HTML、替代对象重建 |
 | codex-ppt | deck、outline、style candidate | visual_deck run、样张、origin_image、视觉版 PPTX | 对象级可编辑重建 |
 | image-to-editable-ppt | visual deck、Style Lock、OCR和 catalog | editable_rebuild run、page validation、可编辑 PPTX | 改风格和教学内容 |
 | ppt-animation-video | 可编辑 PPTX、动画清单、catalog | animation/video run、MP4、音乐、字体修复和视频 QA | 生成课件、补做对象重建 |
@@ -72,7 +72,8 @@ Agent A 只负责登记来源和教学设计交接；Agent B 负责登记课件�
 
 - HTML 任务必须由 Agent HTML 实际执行，并交付单文件 HTML、预览图、静态备用、`embed-spec.json`、`runtime-check.json` 和 `task-result.json`；
 - AI 素材任务必须有实际资源文件、提示词、使用页面和静态文字备用，只有提示词不能通过；
-- 必需 AI 视频必须有实际视频和 QA，可选视频可以记录 `not_applicable`。如果用户明确要求“AI 视频最后生成”，可在任务中写明 `execution_phase: post_visual_deck` 和延期原因；预视觉门禁可显式允许该视频保持 `planned`，但最终交付前仍必须取得视频并通过 QA；HTML 和 AI 素材不能使用此例外；
+- 必需 AI 视频必须有实际视频和 QA，可选视频可以记录 `not_applicable`。如果用户明确要求“AI 视频最后生成”，可在任务中写明 `execution_phase: post_visual_deck` 和延期原因；视频默认按成本控制为 8–15 秒、目标 10–15 秒，除非用户另行指定；预视觉门禁可显式允许该视频保持 `planned`，但最终交付前仍必须取得视频并通过 QA；HTML 和 AI 素材不能使用此例外；
+- 课件讲解配音是独立的可选音频分支，不计作 AI 视频完成证据；需要时由 `azure-tts` skill 使用 `.env` 中的 Azure Speech 配置生成，并把音色、脚本版本、音频路径和 QA 作为 artifact 登记。AI 视频内部配音不进入该分支。
 - 每个必需任务必须至少关联一个正式课堂页面或明确课堂环节。
 
 使用 `scripts/validate_ai_gate.py` 校验当前项目。校验不通过时，禁止登记 `visual_deck`、`editable_rebuild`、`animation_qa`、`video` 或 `publication_package` 为 `passed`。静态备用是故障回退，不等于必需 AI 任务已完成。
@@ -159,7 +160,7 @@ python3 skills/ppt-pipeline-catalog/scripts/validate_ai_gate.py \
 
 ## 风格入库门禁
 
-样张批准只能把风格标记为 `locked`，不能写入系统可复用风格。只有完整 PPT、可编辑 PPTX、动画/视频（如有）通过 QA，并且用户确认完整课件无问题后，Agent B 才能：
+三组样稿 PDF 批准只能把风格标记为 `locked`，不能写入系统可复用风格。样稿阶段必须登记三组各三张 PNG、`风格1.pdf`/`风格2.pdf`/`风格3.pdf`、比较说明和用户审批证据。只有完整 PPT、可编辑 PPTX、动画/视频（如有）通过 QA，并且用户确认完整课件无问题后，Agent B 才能：
 
 1. 写入项目 `style/` 快照；
 2. 注册 `complete_deck_approval`；

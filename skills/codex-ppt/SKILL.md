@@ -50,6 +50,7 @@ Prefer the built-in image generation/editing tool. Use `scripts/image_gen.py` on
 - Read the relevant `Reference Map` files before each phase. This file is the orchestration contract; detailed rules live in `docs/` and worker prompts in `prompts/`.
 - For education decks, establish and lock a reusable main style system before generating page backgrounds or reusable assets. Read `docs/style-system-and-source-selection.md`; record GitHub source, extracted visual rules, style brief, asset plan, and approved style references in `deck_spec.json`.
 - Use one selected style source and one `Style Lock` per deck. Read `docs/style-lock-and-review.md`; for multi-page decks, create a same-ratio thumbnail board before full generation when feasible, then use approved representative samples as the style reference set. The thumbnail board is a planning artifact, not a final slide.
+- Before Style Lock, education decks must compare exactly three materially different candidate styles. Each candidate must contain exactly three representative slides—cover/opening, normal teaching, and activity/practice/feedback—using the same content slices across candidates. Package each candidate as a review PDF named `风格1.pdf`, `风格2.pdf`, and `风格3.pdf`; keep the PNGs, prompts, provenance, contact sheet, and comparison notes beside the PDFs. The PDFs are review artifacts, not final decks and never enter `image-to-editable-ppt`.
 - After the full deck, editable PPTX, and applicable animation/video QA pass, promote the confirmed PPT visual system to the reusable style library only after the user confirms the complete deck is acceptable. Read `docs/style-library.md`; save a project snapshot and a content-neutral system style record, and record `style_library_record` in `deck_spec.json`.
 - Respect approval gates. Do not create final `deck_spec.json`, `speech.md`, prompt jobs, slide images, or `.pptx` before the approvals in `docs/workflow-gates-and-progress.md`.
 - After the user approves the representative sample set and authorizes full-deck generation, every remaining slide image job must be dispatched to a slide subagent whenever subagents are available.
@@ -96,10 +97,12 @@ Do not mark a step complete from chat alone; use real files or script-recorded s
    - Check whether a built-in image tool is callable, state what you checked, name the backend, explain fallback status, and wait for confirmation.
    - If CLI/API fallback is selected, read `docs/cli-api-fallback.md`. Read `docs/image-model-configuration.md` only after config errors or explicit API-setting requests.
 
-5. Generate a representative sample set for approval.
+5. Generate the three-style representative sample packages for approval.
    - Before generating or approving the sample set, read `docs/outline-style-and-sample.md`.
    - For multi-page decks, make and review a same-ratio thumbnail board first when feasible. Use it to check page-role rhythm, density, whitespace, and layout variation; do not pass it downstream as a final slide image.
-   - For a formal classroom deck, generate three representative samples after outline, style, and backend are confirmed: a cover or opening page, a normal teaching page, and an activity/practice/feedback page. Do not generate the full deck until the sample set is approved.
+   - For a formal classroom deck, generate three candidate styles. For each style generate exactly three representative samples: a cover or opening page, a normal teaching page, and an activity/practice/feedback page. Use the same three content slices for fair comparison.
+   - Run `scripts/assemble_style_sample_pdfs.py` to package the three groups as `风格1.pdf`, `风格2.pdf`, and `风格3.pdf`. Show the three PDFs or their contact sheet together and record the PDF paths in the candidate manifest.
+   - Do not generate the full deck or lock a style until the user approves one complete three-slide PDF package. A single approved image cannot replace the three-slide PDF gate.
    - After approval, record `sample_generation_method` and `approved_style_references` in `deck_spec.json` so jobs and subagents inherit the same path and the complete style system.
    - Register the sample set as `style_sample_approval`; keep the style `locked` for this deck only. Do not promote a system style here.
 

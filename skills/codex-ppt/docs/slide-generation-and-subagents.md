@@ -14,7 +14,7 @@ After the outline, visual style, image backend, and representative sample set ha
 
 Do not create these final downstream artifacts before outline approval. If the user explicitly asks for pre-approval planning files, use `.draft.` filenames and synchronize them after approval.
 
-`deck_spec.json` must include `sample_generation_method` copied from the approved sample set and `approved_style_references` before `prepare_slide_prompts.py` is run. The helper copies that method and all style references into each `prompts/slide_XX.json` and into `slide_jobs.json`, so workers can see the exact backend, tool, mode, image context preparation, and shared visual system used by the approved samples.
+`deck_spec.json` must include `sample_generation_method` copied from the approved sample set, the approved three PNG sample paths, and `approved_style_sample_pdf` before `prepare_slide_prompts.py` is run. The helper copies that method and all style references into each `prompts/slide_XX.json` and into `slide_jobs.json`, so workers can see the exact backend, tool, mode, image context preparation, review PDF, and shared visual system used by the approved samples.
 
 Before full production, create structured per-slide image jobs. Prefer the bundled deterministic helper:
 

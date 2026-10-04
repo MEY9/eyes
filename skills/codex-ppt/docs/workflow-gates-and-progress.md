@@ -17,7 +17,7 @@ Phase order:
 7. QA, speaker notes finalization, and PPT assembly
 8. Complete-deck user confirmation and style-library promotion
 
-Style confirmation includes a single selected style source and a completed `Style Lock`. For multi-page decks, the style gate also includes a thumbnail-board review when feasible. The board checks rhythm and page-role variation; it is not a final slide and does not replace the representative sample set.
+Style confirmation includes a single selected style source and a completed `Style Lock`. Before that lock, education decks must produce three candidate packages with exactly three representative slides each and package them as `风格1.pdf`, `风格2.pdf`, and `风格3.pdf`. For multi-page decks, the style gate also includes a thumbnail-board review when feasible. The board checks rhythm and page-role variation; it is not a final slide and does not replace the three PDF sample packages.
 
 Hard rules:
 
@@ -41,7 +41,7 @@ For non-trivial decks, keep a user-visible checklist with one active step:
 Completion evidence:
 
 - `Prepare source, outline, style, and backend decisions`: `outline.md` is approved and image backend is confirmed.
-- `Generate and approve a representative sample set`: the required cover/opening, normal teaching, and activity/practice/feedback samples are approved as the style references; a documented exception may reduce this to one sample.
+- `Generate and approve a representative sample set`: three complete three-slide PDF packages exist, are visually inspected, and one package is approved as the style reference; the PNG sources, prompts, comparison notes, and PDF paths are recorded.
 - `Prepare slide jobs and slide state`: `prompts/slide_XX.json`, `slide_jobs.json`, and `slide_run_state.json` exist.
 - `Dispatch slide subagents`: `slide_job_status.py` shows dispatchable slides and each spawned worker is recorded by `record_slide_dispatch.py`.
 - `Record generated slide results`: each worker output is recorded by `record_slide_result.py`, which copies the selected image into `origin_image/slide_XX.png` and records backend provenance.
