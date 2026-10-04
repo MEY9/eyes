@@ -20,9 +20,16 @@
 
 ```text
 agents/
-  education-ppt-product/       教育 PPT 产品主 Agent 定义
+  teaching-design-enhancer/    Agent A：教学设计处理
+  education-ppt-pipeline/      Agent B：正式课堂 PPT 制作
+  html-courseware/             Agent HTML：HTML 互动课件
 skills/
-  education-ppt-product/       可被 Codex 调用的项目 Skill
+  codex-ppt/                   视觉稿生成
+  image-to-editable-ppt/       对象级可编辑 PPT 重建
+  ppt-pipeline-catalog/        SQLite 协同目录
+  ppt-animation-video/         PPT 动画视频后处理
+  ppt-social-publishing/       社交平台与公众号发布包装
+  read-wechat-articles/        微信公众号文章读取
 products/
   education-ppt/                PPT 产品规范、SKU 与交付结构
 materials/
@@ -35,16 +42,18 @@ scripts/
 
 ## 使用方式
 
-启动 PPT 产品 Agent：
+启动教育课件流程：
 
 ```text
-请使用 education-ppt-product Agent，从教材 PDF 分析开始。
+/education-ppt 教材路径、教学设计路径或微信公众号链接
 ```
 
-显式调用 Skill：
+也可以分别调用：
 
 ```text
-$education-ppt-product
+education-design-a
+education-ppt-b
+html-courseware
 ```
 
 ## 本地与远程同步原则
@@ -60,6 +69,18 @@ git push -u origin main
 ```
 
 如果更换电脑，只需要拉取仓库，设置新的 `CODEX_SKILLS_DIR`，再运行同步脚本。
+
+## 在 ZCode 中使用
+
+仓库同时提供 ZCode 插件适配层：根目录 `AGENTS.md` 负责工作区协同，`.zcode-plugin/plugin.json` 是插件入口，`zcode/agents/` 提供 Agent A、Agent B 和 Agent HTML，`zcode/commands/education-ppt.md` 提供完整流程命令。
+
+在 ZCode 中添加 GitHub 仓库 `https://github.com/MEY9/eyes` 为插件市场并安装 `eyes-education-ppt`，然后运行：
+
+```text
+/education-ppt 教材路径、教学设计路径或微信公众号链接
+```
+
+完整迁移说明见 [docs/zcode-migration.md](docs/zcode-migration.md)。
 
 ## 数据安全和版权
 

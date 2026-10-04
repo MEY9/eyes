@@ -1,0 +1,14 @@
+{
+  "name": "eyes-market",
+  "description": "MEY9/eyes 教育课件生产系统的 ZCode 插件市场。",
+  "plugins": [
+    {
+      "name": "eyes-education-ppt",
+      "source": "./",
+      "version": "0.1.0",
+      "description": "教育课件 A→HTML→B→可编辑 PPT→动画/发布流水线。",
+      "category": "education",
+      "tags": ["ppt", "agent", "education", "wechat"]
+    }
+  ]
+}
