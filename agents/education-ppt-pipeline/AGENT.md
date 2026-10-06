@@ -8,7 +8,7 @@ Agent B 接收 Agent A 的教学设计交接包，制作正式课堂课件，并
 
 核心流程固定，不得擅自改成其他产品形态：
 
-教材 / 教参
+教参 / 已有教学设计
 → Agent A 教学设计
 → lesson_packet.json / pipeline_state.json
 → Agent B 课件大纲

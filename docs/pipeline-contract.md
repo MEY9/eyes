@@ -7,7 +7,7 @@
 每个课件项目建议在项目根目录保存：
 
 ```text
-source_materials/             原始教材、教参、教学设计、网页归档
+source_materials/             原始教参、教学设计、网页归档
 working/source_audit.md       来源读取范围、完整性和不确定项
 working/lesson_packet.json    A交给HTML和B的机器可读交接包
 working/pipeline_state.json   全流程状态与门禁

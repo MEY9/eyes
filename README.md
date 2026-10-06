@@ -4,10 +4,10 @@
 
 ## 当前目标
 
-把教材 PDF 转换成可售卖的教育视觉产品：
+把教参、已有教学设计或微信公众号文章转换成可售卖的教育视觉产品：
 
 ```text
-教材 PDF
+教参 / 教学设计 / 公众号文章
 → 内容与教学目标分析
 → PPT 故事板
 → AI 图片与视频
@@ -43,7 +43,7 @@ logs/                           任务记录、复盘和版本决策
 启动教育课件流程：
 
 ```text
-/education-ppt 教材路径、教学设计路径或微信公众号链接
+/education-ppt 教参路径、教学设计路径或微信公众号链接
 ```
 
 也可以分别调用：
@@ -65,7 +65,7 @@ html-courseware
 在 ZCode 中添加 GitHub 仓库 `https://github.com/MEY9/eyes` 为插件市场并安装 `eyes-education-ppt`，然后运行：
 
 ```text
-/education-ppt 教材路径、教学设计路径或微信公众号链接
+/education-ppt 教参路径、教学设计路径或微信公众号链接
 ```
 
 完整迁移说明见 [docs/zcode-migration.md](docs/zcode-migration.md)。

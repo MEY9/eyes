@@ -1,6 +1,6 @@
 ---
-description: 从教材、教参、已有教学设计或公众号文章运行完整教育课件流水线。
-argument-hint: "[教材路径、教学设计路径或微信公众号链接]"
+description: 从教参、已有教学设计或公众号文章运行完整教育课件流水线。
+argument-hint: "[教参路径、教学设计路径或微信公众号链接]"
 skills: read-wechat-articles,codex-ppt,image-to-editable-ppt,ppt-pipeline-catalog,ppt-animation-video,ppt-social-publishing
 ---
 
