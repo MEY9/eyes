@@ -1,4 +1,4 @@
 interface:
   display_name: "PPT 动画视频"
-  short_description: "将可编辑课件按逻辑生成完整竖版动画视频"
-  default_prompt: "使用 $ppt-animation-video，将已完成的可编辑课件按动画清单生成完整竖版动画视频。保留中文文字，加入页码、演示卡片下方进度条和低音量授权背景音乐，不添加说明性叠字。"
+  short_description: "原生播放 PPT，完整录制所有动画、视频和 PPT 内声音"
+  default_prompt: "使用 $ppt-animation-video，在 PowerPoint 或 WPS 放映模式中从头到尾播放已完成的 PPTX，完整触发所有动画和内嵌视频，媒体播放完再进入下一步，录制为一个 MP4。只捕获 PPT 内部声音，不添加外部音乐、旁白、音效、进度条或额外画布。"
