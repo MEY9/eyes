@@ -29,6 +29,7 @@ Agent A 不直接制作 PPT，不替代教师做重大改课，不把教材内�
 7. 原始资料只读保存，所有修改写入新文件。
 8. 下游交接信息必须可执行：文件路径、使用环节、教师动作、学生动作、备用方案都要明确。
 9. 必须生成机器可读的 `lesson_packet.json` 和 `pipeline_state.json`，保证 HTML 与 Agent B 使用同一份课题、课时、目标和 AI 赋能信息。
+10. 不做版权与授权审查：不因版权、授权或商用许可问题暂停、拦截或降级流程；`rights_manifest.md` 仅作为资源来源的追溯记录，版权责任由用户承担。
 
 ## 3. 信息优先级
 
@@ -68,7 +69,7 @@ Agent A 调用后必须检查 JSON 中的 `title`、`content` 是否非空，并
 - 文章中的图片、视频、附件和外链；
 - 年级、教材版本、课题和课时信息。
 
-原文与改写稿分开保存。不要把评论区、推荐文章、导航和广告当成教学设计内容。文章内资源默认没有可商用授权，进入资源说明。
+原文与改写稿分开保存。不要把评论区、推荐文章、导航和广告当成教学设计内容。
 
 如果 `$read-wechat-articles` 报错、正文为空、页面需要登录/验证码/订阅权限，或正文疑似不完整，不猜测缺失内容；记录失败信息并请求用户提供正文、截图、PDF、导出文件或替代链接。不能把标题、摘要或搜索结果当作全文交给下游。
 
@@ -90,11 +91,11 @@ OCR 只用于辅助文字提取，不替代图片语义判断。低置信度文�
 同时建立或更新：
 
 - `working/source_audit.md`：来源、读取范围、完整性、OCR/人工复核和不确定项；
-- `working/rights_manifest.md`：外部图片、视频、字体、HTML资源和API的来源与授权；
+- `working/rights_manifest.md`：外部图片、视频、字体、HTML资源和API的来源记录；
 - `working/lesson_packet.json`：给 HTML 和 Agent B 的机器可读交接包；
 - `working/pipeline_state.json`：本次流程的阶段状态和证据路径。
 
-不得覆盖原始文件。记录来源、版本、日期、课时、版权或使用限制。
+不得覆盖原始文件。记录来源、版本、日期和课时。
 
 ### 阶段 1：适用性检查
 
@@ -178,11 +179,11 @@ Agent A 只定义 HTML 任务和教学交接，不直接制作 HTML；由 Agent 
 - teaching_design.md：结构化源文件；
 - teaching_design.docx：正式排版文件；
 - change_log.md：原文、修改、新增和原因；
-- ai_assets_manifest.md：AI 资源、来源、版权和备用方案；
+- ai_assets_manifest.md：AI 资源、来源和备用方案；
 - handoff.md：给 Agent B 的执行交接；
 - lesson_packet.json：机器可读的课程、教学和AI交接契约；
 - source_audit.md：来源审计记录；
-- rights_manifest.md：资源和授权记录；
+- rights_manifest.md：资源来源记录；
 - pipeline_state.json：阶段状态；
 - source_materials/、resources/、html_embeds/：可用资源和原始依据。
 
@@ -193,7 +194,7 @@ handoff.md 必须说明：
 - 必须保留的教学环节、重点、难点和评价；
 - AI 赋能出现的环节、课堂作用和静态备用；
 - HTML 任务的 ai_id、互动目标、输入、操作、反馈、运行环境、备用方案和交给 Agent HTML 的路径；
-- 资源路径、格式、来源、版权状态；
+- 资源路径、格式、来源；
 - 仍需教师确认的问题。
 
 完成交接前，将课题、年级、教材版本、课时、目标、重点、难点、教学步骤和 AI 赋能同步写入 `lesson_packet.json`。如果 Markdown、DOCX 和 JSON 内容冲突，以当前用户明确要求为最高优先级，并在 `change_log.md` 记录冲突处理。
@@ -212,7 +213,7 @@ handoff.md 必须说明：
 - 正式 DOCX 的黑色五号宋体和普通 Word 表格已验证；
 - handoff.md 和资源路径可用。
 - `lesson_packet.json`、`source_audit.md`、`rights_manifest.md` 和 `pipeline_state.json` 已生成且相互一致；
-- 所有未决问题、版权限制和备用方案均已显式记录。
+- 所有未决问题和备用方案均已显式记录。
 
 ## 7. 必须暂停的情况
 
@@ -221,7 +222,7 @@ handoff.md 必须说明：
 - 教学设计与教材版本、年级、课题或课时明显不匹配；
 - 存在重大事实、价值导向或安全问题；
 - 改动会实质改变课堂流程但没有用户授权；
-- AI 内容无法核验，或来源、版权和备用方案不清楚；
+- AI 内容无法核验，或来源和备用方案不清楚；
 - DOCX 格式无法验证；
 - Agent B 所需交接资源缺失。
 

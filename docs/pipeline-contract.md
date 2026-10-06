@@ -11,7 +11,7 @@ source_materials/             原始教参、教学设计、网页归档
 working/source_audit.md       来源读取范围、完整性和不确定项
 working/lesson_packet.json    A交给HTML和B的机器可读交接包
 working/pipeline_state.json   全流程状态与门禁
-working/rights_manifest.md    图片、视频、音乐、字体和API版权记录
+working/rights_manifest.md    图片、视频、音乐、字体和API来源记录
 working/content_traceability.csv
                               教学内容到页面、对象和动画组的追踪
 resources/                    可交付资源和静态备用
@@ -44,7 +44,7 @@ outputs/                      正式DOCX、PPTX、MP4和最终报告
 3. AI 任务状态按 `planned → running → artifact_ready → qa_passed → integrated → delivered` 推进；失败使用 `failed`，可选且跳过的任务使用 `not_applicable`。
 4. HTML项目只有在实际生成单文件HTML、预览图、静态备用、`embed-spec.json`、`runtime-check.json` 和 `task-result.json` 并通过离线验证后，才能把状态推进到 `qa_passed`。
 5. `ai_enrichment` 未通过前，不能进入视觉稿、可编辑重建、动画、视频或发布阶段。
-4. 无法确认的来源、事实、版权或课堂安排必须写入 `open_questions`，不能用猜测填充。
+4. 无法确认的来源、事实或课堂安排必须写入 `open_questions`，不能用猜测填充。
 
 ## 3. pipeline_state.json
 
@@ -74,12 +74,12 @@ outputs/                      正式DOCX、PPTX、MP4和最终报告
 
 ## 4. 跨阶段门禁
 
-1. A完成前，必须有来源审计、教学设计、变更记录、AI清单、版权清单和 `lesson_packet.json`。
+1. A完成前，必须有来源审计、教学设计、变更记录、AI清单和 `lesson_packet.json`。
 2. HTML启用时，必须有单文件HTML、预览图、静态备用、`embed-spec.json` 和离线运行验证记录。
 3. B开始生成视觉稿前，必须锁定课题、教材版本、课时、大纲和AI页面位置。
 4. 进入可编辑重建前，视觉稿必须完成逐页视觉QA。
 5. 进入动画或视频前，最终PPTX必须通过对象级重建和结构验证。
-6. 最终交付前，内容追踪、版权清单、资源备用和视频验证必须闭环。
+6. 最终交付前，内容追踪、资源备用和视频验证必须闭环。
 
 ## 5. 内容追踪
 
@@ -91,8 +91,8 @@ content_id,teaching_step,source_reference,slide_no,slide_role,text_object_ids,vi
 
 每一条教学重点、课堂问题、学生活动、AI任务和作业都应能追踪到页面。没有对应页面或对象时，状态必须为 `missing`，不能静默忽略。
 
-## 6. 来源与版权
+## 6. 来源记录
 
 `source_audit.md` 记录来源URL或文件、读取日期、读取范围、是否完整、OCR或人工复核情况、事实不确定项和替代材料。
 
-`rights_manifest.md` 记录图片、视频、音乐、字体、HTML资源和外部API的来源、许可、是否允许商用、是否需要署名、用途范围和替换方案。密钥只能放在 `.env`，不能写入这些清单。
+`rights_manifest.md` 只做资源来源追溯，记录图片、视频、音乐、字体、HTML资源和外部API的来源与替换方案；不做版权与授权审查，不因版权问题阻塞流程。密钥只能放在 `.env`，不能写入这些清单。

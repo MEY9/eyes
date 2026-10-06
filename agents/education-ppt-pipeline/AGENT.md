@@ -198,7 +198,7 @@ HTML分支通过门禁前，还必须确认单文件HTML实际离线打开、核
 
 初始化 SQLite catalog，登记 `deck_id`、项目路径、课题、学科、年级和课时；读取 Agent A 的 `lesson_packet.json`、`pipeline_state.json` 和已有 catalog 记录，不根据目录名临时生成多个 ID。
 
-门禁：教学设计交接包完整，课时与格式要求明确；`lesson_packet.json`、`pipeline_state.json`、来源审计和版权清单可读取且没有冲突。若存在 `ai_tasks` 或 `ai_empowerment`，每项任务必须进入 `working/ai_task_state.json`，否则退回 Agent A，不得继续。
+门禁：教学设计交接包完整，课时与格式要求明确；`lesson_packet.json`、`pipeline_state.json` 和来源审计可读取且没有冲突。若存在 `ai_tasks` 或 `ai_empowerment`，每项任务必须进入 `working/ai_task_state.json`，否则退回 Agent A，不得继续。
 
 ### 阶段 1：课件大纲
 
@@ -272,7 +272,7 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 风格一致性和布局变化；
 - AI 页面、互动入口和静态备用；
 - AI 任务状态、实际资源、页面引用和静态备用与 `ai_task_gate.json` 一致；
-- 必须使用的素材、来源和版权说明；
+- 必须使用的素材和来源说明；
 - 无关 logo、水印、错误页码和事实错误。
 - `content_id` 是否能回溯到 `lesson_packet.json`，页面是否覆盖对应教学任务。
 - 每个必需 AI 任务是否至少对应一个正式课堂页面或明确课堂环节，且不是只有说明文字。
@@ -402,7 +402,7 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - AI 赋能、资源、静态备用和讲稿路径完整。
 - `working/ai_task_state.json` 和 `working/ai_task_gate.json` 存在；所有必需 AI 任务均已达到 `integrated` 或 `delivered`，没有遗留 `planned`、`running`、`failed` 或未解释的 `not_applicable`。
 - `content_traceability.csv` 已覆盖教学重点、问题、活动、AI任务和作业；
-- `rights_manifest.md` 中的资源许可、替换方案和最终使用范围已核对；
+- `rights_manifest.md` 中的资源来源和替换方案已核对；
 - `pipeline_state.json` 的所有适用阶段均为 `passed`，阻塞项为空。
 
 ## 8. 完整课件确认后的风格入库
@@ -445,7 +445,7 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 页面 manifest、preview、validation 和 page_result；
 - lesson_packet.json、pipeline_state.json、source_audit.md、rights_manifest.md 和 content_traceability.csv；
 - `working/catalog_snapshot.json` 和 catalog 中对应的 `deck_id`、阶段、artifact、审批与风格链接；
-- AI 赋能清单、资源来源和版权说明；
+- AI 赋能清单和资源来源说明；
 - 用户确认完整课件后生成的 `style/` 风格快照和 `deck_spec.json` 中的 `style_library_record`；
 - handoff_to_B.md 或最终交付记录。
 
@@ -457,7 +457,7 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 
 - 教学设计或课件大纲未确认且用户未授权继续；
 - 课时、教材版本、模板或交付格式冲突；
-- 必须使用的素材缺失或授权不明；
+- 必须使用的素材缺失；
 - 生图后端不可用；
 - 必需 AI 任务未通过 `ai_enrichment` 门禁，或 Agent HTML/AI 素材实际产物、运行 QA、静态备用和页面引用缺失；
 - 多页没有可用 page worker；
