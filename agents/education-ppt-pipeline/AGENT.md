@@ -63,7 +63,7 @@ Agent B 是本流水线的编排者，负责为一次课件运行建立稳定的
 - 项目文件和 Git 是内容事实来源；SQLite 只记录路径、哈希、阶段、版本、来源、运行和审批关系。
 - 所有下游阶段必须携带同一个 `deck_id`；风格使用 `style_id@version`；每个 skill 的运行使用自己的 `run_id`。
 - Agent B 在项目建立时登记 deck，在每个阶段登记 run 和 artifact，并在 artifact 已存在且 QA 通过后才把阶段标记为 `passed`。
-- codex-ppt 只登记风格候选、Style Lock、样张、视觉稿和视觉版 PPTX；image-to-editable-ppt 只登记对象重建和可编辑 PPTX；ppt-animation-video 只登记 PPT 原生播放计划、实际录制日志、PPT 内音轨证据、单个录制母版和视频 QA；ppt-social-publishing 只登记三个手动平台 variant、一个公众号 API variant、公众号 HTML、文案、标签和发布 QA。
+- codex-ppt 只登记风格候选、Style Lock、样张、视觉稿和视觉版 PPTX；image-to-editable-ppt 只登记对象重建和可编辑 PPTX；ppt-animation-video 默认登记语义动画 manifest、媒体计划、合成配置、实际时间线、单个视频母版、哈希和视频 QA，用户明确要求原生放映时再登记原生播放计划与录制日志；ppt-social-publishing 只登记三个手动平台 variant、一个公众号 API variant、公众号 HTML、文案、标签和发布 QA。
 - 样张批准只能把风格标记为 `locked`。完整 PPT、可编辑 PPTX、动画/视频（如有）通过 QA 且用户确认完整课件无问题后，Agent B 才能登记 `complete_deck_approval` 和 `style_promotion`，把风格写入系统库。
 - 数据库不可用时不得伪造成功；保留项目文件和 `working/catalog_snapshot.json`，修复或恢复 catalog 后再补登记。
 - API key、OCR token、密码和完整私密教学内容不得写入数据库、快照、日志或 Git。
@@ -174,7 +174,7 @@ AI 赋能不是大纲中的装饰性标签，而是必须有产物、证据和�
 3. 后置生成：完成视觉稿、可编辑 PPTX 和动画结构 QA 后，Agent B 把最终中文即梦提示词、可选参考图/参考图提示词交给用户。视频按成本控制为适合课堂导入的短片，默认目标 10—15 秒，允许 8—15 秒；不要求占满导入环节。用户生成并提供 MP4 后，B 检查 16:9、H.264/AAC、黑边、水印、乱码、首尾稳定帧、课堂内容和 Style Lock 一致性。
 4. 回填与复核：通过 QA 后，将 MP4 放入既有视频槽位，保持原来的 x/y/width/height、裁切、圆角/边框和页面布局；静态海报继续保留为离线备用。只替换媒体源，不重新设计页面，不新增视频页。然后重新渲染该页并验证 PPTX 可打开、视频对象存在、静态备用仍可用。
 
-AI-VIDEO-01 的状态在视频生成前保持 `planned`，并写入 `execution_phase=post_visual_deck`；视频到达后才推进 `artifact_ready` → `qa_passed` → `integrated`。它与 `ppt-animation-video` 不是同一件事：前者是课堂中的内嵌导入视频资源，后者是完成 PPT 后对整套原生幻灯片放映的连续录制。
+AI-VIDEO-01 的状态在视频生成前保持 `planned`，并写入 `execution_phase=post_visual_deck`；视频到达后才推进 `artifact_ready` → `qa_passed` → `integrated`。它与 `ppt-animation-video` 不是同一件事：前者是课堂中的内嵌导入视频资源，后者是在 PPT 完成后把整套课件动画、内嵌媒体和 PPT 内部声音输出为连续视频母版。
 
 `ai_enrichment` 未通过前，不得调用 codex-ppt 批量生成、不得进入 image-to-editable-ppt、动画、视频或发布阶段。若用户明确把必需 AI 视频延期到最后，可使用 `--allow-deferred-post-visual` 预视觉门禁先完成视觉稿和可编辑 PPTX；该开关只对写明 `execution_phase=post_visual_deck` 的 AI 视频生效，HTML 和 AI 素材仍必须先通过。进入最终交付或发布前，AI 视频必须取得即梦 MP4 并完成 QA。所有其他必需任务必须达到 `integrated` 或 `delivered`；静态备用是故障回退，不是完成证明。
 
@@ -345,29 +345,31 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 在可用环境中用 PowerPoint 或 WPS 实际点击播放检查；对视频页必须实际验证“最后一组教学动画完成 → 无额外点击 → 视频自动播放”。无法使用 PowerPoint/WPS 时，至少完成 OOXML 中的 `p:video`/`p:cMediaNode`、`playFrom(0.0)` 和 `afterEffect` 触发关系校验、压缩包校验和 LibreOffice 页面渲染检查，并明确记录未完成的原生播放验收；
 - 发现动画单调、无教学目的、背景运动、点击过密或播放失败时，返修动画规划或后处理，不交付问题版本。
 
-### 阶段 7：AI 视频交付与 PPT 原生放映录制
+### 阶段 7：AI 视频交付与 PPT 动画视频
 
 如果项目存在延期的 AI-VIDEO-01，本阶段先把 Agent B 生成的最终中文即梦提示词和可选参考图交给用户。用户返回 MP4 后，B 依据 AI 视频 QA 清单检查 16:9、H.264/AAC、文字/水印/黑边、首尾稳定帧、内容完整性和与 Style Lock 的一致性；通过后将视频作为真实视频对象嵌入对应 PPT 页面，并保留静态海报备用。AI-VIDEO-01 通过后才可进入最终课件交付。
 
-随后，若用户需要将课件做成视频，调用 `ppt-animation-video` skill，在 PowerPoint 或 WPS 放映模式中真实播放最终 PPTX，并录制为一个连续 MP4。该技能不再重渲染静态状态或仿造动画，不替代 PPTX 原生动画和对象级可编辑重建。
+随后，若用户需要将课件做成视频，调用 `ppt-animation-video` skill。默认根据最终可编辑 PPTX、`animation_manifest_logic.json` 和内嵌媒体计划做对象级语义动画合成，无需启动 PowerPoint/WPS；只有用户明确要求精确复现原生引擎时，才切换到 PowerPoint/WPS 原生放映录制。语义合成与原生录制必须如实标注，均不得替代 PPTX 本身的对象级可编辑重建。
 
 固定要求：
 
-- 优先使用 PowerPoint，可在先验证动画和视频兼容后使用 WPS；没有可用的原生放映引擎时必须阻断，不得降级为静态图或状态帧拼接。
-- 从第 1 页连续播放到最后一页，触发所有 PPT 原生动画；取消一分钟限制，不跳页、不跳动画组。
-- 嵌入视频在 PPT 内真实播放，完整播放结束前不发送下一步或切页指令。如视频挂在最后一组教学动画之后，不额外点击视频对象。
-- 录制画面只保留 PPT 幻灯片放映内容和原始比例，不额外添加竖版画布、页码、进度条、封面、说明文字或平台装饰。
-- 只捕获 PPT 内部已有声音，包括内嵌视频原声、PPT 音效和 PPT 音频对象；关闭麦克风，不添加外部背景音乐、Azure 旁白、后期音效或其他音轨。
-- 生成并保存 `native_playback_plan.json`、`native_recording_config.json`、`native_recording_log.json` 和 `video_qa.md`；录制日志必须记录实际页面、动画组和媒体起止时间。
-- 验收“所有动画播放、所有媒体播完、媒体播完后才进入下一步、音轨只来自 PPT”；任一项失败时重录，不交付问题版本。
+- 从第 1 页连续播放到最后一页；实际页数和动画组数必须从当前 PPTX/manifest 读取，不设置 19 页或其他固定页数，不跳页、不跳动画组。
+- 默认语义合成必须从可编辑对象生成累计状态，按照教学逻辑复现 `appear`、`fade`、`wipe`、`zoom` 等效果；禁止只做整页图切换，也禁止给每个元素机械套同一种动画。
+- 嵌入视频按媒体计划在指定动画组结束后自动开始，使用 PPT 中的真实对象边界和真实媒体文件，完整播放结束前不得继续下一步或切页。
+- 画面只保留 PPT 内容和原始比例，默认 16:9；不添加竖版画布、页码、进度条、封面、说明文字或平台装饰。
+- 只保留 PPT 内部已有声音，包括内嵌视频原声、PPT 音效和 PPT 音频对象；不添加外部背景音乐、Azure 旁白、后期音效或麦克风声音。
+- 取消一分钟限制；时长由动画组、阅读停留和媒体实际时长共同决定。
+- 默认生成 `semantic_video_media_plan.json`、`semantic_video_config.json`、`semantic_video_timeline.json` 和 `video_qa.md`；时间线必须记录实际页面、动画组和媒体起止时间。
+- 若用户明确要求原生模式，再生成 `native_playback_plan.json`、`native_recording_config.json` 和 `native_recording_log.json`，优先 PowerPoint，WPS 先验证兼容性；缺少原生引擎或录制权限时阻断，不得声称完成原生录制。
+- 验收“所有语义组均产生可见变化、所有媒体播完、媒体播完后才继续、音轨只来自 PPT、文字和字体无失真”；任一项失败时返修，不交付问题版本。
 
-单个原生播放录制 MP4、播放计划、实际录制日志、PPT 内音轨证据和 QA 结果必须写入当前课件项目目录，并在最终交付报告中列出。
+单个 16:9 动画视频母版、所用模式、manifest、媒体计划、实际时间线、PPT 内音轨证据、哈希和 QA 结果必须写入当前课件项目目录，并在最终交付报告中列出。
 
 同时登记 `animation_qa` 和 `video` run。ppt-animation-video 不得修改 style 状态，也不得提前触发风格入库；它只向 Agent B 返回可验证的 artifact 和 QA 结果。
 
 ### 阶段 7.1：多平台发布包
 
-`ppt-animation-video` 产生的单个 PPT 原生播放录制母版通过后，再调用 `ppt-social-publishing`。这个阶段只做平台分发、必要的画布适配和发布材料整理，不回写原生录制母版，不改变课件、动画语义、媒体时序或音轨内容。
+`ppt-animation-video` 产生的单个 16:9 PPT 动画视频母版通过后，再调用 `ppt-social-publishing`。这个阶段只做平台分发、必要的画布适配和发布材料整理，不回写或替换母版，不改变课件、动画语义、媒体时序或音轨内容。
 
 这是 Agent B 的默认连续阶段。除非用户明确要求只交付 PPTX/视频或明确暂停，动画视频通过后不得停在阶段 7；必须继续生成三平台手动发布包，并按权限创建微信公众号草稿。公众号草稿创建和 `draft/get` 回读通过后，才能将发布包阶段标记为 `passed`。
 
@@ -395,7 +397,7 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 主要文字、形状、线条、图片和图示可以单独选择、移动、隐藏和编辑；
 - 独立图片层均有明确来源和不可编辑范围；
 - 动画清单、动画结构校验和播放验证结果完整；
-- PPT 原生播放录制母版、播放应用/版本、播放计划、实际录制日志、PPT 内音轨捕获证据和视频 QA 记录完整；
+- PPT 动画视频母版、实际所用模式、动画 manifest、媒体计划、实际时间线、PPT 内音轨证据和视频 QA 记录完整；若用户明确选择原生模式，还须包含播放应用/版本、播放计划和实际录制日志；
 - 多平台发布包、3:4/9:16 平台映射、公众号固定排版、三个手动复制文案、公众号草稿/发布结果和五个标签检查完整；
 - AI 赋能、资源、静态备用和讲稿路径完整。
 - `working/ai_task_state.json` 和 `working/ai_task_gate.json` 存在；所有必需 AI 任务均已达到 `integrated` 或 `delivered`，没有遗留 `planned`、`running`、`failed` 或未解释的 `not_applicable`。
@@ -437,7 +439,7 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - resources/ 和 html_embeds/；
 - image-to-editable-ppt 运行目录；
 - 动画后处理脚本、动画清单和动画 QA 记录；
-- 单个完整 PPT 原生播放录制母版、`native_playback_plan.json`、`native_recording_config.json`、`native_recording_log.json` 和视频 QA 记录；
+- 单个完整 PPT 动画视频母版、`semantic_video_media_plan.json`、`semantic_video_config.json`、`semantic_video_timeline.json` 和视频 QA 记录；原生模式另附 `native_playback_plan.json`、`native_recording_config.json` 和 `native_recording_log.json`；
 - `outputs/social/` 下的小红书、抖音、微信视频号视频包和微信公众号 HTML/Markdown/文案包；
 - `working/publication_manifest.json` 和 `working/publication_qa.md`；
 - 页面 manifest、preview、validation 和 page_result；

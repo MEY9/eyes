@@ -1,133 +1,185 @@
 ---
 name: ppt-animation-video
-description: Record a completed animated PPTX as one continuous MP4 by running it in native PowerPoint or WPS slideshow mode. Capture every native animation and embedded video in real time, wait for media playback to finish before advancing, and record only audio already contained in the PPT. Use after editable-PPT reconstruction and animation QA; do not use for static-state simulation, external music or voiceover, platform framing, or deck authoring.
+description: Create one continuous MP4 from a completed editable PPTX and its semantic animation manifest, including full embedded-video playback and only audio already contained in the PPT. Default to player-free semantic composition; use native PowerPoint or WPS recording only when the user explicitly requires exact engine playback. Use after editable reconstruction and animation QA, not for deck authoring or social-platform framing.
 ---
 
-# PPT 原生播放录制
+# PPT 动画视频
 
 ## 定位
 
-本技能是 Agent B 的原生幻灯片录制阶段。输入是已完成对象级重建、PPTX 原生动画、内嵌媒体和播放 QA 的可编辑 PPTX；输出是一个连续的 MP4 录制母版。
+本技能把 Agent B 已完成的可编辑 PPTX、逻辑动画清单和内嵌媒体合成为一条连续课件视频。默认不启动 PowerPoint 或 WPS，而是依据对象级动画语义重建播放过程；只有用户明确要求“原生放映”“必须与 PowerPoint/WPS 完全一致”时，才切换到原生录制模式。
 
-录制的是 PowerPoint 或 WPS 在幻灯片放映模式下的真实播放结果，不是重渲染静态状态、截图拼接、逐页图片切换或视频后期仿造动画。
+两种模式必须如实标注，不得把语义合成视频声称为原生录屏，也不得用静态整页切换冒充对象级动画。
 
 固定原则：
 
-- 从第 1 页开始，按 PPT 原有顺序播放到最后一页，录制为一个完整视频。
-- 所有 PPT 内动画都必须实际播放，不跳组、不跳页、不用最终状态代替过程。
-- 内嵌视频必须在 PPT 内真实播放；视频未结束时不得点击下一步或进入下一页。
-- 只录制 PPT 内部已有声音，不添加外部背景音乐、Azure 旁白、后期音效、麦克风声音或其他音轨。
-- 画面保留 PPT 放映的原始比例和内容，不额外添加竖版画布、页码、进度条、说明性文字、外部封面或平台装饰。
-- 取消一分钟限制；总时长由 PPT 动画、嵌入媒体和必要的步骤间隔决定。
+- 从第 1 页按 PPT 实际顺序播放到最后一页，页数、动画组数和媒体时长从当前项目读取，不沿用旧课件或固定 19 页。
+- 每个语义动画组必须播放一次；动画顺序、组合关系和课堂逻辑以 `animation_manifest_logic.json` 为准。
+- 内嵌视频在指定动画组结束后自动开始，完整播放结束后才继续下一步或切页。
+- 只保留 PPT 内部已有声音；不添加外部背景音乐、Azure 旁白、后期音效或麦克风声音。
+- 保留 PPT 的原始画幅，默认 16:9；不添加页码、进度条、竖版外框、说明文字、外部封面或平台装饰。
+- 不设一分钟上限；总时长由动画、媒体和必要的阅读停留共同决定。
+
+## 模式选择
+
+### 模式 A：语义动画合成（默认）
+
+适用于绝大多数交付：依据可编辑 PPTX 的对象、逻辑动画清单和媒体计划生成完整 MP4，无需打开 PowerPoint/WPS。该模式可稳定复现对象逐步显现、淡入、擦除、缩放和组合动画，并把真实内嵌视频及其原声接入时间线。
+
+### 模式 B：原生放映录制（仅明确要求时）
+
+仅当用户明确要求精确复现 PowerPoint/WPS 特有效果、复杂路径动画、Morph、交互触发器或原生播放引擎行为时使用。优先 PowerPoint，WPS 必须先做兼容性测试。若缺少应用、录屏权限或应用音频捕获能力，应阻断并说明，不得伪造原生录制结果。
 
 ## SQLite Catalog 协同
 
-沿用 Agent B 传入的 `deck_id`、`style_id@version`、`catalog_db` 和 `run_id`。只读取已通过的可编辑 PPTX 和动画 QA artifact，不根据文件名新建课件身份。
+沿用 Agent B 传入的 `deck_id`、`style_id@version`、`catalog_db` 和 `run_id`，只读取已通过的可编辑 PPTX与动画 QA artifact。
 
-- 登记原生播放计划、录制日志、输出 MP4、PPT 内音轨证据和 QA 结果。
-- 只有原生播放录制和全量 QA 通过后，才将 `video` run 标记为 `passed`。
+- 模式 A 登记动画 manifest、媒体计划、合成配置、实际时间线、输出 MP4、哈希和 QA。
+- 模式 B 另行登记原生播放计划、录制配置、实际录制日志、PPT 内音轨证据和 QA。
+- 只有视频文件存在且全量 QA 通过后，才把 `video` run 标记为 `passed`。
 - 本技能不修改 Style Lock、风格版本或用户审批状态，不触发风格入库。
 - 密钥、录屏权限数据和私密素材不得写入 Git、SQLite 或对外交付日志。
 
 ## 输入门禁
 
-录制前必须确认：
+开始前必须确认：
 
 - 最终可编辑 PPTX 可正常打开，页数、顺序、文字、对象和媒体完整。
-- 动画清单与 PPTX 实际时间线一致，每页的点击组、`withEffect`、`afterEffect` / `afterPrevious` 和页面切换已通过结构 QA。
-- 内嵌视频是真实媒体对象，编码可由目标播放引擎解码；静态海报只是备用，不冒充视频。
-- 需要在前置动画完成后自动播放的视频，已在 PPTX 中建立原生媒体节点和播放命令，不依赖录制程序去点击视频封面。
-- 已获得 PowerPoint 或 WPS 放映所需的屏幕录制、辅助功能和系统/应用音频捕获权限。
-- 已识别 PPT 中所有视频和音频对象的时长、播放次数和触发方式。
+- `working/animation_manifest_logic.json` 与 PPTX 对象和页面一致，已通过动画结构 QA。
+- 动画清单按教学语义划分组合，不是给每个元素机械套同一种效果。
+- 所有媒体文件真实存在，可解码，并已确定所属页、对象 ID、播放触发点和实际时长。
+- 需要在其他动画之后播放的视频，媒体计划明确 `slide`、`after_group`、`shape_id` 和文件路径。
+- 静态海报只是离线备用，不得替代真实视频。
 
-如果没有可用的 PowerPoint/WPS 原生放映引擎，或录屏器不能捕获 PPT 内部声音，必须阻断并说明原因。不得降级为静态页拼接、状态图仿动画或静音视频后声称完成原生播放录制。
+缺少可编辑 PPTX、动画 manifest 或必需媒体时必须阻断。不得只使用最终整页图制造简单翻页视频后声称完成。
 
-## 完整流程
+## 模式 A 完整流程
 
-### 1. 选择原生播放与录制环境
+### 1. 建立媒体计划
 
-- 优先使用 Microsoft PowerPoint；未安装 PowerPoint 时可使用 WPS，但必须先在含动画和视频的页面上验证兼容性。
-- 以幻灯片放映模式播放，隐藏编辑器界面、播放控件、鼠标指针、系统通知、Dock 和菜单栏。
-- 录制区域只包含幻灯片播放画面，比例跟随 PPT；默认不重构为 3:4 或 9:16。
-- 使用能同时捕获屏幕和应用/系统输出音频的工具，例如 macOS ScreenCaptureKit 或已正确配置的 OBS。麦克风输入必须关闭。
-- 录制为单次连续会话；不逐页录制后再拼接，除非发生可证明的播放失败并必须重录整段。
+生成 `working/semantic_video_media_plan.json`。每个媒体至少记录：
 
-### 2. 生成播放计划
+- 页码、对象 ID/对象名和媒体文件；
+- 在第几个动画组之后开始；
+- PPT 页面内的 x、y、width、height 或可验证的对象边界；
+- 真实时长、是否保留原声、首尾稳定帧和备用海报；
+- 播放结束后继续本页下一组还是进入下一页。
 
-从 PPTX 和动画 manifest 生成 `working/native_playback_plan.json`，至少记录：
+媒体时长必须由文件探测获得，不得凭提示词或文件名猜测。
 
-- 页码和实际总页数；
-- 每页的动画组、触发方式和预计完成时间；
-- 页面切换是手动还是自动；
-- 每个嵌入视频/音频的对象 ID、对象名、触发点、媒体时长、循环规则和结束后的下一步；
-- 每次需要由录制程序发送的点击/键盘事件，以及事件前后的最小安全间隔。
+### 2. 渲染对象级累计状态
 
-不允许将页数、点击次数或视频时长写死为上一套课件的值。
+- 从 PPTX 中解析每页可编辑对象，按照 manifest 的语义组生成累计可见状态。
+- 每个组完成后的画面应保留前序组的可见结果；背景和固定版式始终存在。
+- 同组对象保持同步，组内不得被拆成无意义的逐字、逐图标动画。
+- 使用 LibreOffice/PowerPoint 渲染中间状态后，检查字体、文字、图片、形状、图表和层级是否与最终 PPT 一致。
+- 不得用原始高质量页面图覆盖可编辑对象来掩盖字体或排版问题；缺字体时先安装或替换为批准字体并重新渲染。
 
-### 3. 执行完整放映
+### 3. 合成逻辑动画
 
-- 开始录制后从第 1 页进入放映，按播放计划依次触发所有点击动画。
-- 同一组内的 `withEffect` 和 `afterEffect` / `afterPrevious` 由 PPT 自身时间线执行；录制程序不额外点击或重放。
-- 每次触发后必须等待该组动画完成再触发下一步，不用连点追赶时长。
-- 如果最后一组动画之后会自动播放视频，只触发最后一组，随后等待 PPT 自动开始视频；不再点击媒体对象。
-- 视频开始后，等待完整媒体时长和少量结尾缓冲后再进入下一步。若 PPT 中设定为循环播放，默认完整录制一个循环后进入下一步；用户或 manifest 有明确次数时按指定执行。
-- 页内所有动画和媒体完成后才允许切换页面。自动切页由 PPT 执行；手动切页只在播放计划指定的时点发送一次。
-- 最后一页的所有动画和媒体结束后，保留短暂稳定画面，然后结束录制。
+根据 manifest 为相邻累计状态生成过渡：
 
-### 4. 只录制 PPT 内部声音
+- `appear`：直接出现，适合答案揭示或明确步骤；
+- `fade`：淡入，适合标题、说明和轻量素材；
+- `wipe`：按阅读/流程方向擦除，适合流程线、表格行和步骤卡；
+- `zoom`：轻微缩放进入，适合核心结论、关键图片或任务卡。
 
-- 录屏输入只选择 PowerPoint/WPS 应用音频或系统输出；麦克风、摄像头麦克风和环境收音全部关闭。
-- 不调用 `azure-tts`，不下载或添加背景音乐，不在后期添加点击声、转场声或解说。
-- PPT 内嵌视频的原声、PPT 内已嵌入的音效和 PPT 自身音频对象属于允许录制的声音。
-- 可以为平台兼容进行音频编码转换、空白首尾裁剪和防削波保护，但不得增加新的音频内容、改变声画同步或用外部音乐填补静音。
+效果应由内容逻辑决定，不能全套使用同一种动画。默认 30 fps，单组动画和停留时长由 manifest/config 控制；不得为了缩短视频连续快切到无法阅读。
 
-### 5. 裁剪和封装
+项目内置脚本：
 
-- 只裁掉开始放映前和结束放映后的空白时间，不剪掉动画过程、阅读停留或媒体内容。
-- 不分段重排、不加速嵌入视频、不替换音轨、不变更页面顺序。
-- 保留 PPT 实际放映的宽高比。编码优先使用 H.264 视频和 AAC 音频；如 PPT 全程没有任何内部声音，可保留静音音轨以提高兼容性，但不得添加其他声音。
-- 建议输出：`outputs/<课题>_PPT原生播放录制.mp4`。
+```bash
+python3 skills/ppt-animation-video/scripts/render_semantic_video.py \
+  --input <最终可编辑PPTX> \
+  --manifest working/animation_manifest_logic.json \
+  --media-plan working/semantic_video_media_plan.json \
+  --state-dir working/semantic-video/states \
+  --base-output working/semantic-video/base.mp4 \
+  --timeline working/semantic_video_timeline.json \
+  --output outputs/<课题>_课件语义动画_16x9.mp4
+```
+
+实际参数以脚本 `--help` 为准；帧率、过渡时长、停留时长和媒体尾帧缓冲等参数同时写入 `semantic_video_config.json`，并通过对应命令行参数传给脚本。需要的中间文件统一放入 `working/semantic-video/`，QA 抽帧放入 `qa/semantic-video/`。
+
+### 4. 插入真实媒体与内部声音
+
+- 到达媒体计划指定时间点后，在 PPT 对象边界内播放真实视频，不放大到页面外，也不覆盖其他应保留的版式元素。
+- 媒体完整播放，禁止加速、截断或在媒体结束前进入下一步。
+- 只混入该媒体自身原声或 PPT 已有音频；其余时间保持静音。
+- 若 PPT 全程没有内部声音，可保留兼容性的静音 AAC 音轨，但不得用外部音乐填补。
+- 媒体结束后恢复 PPT 时间线，继续本页剩余动画或进入下一页。
+
+### 5. 输出与封装
+
+- 输出 H.264 视频、AAC 音频、30 fps 的连续 MP4。
+- 分辨率跟随 PPT 画幅，16:9 默认使用 1920×1080。
+- 只裁掉合成器的技术空白，不删除教学停留、动画过程或媒体内容。
+- 建议文件名：`outputs/<课题>_课件语义动画_<ratio>.mp4`。
+
+## 模式 B 原生录制流程
+
+用户明确要求原生引擎时：
+
+1. 生成 `working/native_playback_plan.json`，记录实际页数、动画组、媒体、触发事件和等待时间。
+2. 使用 PowerPoint 或经验证的 WPS 全屏放映，隐藏编辑界面、指针、通知、Dock 和菜单栏。
+3. 录制程序按计划触发点击；同组的 `withEffect`、`afterEffect` / `afterPrevious` 由 PPT 自身执行。
+4. 媒体自动开始后等待完整时长和结尾缓冲，不额外点击媒体封面。
+5. 只捕获应用/系统输出，关闭麦克风；不添加外部声音。
+6. 记录 `native_recording_config.json` 和 `native_recording_log.json` 的实际时间戳。
+
+原生录制仍须遵守本技能的页序、媒体完整播放、内部音轨和无额外画布规则。
 
 ## 验收门禁
 
 必须逐项验证：
 
 1. 输出是一个连续 MP4，从第 1 页开始并在最后一页结束。
-2. 页数与 PPTX 一致，顺序一致，没有跳页或重复页。
-3. 动画清单中的每个动画组都在录制中出现，顺序、效果和触发关系与 PPT 实际放映一致。
-4. 每个内嵌视频都真实开始、连续播放到结束，视频结束前没有下一步或切页事件。
-5. 需要在其他动画之后自动播放的视频，符合“最后一组教学动画完成 → 无额外点击 → 视频自动播放 → 播放结束 → 下一步”。
-6. 画面中只有 PPT 放映内容，没有编辑器、鼠标、录屏控件、系统通知、额外页码、进度条或说明性叠字。
-7. 音轨只含 PPT 内部声音；麦克风未开启，没有外部音乐、旁白或后期音效。
-8. 声画同步，嵌入视频无黑屏、卡顿、截断或静音异常。
-9. 无一分钟或其他硬编码时长限制，录制时长覆盖完整 PPT 播放流程。
-10. 使用 FFmpeg/ffprobe 或等效工具验证 MP4 可解码、分辨率、帧率、总时长、视频流和音频流；通过时间戳日志核对每页、每组动画和每个媒体的起止点。
+2. 页数与 PPTX 一致，顺序一致，无跳页、重复页或硬编码页数。
+3. manifest 中每个动画组均产生可见变化，顺序和组合关系正确；不存在空组或机械逐元素动画。
+4. 动画效果有逻辑差异，不是全程同一种淡入或统一飞入。
+5. 每个内嵌视频均在规定组后自动开始，完整播放到结束，媒体结束前没有下一步或切页。
+6. 音轨只在 PPT 内部媒体/音频应发声的区间出现；没有麦克风、外部音乐、Azure 旁白或后期音效。
+7. 画面只包含 PPT 内容，比例正确，无页码、进度条、平台画布、说明性叠字、录屏控件或鼠标。
+8. 文字、字体、图片、形状、层级和颜色与批准 PPT 一致，无乱码、缺字、黑屏、闪帧、裁切或明显抖动。
+9. 使用 FFmpeg/ffprobe 验证 MP4 可解码、分辨率、帧率、总时长、视频流和音频流。
+10. `semantic_video_timeline.json` 或原生录制日志可核对每页、每组和每个媒体的实际起止时间。
+11. QA 报告明确标注“语义动画合成”或“原生放映录制”，不得混淆。
 
-任一页动画未完整播放、媒体被跳过/截断、录制时误触下一步、没有捕获 PPT 内部声音或混入麦克风/外部音轨时，整个录制不得标记为通过。
+任一动画组缺失、媒体被截断、声音来源不合规、文字失真或模式标注不实，均不得标记为通过。
 
 ## 固定项目产物
 
+默认模式 A：
+
 ```text
 working/animation_manifest_logic.json
-working/native_playback_plan.json
-working/native_recording_log.json
-working/native_recording_config.json
+working/semantic_video_media_plan.json
+working/semantic_video_config.json
+working/semantic_video_timeline.json
 working/video_qa.md
+qa/semantic-video/
+outputs/<课题>_课件语义动画_<ratio>.mp4
+```
+
+模式 B 另加：
+
+```text
+working/native_playback_plan.json
+working/native_recording_config.json
+working/native_recording_log.json
 outputs/<课题>_PPT原生播放录制.mp4
 ```
 
-`native_recording_config.json` 至少记录播放应用及版本、录屏器、录制区域、帧率、系统/应用音频来源、麦克风关闭状态和权限检查结果。`native_recording_log.json` 记录实际播放时间戳，不只保存计划值。
-
 ## Agent B 调用规则
 
-Agent B 在 PPTX 原生动画、内嵌媒体和播放结构 QA 通过后调用本技能。至少传入：
+Agent B 在可编辑 PPTX、逻辑动画和内嵌媒体 QA 通过后调用本技能，至少传入：
 
-- 最终可编辑 PPTX 路径；
-- 动画清单路径；
-- 嵌入媒体清单及实际时长；
+- 最终可编辑 PPTX；
+- 动画 manifest、媒体清单及真实时长；
 - 课题名、实际总页数和输出目录；
-- `deck_id`、`style_id@version`、`catalog_db` 和 `animation_qa` / `video` run ID。
+- `deck_id`、`style_id@version`、`catalog_db` 和 `animation_qa` / `video` run ID；
+- 用户是否明确要求原生 PowerPoint/WPS 录制。
 
-Agent B 接收输出后，必须登记 MP4 路径、PPT 播放引擎、播放计划、实际录制日志、PPT 内声音捕获证据和 QA 结果。失败时保留日志并返修；不得用静态拼接视频、无动画视频或混入外部声音的视频代替。
+没有明确原生要求时一律使用模式 A。Agent B 接收结果后登记 MP4、所用模式、manifest、媒体计划、实际时间线、哈希和 QA。失败时保留日志并返修，不得用无动画视频、简单翻页或混入外部声音的视频代替。
 
-如果后续需要小红书、抖音或视频号的竖版包装，将本技能产生的单个原生播放母版交给 `ppt-social-publishing` 另行处理。平台包装不得回写或替换本原生录制母版。
+如需小红书、抖音或视频号竖版包装，将本技能产生的单个 16:9 母版交给 `ppt-social-publishing`；平台包装不得回写或替换本母版。

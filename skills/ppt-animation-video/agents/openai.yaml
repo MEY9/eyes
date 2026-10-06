@@ -1,4 +1,4 @@
 interface:
   display_name: "PPT 动画视频"
-  short_description: "原生播放 PPT，完整录制所有动画、视频和 PPT 内声音"
-  default_prompt: "使用 $ppt-animation-video，在 PowerPoint 或 WPS 放映模式中从头到尾播放已完成的 PPTX，完整触发所有动画和内嵌视频，媒体播放完再进入下一步，录制为一个 MP4。只捕获 PPT 内部声音，不添加外部音乐、旁白、音效、进度条或额外画布。"
+  short_description: "按语义动画合成完整课件视频，并播完内嵌媒体"
+  default_prompt: "使用 $ppt-animation-video，默认根据可编辑 PPTX 和动画清单合成完整 16:9 MP4，无需打开 WPS。依次播放所有语义动画组，内嵌视频在指定组后完整播放，播放完再继续。只保留 PPT 内部声音，不添加外部音乐、页码、进度条或额外画布。只有用户明确要求原生放映时才录制 PowerPoint/WPS。"
