@@ -262,8 +262,20 @@ def main() -> int:
         "cover_media_id": cover_id,
         "slide_count": len(slide_paths),
     }
+    (args.output_dir / "publish_result.json").write_text(
+        json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     if args.mode == "publish":
-        submitted = publish(token, draft_id)
+        try:
+            submitted = publish(token, draft_id)
+        except RuntimeError as exc:
+            if "48001" in str(exc):
+                result["status"] = "draft_created_publish_unauthorized_48001"
+                (args.output_dir / "publish_result.json").write_text(
+                    json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                print(json.dumps(result, ensure_ascii=False))
+                return 2
+            raise
+        result["publish_id"] = submitted["publish_id"]
         result["publish_id"] = submitted["publish_id"]
         for _ in range(40):
             status = publish_status(token, submitted["publish_id"])
