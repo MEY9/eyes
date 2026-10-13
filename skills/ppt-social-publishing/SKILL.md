@@ -170,3 +170,13 @@ image-to-editable-ppt
 ```
 
 公众号分支不要求视频；三个手动视频平台共用唯一 9:16 发布视频，由本 skill 从 16:9 基底包装产出。发布包完成不等于风格入库，风格入库仍等待用户确认。
+
+## 发布后数据回流
+
+用户手动发布到小红书后，经 `skills/xhs-research/` 拉取自己笔记的表现数据：用 `search_feeds` 搜索笔记标题（或 `user_profile` 拉账号主页），把结果写入该课件 `publish/manifest.json` 的 `performance` 字段——`{"collected_at": "ISO时间", "posts": [{"url", "title", "liked", "collected", "comments"}]}`，保留历史采集记录形成时间序列，不覆盖旧值。
+
+规则：
+
+- 数据回流是手动触发步骤（用户说一声拉一次），不做定时自动化；
+- 只读采集，遵守 xhs-research 的低频与账号隔离约定；
+- 多套课件的 performance 数据对比可反哺下一套的选题与大纲（高互动教学点优先），结论记入新立项的 `working/xhs_research.md`，不臆测因果。
