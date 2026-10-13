@@ -365,11 +365,11 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 取消一分钟限制；时长由动画组、阅读停留和媒体实际时长共同决定。
 - 默认生成 `semantic_video_media_plan.json`、`semantic_video_config.json`、`semantic_video_timeline.json` 和 `video_qa.md`；时间线必须记录实际页面、动画组和媒体起止时间。
 - 若用户明确要求原生模式，再生成 `native_playback_plan.json`、`native_recording_config.json` 和 `native_recording_log.json`，优先 PowerPoint，WPS 先验证兼容性；缺少原生引擎或录制权限时阻断，不得声称完成原生录制。
-- 全线统一背景音乐：语义视频母版通过 QA 后，按 `assets/bgm/BGM.md` 的标准命令合成 `*_BGM.mp4` 版本（volume=0.18、循环截断至视频时长、视频流零重编码；曲目与许可记录见该文件）。发布包装优先使用 BGM 版，原母版保留；后续课件一律沿用该曲目，不逐次询问。
+- 全线统一背景音乐：语义视频母版通过 QA 后，按 `assets/bgm/BGM.md` 的标准命令合成 `*_BGM.mp4` 版本（volume=0.18、循环截断至视频时长、视频流零重编码；曲目与许可记录见该文件）。16:9 母版与 BGM 版都只是内部合成基底，存放在 `working/`，不作为交付视频复制到 `outputs/`；后续课件一律沿用该曲目，不逐次询问。
 - 验收“所有语义组均产生可见变化、所有媒体播完、媒体播完后才继续、音轨只来自 PPT、文字和字体无失真”；任一项失败时返修，不交付问题版本。
-- 发布包装随视频交付，不等待单独指令：BGM 母版通过 QA 后，按 `skills/ppt-social-publishing/` 立即产出三平台手动包（课件项目 `publish/` 目录）——小红书 `video_3x4.mp4`（1080×1440，16:9 母版中央裁切）、抖音与视频号 `video_9x16.mp4`（1080×1920，中央裁切），每包 `copy.txt` 为 UTF-8 三行：教材/年级/册次与 50 字内摘要、品牌行“精研AI教育，接顶制”、恰好 5 个空格分隔的话题标签；公众号文章文件同批按该 skill 规则生成。摘要与标签一律取自教学设计（课型、学段学科、教材版本、单元内容点），不得引入教材外结论。
+- 发布包装随视频交付，不等待单独指令：BGM 基底通过 QA 后，按 `skills/ppt-social-publishing/` 立即产出发布包（课件项目 `outputs/social/` 目录）。整个项目只交付一个视频文件 `video_9x16.mp4`（1080×1920）：9:16 只是视频画布比例，幻灯片内容必须保持完整 16:9 等比缩放居中，上下以模糊放大的同源画面铺底；小红书、抖音、微信视频号三个平台共用这一个视频，不按平台复制多份。严禁为平台重新生成 9:16/3:4 的幻灯片、PPT 或任何额外视频，严禁对 16:9 基底做中央裁切或非等比拉伸（都会破坏幻灯片）。每平台 `copy.txt` 为 UTF-8 三行：教材/年级/册次与 50 字内摘要、品牌行“精研AI教育，接顶制”、恰好 5 个空格分隔的话题标签；公众号文章文件同批按该 skill 规则生成。摘要与标签一律取自教学设计（课型、学段学科、教材版本、单元内容点），不得引入教材外结论。
 
-单个 16:9 动画视频母版、所用模式、manifest、媒体计划、实际时间线、PPT 内音轨证据、哈希和 QA 结果必须写入当前课件项目目录，并在最终交付报告中列出。
+16:9 合成基底（母版与 BGM 版）、所用模式、manifest、媒体计划、实际时间线、PPT 内音轨证据、哈希和 QA 结果必须写入当前课件项目 `working/`，并在最终交付报告中列出；`outputs/` 中唯一的视频交付物是 `video_9x16.mp4`。
 
 同时登记 `animation_qa` 和 `video` run。ppt-animation-video 不得修改 style 状态，也不得提前触发风格入库；它只向 Agent B 返回可验证的 artifact 和 QA 结果。
 
@@ -381,8 +381,8 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 
 固定交付：
 
-- 小红书使用 3:4、1080×1440 完整动画视频，生成手动发布包；
-- 抖音和微信视频号使用 9:16、1080×1920 完整动画视频，生成手动发布包；
+- 只交付一个视频：`outputs/social/video_9x16.mp4`（9:16、1080×1920 画布），小红书、抖音和微信视频号三个平台共用这一个文件，各平台目录只放自己的 `copy.txt`，不按平台复制视频；
+- 该唯一视频由 `working/` 中的 16:9 BGM 基底画布包装得到，只改画布、不改内容：完整 16:9 幻灯片等比缩放到画布宽度并居中，上下为模糊压暗的同源背景；禁止中央裁切、禁止拉伸变形、禁止为任何平台重新生成 9:16/3:4 幻灯片、PPT 或额外视频；
 - 微信公众号调用官方 API，生成固定排版 `wechat-education-warm-paper` 的文章；
 - 公众号正文只显示教材、年级、册次、根据用户话语/教学重难点/教学过程提炼的 50 字以内摘要，以及固定品牌句“精研AI教育，接顶制”；不得出现“【教学设计总结内容】”“【教学课件视频】”、标签、课件制作说明或内部流程文字；
 - 公众号正文必须按顺序放入全部 PPT 幻灯片图片，不放课件视频；视频只进入小红书、抖音和微信视频号的手动发布包；
@@ -404,7 +404,7 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - 独立图片层均有明确来源和不可编辑范围；
 - 动画清单、动画结构校验和播放验证结果完整；
 - PPT 动画视频母版、实际所用模式、动画 manifest、媒体计划、实际时间线、PPT 内音轨证据和视频 QA 记录完整；若用户明确选择原生模式，还须包含播放应用/版本、播放计划和实际录制日志；
-- 多平台发布包、3:4/9:16 平台映射、公众号固定排版、三个手动复制文案、公众号草稿/发布结果和五个标签检查完整；
+- 多平台发布包与唯一发布视频 `video_9x16.mp4` 的 9:16 画布、完整 16:9 幻灯片适配检查（无裁切、无变形、无竖版幻灯片、无平台视频副本）、公众号固定排版、三个手动复制文案、公众号草稿/发布结果和五个标签检查完整；
 - AI 赋能、资源、静态备用和讲稿路径完整。
 - `working/ai_task_state.json` 和 `working/ai_task_gate.json` 存在；所有必需 AI 任务均已达到 `integrated` 或 `delivered`，没有遗留 `planned`、`running`、`failed` 或未解释的 `not_applicable`。
 - `content_traceability.csv` 已覆盖教学重点、问题、活动、AI任务和作业；
@@ -445,8 +445,8 @@ codex-ppt 的职责是生成视觉稿，不负责对象级可编辑重建。
 - resources/ 和 html_embeds/；
 - image-to-editable-ppt 运行目录；
 - 动画后处理脚本、动画清单和动画 QA 记录；
-- 单个完整 PPT 动画视频母版、`semantic_video_media_plan.json`、`semantic_video_config.json`、`semantic_video_timeline.json` 和视频 QA 记录；原生模式另附 `native_playback_plan.json`、`native_recording_config.json` 和 `native_recording_log.json`；
-- `outputs/social/` 下的小红书、抖音、微信视频号视频包和微信公众号 HTML/Markdown/文案包；
+- 内部 16:9 动画合成基底（母版与 BGM 版，存放于 `working/`）、`semantic_video_media_plan.json`、`semantic_video_config.json`、`semantic_video_timeline.json` 和视频 QA 记录；原生模式另附 `native_playback_plan.json`、`native_recording_config.json` 和 `native_recording_log.json`；
+- `outputs/social/` 下唯一的视频交付物 `video_9x16.mp4`、三个平台各自的 `copy.txt` 和微信公众号 HTML/Markdown/文案包；
 - `working/publication_manifest.json` 和 `working/publication_qa.md`；
 - 页面 manifest、preview、validation 和 page_result；
 - lesson_packet.json、pipeline_state.json、source_audit.md、rights_manifest.md 和 content_traceability.csv；

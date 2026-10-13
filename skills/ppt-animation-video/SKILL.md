@@ -96,7 +96,7 @@ python3 skills/ppt-animation-video/scripts/render_semantic_video.py \
   --state-dir working/semantic-video/states \
   --base-output working/semantic-video/base.mp4 \
   --timeline working/semantic_video_timeline.json \
-  --output outputs/<课题>_课件语义动画_16x9.mp4
+  --output working/semantic-video/<课题>_课件语义动画_16x9.mp4
 ```
 
 实际参数以脚本 `--help` 为准；帧率、过渡时长、停留时长和媒体尾帧缓冲等参数同时写入 `semantic_video_config.json`，并通过对应命令行参数传给脚本。需要的中间文件统一放入 `working/semantic-video/`，QA 抽帧放入 `qa/semantic-video/`。
@@ -114,7 +114,7 @@ python3 skills/ppt-animation-video/scripts/render_semantic_video.py \
 - 输出 H.264 视频、AAC 音频、30 fps 的连续 MP4。
 - 分辨率跟随 PPT 画幅，16:9 默认使用 1920×1080。
 - 只裁掉合成器的技术空白，不删除教学停留、动画过程或媒体内容。
-- 建议文件名：`outputs/<课题>_课件语义动画_<ratio>.mp4`。
+- 母版及 BGM 版是内部合成基底，写入 `working/semantic-video/`（如 `working/semantic-video/<课题>_课件语义动画_16x9.mp4` 与 `*_BGM.mp4`），不放入 `outputs/`；对外唯一交付的视频由 `ppt-social-publishing` 包装为 `outputs/social/video_9x16.mp4`。
 
 ## 模式 B 原生录制流程
 
@@ -158,7 +158,8 @@ working/semantic_video_config.json
 working/semantic_video_timeline.json
 working/video_qa.md
 qa/semantic-video/
-outputs/<课题>_课件语义动画_<ratio>.mp4
+working/semantic-video/<课题>_课件语义动画_16x9.mp4（内部基底）
+working/semantic-video/<课题>_课件语义动画_16x9_BGM.mp4（内部基底，发布包装输入）
 ```
 
 模式 B 另加：
@@ -167,7 +168,7 @@ outputs/<课题>_课件语义动画_<ratio>.mp4
 working/native_playback_plan.json
 working/native_recording_config.json
 working/native_recording_log.json
-outputs/<课题>_PPT原生播放录制.mp4
+working/semantic-video/<课题>_PPT原生播放录制.mp4
 ```
 
 ## Agent B 调用规则
@@ -182,4 +183,4 @@ Agent B 在可编辑 PPTX、逻辑动画和内嵌媒体 QA 通过后调用本技
 
 没有明确原生要求时一律使用模式 A。Agent B 接收结果后登记 MP4、所用模式、manifest、媒体计划、实际时间线、哈希和 QA。失败时保留日志并返修，不得用无动画视频、简单翻页或混入外部声音的视频代替。
 
-如需小红书、抖音或视频号竖版包装，将本技能产生的单个 16:9 母版交给 `ppt-social-publishing`；平台包装不得回写或替换本母版。
+本技能只产出唯一的 16:9 内部合成基底（母版与 BGM 版，存于 `working/semantic-video/`），不为任何平台生成竖版母版、竖版画布版本或 9:16/3:4 幻灯片；9:16 只是发布画布比例，与幻灯片比例无关。对外只交付一个视频：由 `ppt-social-publishing` 将 16:9 BGM 基底包装为 `outputs/social/video_9x16.mp4`（完整 16:9 幻灯片居中 + 模糊背景），三个平台共用；包装不得回写或替换内部基底。
