@@ -1,0 +1,45 @@
+{
+  "schema_version": 1,
+  "last_verified": "2026-10-14",
+  "servers": [
+    {
+      "id": "xiaohongshu-mcp",
+      "purpose": "Read-only style research, teaching-material research, topic research, and post-publication metrics for xhs-research",
+      "upstream": "https://github.com/xpzouying/xiaohongshu-mcp",
+      "release_page": "https://github.com/xpzouying/xiaohongshu-mcp/releases/tag/v2.5.5",
+      "version": "v2.5.5",
+      "release_commit": "a5c8f77",
+      "transport": "streamable-http",
+      "endpoint": "http://localhost:18060/mcp",
+      "platform": "windows-amd64",
+      "executable_name": "xiaohongshu-mcp.exe",
+      "local_expected_path": "E:\\tools\\xiaohongshu-mcp\\xiaohongshu-mcp.exe",
+      "binary_size_bytes": 15612416,
+      "sha256": "CB55674F90C1649C875BE9C4CDE3AF193B02FC34FFC860C40C8D711E6CA53E27",
+      "used_by": [
+        "skills/xhs-research"
+      ],
+      "allowed_tools": [
+        "check_login_status",
+        "get_login_qrcode",
+        "search_feeds",
+        "get_feed_detail",
+        "user_profile"
+      ],
+      "forbidden_tools": [
+        "publish_content",
+        "publish_with_video",
+        "like_feed",
+        "favorite_feed",
+        "post_comment_to_feed",
+        "reply_comment_in_feed",
+        "reply_notification"
+      ],
+      "client_policy": {
+        "zcode": "May register the local endpoint; repository policy remains read-only",
+        "codex": "Global MCP registration is optional; the skill defaults to direct local HTTP calls"
+      },
+      "secrets_in_git": false
+    }
+  ]
+}

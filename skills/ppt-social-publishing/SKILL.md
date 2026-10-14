@@ -83,7 +83,9 @@ outputs/social/
 
 ## 公众号文章规则
 
-公众号文章使用固定主题 `wechat-education-warm-paper`，文章标题只使用真实课题名，例如 `《行路难（其一）》`，不得添加“课件幻灯片”“预览”“正式课堂”等说明性后缀。
+公众号文章默认使用固定主题 `wechat-education-warm-paper`，文章标题只使用真实课题名，例如 `《行路难（其一）》`，不得添加“课件幻灯片”“预览”“正式课堂”等说明性后缀。
+
+当用户明确要求精品展示、iOS 视觉或壹伴级排版时，可显式选择独立主题 `wechat-ios-showcase@1.0`。该主题不替换默认主题，不得自动写回项目的默认发布风格。它允许在完整幻灯片之外选用少量真实课件截图与 GIF 讲清教学价值，但仍禁止嵌入 `<video>`。底部引流优先使用知识星球原生小程序卡片：API 创建草稿后由运营者在锚点位置手动插入，正文二维码保留为回退入口，不使用 HTML 伪装按钮。规范见 [references/wechat-ios-showcase.md](references/wechat-ios-showcase.md)。
 
 正文直接从课程信息开始，不显示以下内容：
 
@@ -155,6 +157,7 @@ outputs/social/
 详细排版与 API 约束见：
 
 - [references/wechat-education-warm-paper.md](references/wechat-education-warm-paper.md)
+- [references/wechat-ios-showcase.md](references/wechat-ios-showcase.md)
 - [references/platform-spec.md](references/platform-spec.md)
 - [references/wechat-auto-publish.md](references/wechat-auto-publish.md)
 

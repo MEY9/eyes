@@ -53,6 +53,7 @@ Each rule in this skill has exactly one authoritative home; the other files poin
 - `references/manifest-schema.md`: the single home for JSON field contracts of deck/page/image artifacts — required manifest fields, positioned-object coordinates, `validation.json`, and `page_result.json` shapes. Read it when writing or validating any run/page file.
 - `references/page-decision-tree.md`: the single source of truth for page object decisions — background handling, foreground asset separation, native shapes, formulas, text-hints usage, the final self-check, and the fix-versus-warning split. Read its common decision boundaries first, then the sections relevant to the page inventory; the page prompt provides the reading route.
 - `references/animation-postprocessing.md`: the authoritative contract for optional post-reconstruction PPTX animation — semantic grouping, effect selection, trigger rules, animation manifest fields, and structural/playback QA.
+- `references/token-efficient-reconstruction.md`: token-efficiency policy for page workers — allowed savings (targeted reading, spot-check image comparison, artifact reuse, pre-validated hints, budget targets) and the explicit red lines that must never be skipped (full inventory, complete decomposition, verbatim text checks, validation loops). Efficiency only; never a basis for lowering acceptance.
 - `ppt-pipeline-catalog`: the shared SQLite catalog for `deck_id`, `style_id@version`, `run_id`, artifacts, approvals, and cross-skill provenance.
 
 ## Entry Contract

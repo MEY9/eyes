@@ -1,16 +1,18 @@
 {
   "name": "eyes-education-ppt",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "教育课件多 Agent 流水线：教学设计、HTML 赋能、视觉稿、可编辑 PPT、动画和公众号发布。",
   "repository": "https://github.com/MEY9/eyes",
   "keywords": ["education", "ppt", "agent", "wechat", "html"],
   "skills": [
+    "skills/read-wechat-articles",
+    "skills/ppt-pipeline-catalog",
+    "skills/xhs-research",
     "skills/codex-ppt",
     "skills/image-to-editable-ppt",
-    "skills/ppt-pipeline-catalog",
+    "skills/azure-tts",
     "skills/ppt-animation-video",
-    "skills/ppt-social-publishing",
-    "skills/read-wechat-articles"
+    "skills/ppt-social-publishing"
   ],
   "agents": "zcode/agents",
   "commands": "zcode/commands"

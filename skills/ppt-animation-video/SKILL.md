@@ -1,6 +1,6 @@
 ---
 name: ppt-animation-video
-description: Create one continuous MP4 from a completed editable PPTX and its semantic animation manifest, including full embedded-video playback and only audio already contained in the PPT. Default to player-free semantic composition; use native PowerPoint or WPS recording only when the user explicitly requires exact engine playback. Use after editable reconstruction and animation QA, not for deck authoring or social-platform framing.
+description: Create one continuous 16:9 MP4 base from a completed editable PPTX and its semantic animation manifest, including full embedded-video playback and only audio already contained in the PPT during base composition; after QA, optionally create the standard licensed BGM derivative used by the publishing workflow. Default to player-free semantic composition; use native PowerPoint or WPS recording only when the user explicitly requires exact engine playback. Use after editable reconstruction and animation QA, not for deck authoring or social-platform framing.
 ---
 
 # PPT 动画视频
@@ -16,7 +16,7 @@ description: Create one continuous MP4 from a completed editable PPTX and its se
 - 从第 1 页按 PPT 实际顺序播放到最后一页，页数、动画组数和媒体时长从当前项目读取，不沿用旧课件或固定 19 页。
 - 每个语义动画组必须播放一次；动画顺序、组合关系和课堂逻辑以 `animation_manifest_logic.json` 为准。
 - 内嵌视频在指定动画组结束后自动开始，完整播放结束后才继续下一步或切页。
-- 只保留 PPT 内部已有声音；不添加外部背景音乐、Azure 旁白、后期音效或麦克风声音。
+- 母版合成阶段只保留 PPT 内部已有声音，不添加 Azure 旁白、后期音效或麦克风声音；母版通过 QA 后，才可按 `assets/bgm/BGM.md` 生成标准 BGM 派生基底。
 - 保留 PPT 的原始画幅，默认 16:9；不添加页码、进度条、竖版外框、说明文字、外部封面或平台装饰。
 - 不设一分钟上限；总时长由动画、媒体和必要的阅读停留共同决定。
 
@@ -105,8 +105,8 @@ python3 skills/ppt-animation-video/scripts/render_semantic_video.py \
 
 - 到达媒体计划指定时间点后，在 PPT 对象边界内播放真实视频，不放大到页面外，也不覆盖其他应保留的版式元素。
 - 媒体完整播放，禁止加速、截断或在媒体结束前进入下一步。
-- 只混入该媒体自身原声或 PPT 已有音频；其余时间保持静音。
-- 若 PPT 全程没有内部声音，可保留兼容性的静音 AAC 音轨，但不得用外部音乐填补。
+- 母版只混入该媒体自身原声或 PPT 已有音频；其余时间保持静音。
+- 若 PPT 全程没有内部声音，母版可保留兼容性的静音 AAC 音轨；不得在母版合成中临时选曲，标准 BGM 只能在母版 QA 后按 `assets/bgm/BGM.md` 生成派生版本。
 - 媒体结束后恢复 PPT 时间线，继续本页剩余动画或进入下一页。
 
 ### 5. 输出与封装
@@ -114,7 +114,7 @@ python3 skills/ppt-animation-video/scripts/render_semantic_video.py \
 - 输出 H.264 视频、AAC 音频、30 fps 的连续 MP4。
 - 分辨率跟随 PPT 画幅，16:9 默认使用 1920×1080。
 - 只裁掉合成器的技术空白，不删除教学停留、动画过程或媒体内容。
-- 母版及 BGM 版是内部合成基底，写入 `working/semantic-video/`（如 `working/semantic-video/<课题>_课件语义动画_16x9.mp4` 与 `*_BGM.mp4`），不放入 `outputs/`；对外唯一交付的视频由 `ppt-social-publishing` 包装为 `outputs/social/video_9x16.mp4`。
+- 母版通过 QA 后，按 `assets/bgm/BGM.md` 的固定曲目、许可和音量规则生成 BGM 派生版。母版及 BGM 版都是内部合成基底，写入 `working/semantic-video/`（如 `working/semantic-video/<课题>_课件语义动画_16x9.mp4` 与 `*_BGM.mp4`），不放入 `outputs/`；对外唯一交付的视频由 `ppt-social-publishing` 包装为 `outputs/social/video_9x16.mp4`。
 
 ## 模式 B 原生录制流程
 

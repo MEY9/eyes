@@ -3,6 +3,8 @@
 node_modules/
 dist/
 build/
+__pycache__/
+*.pyc
 .env
 .env.*
 !.env.example
@@ -22,6 +24,13 @@ tmp/
 .codex-local/
 .idea/
 .vscode/
+
+# MCP 本地登录态与运行数据；仓库只提交 mcp/ 下的公开清单和说明
+mcp/runtime/
+mcp/local/
+mcp/**/cookies.json
+mcp/**/service.log
+mcp/**/qrcode*.png
 
 # PPT pipeline SQLite runtime state
 *.sqlite3

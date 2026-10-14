@@ -31,7 +31,7 @@ outputs/                      正式DOCX、PPTX、MP4和最终报告
   "course": {"title": "", "subject": "", "grade": "", "textbook": "", "unit": "", "lesson": "", "hours": 1},
   "source": {"source_audit": "working/source_audit.md", "teaching_design": "working/teaching_design.docx", "teaching_design_source": "source_materials/"},
   "teaching_contract": {"objectives": [], "key_points": [], "difficult_points": [], "must_keep_steps": [], "assessment": [], "homework": []},
-  "ai_tasks": [{"ai_id": "AI-01", "ai_type": "HTML|AI视频|AI素材|AI辅助任务", "required": true, "status": "planned", "execution_owner": "Agent HTML|Agent B", "lesson_step": "", "objective": "", "teacher_action": "", "student_action": "", "duration": "", "verification": "", "fallback": "", "resource_path": "", "rights_status": ""}],
+  "ai_tasks": [{"ai_id": "AI-01", "ai_type": "HTML|AI视频|AI素材|AI辅助任务", "required": true, "status": "planned", "execution_owner": "Agent HTML|Agent B", "execution_phase": "pre_visual|post_visual_deck", "lesson_step": "", "objective": "", "teacher_action": "", "student_action": "", "duration": "", "verification": "", "fallback": "", "resource_path": "", "rights_status": ""}],
   "constraints": {"formal_document_font": "宋体", "formal_document_size": "五号", "formal_document_color": "黑色", "one_lesson_stays_one_lesson": true},
   "handoff": {"open_questions": [], "change_log": "working/change_log.md", "rights_manifest": "working/rights_manifest.md"}
 }
@@ -43,8 +43,8 @@ outputs/                      正式DOCX、PPTX、MP4和最终报告
 2. `ai_tasks` 至少有一个有效项目，但不要求同时使用 HTML、AI视频和AI素材；只有明确标记为可选的任务才能使用 `required=false`。
 3. AI 任务状态按 `planned → running → artifact_ready → qa_passed → integrated → delivered` 推进；失败使用 `failed`，可选且跳过的任务使用 `not_applicable`。
 4. HTML项目只有在实际生成单文件HTML、预览图、静态备用、`embed-spec.json`、`runtime-check.json` 和 `task-result.json` 并通过离线验证后，才能把状态推进到 `qa_passed`。
-5. `ai_enrichment` 未通过前，不能进入视觉稿、可编辑重建、动画、视频或发布阶段。
-4. 无法确认的来源、事实或课堂安排必须写入 `open_questions`，不能用猜测填充。
+5. `ai_enrichment` 未通过前，不能进入视觉稿、可编辑重建、动画、视频或发布阶段。唯一例外是用户明确要求把必需 AI 视频放到视觉稿之后生成：该任务必须写明 `execution_phase=post_visual_deck`，使用显式预视觉门禁，且只允许先完成视觉稿和可编辑 PPTX；最终交付或发布前仍须取得真实视频并通过普通门禁。HTML、AI 素材和其他必需任务不适用此例外。
+6. 无法确认的来源、事实或课堂安排必须写入 `open_questions`，不能用猜测填充。
 
 ## 3. pipeline_state.json
 
@@ -76,10 +76,10 @@ outputs/                      正式DOCX、PPTX、MP4和最终报告
 
 1. A完成前，必须有来源审计、教学设计、变更记录、AI清单和 `lesson_packet.json`。
 2. HTML启用时，必须有单文件HTML、预览图、静态备用、`embed-spec.json` 和离线运行验证记录。
-3. B开始生成视觉稿前，必须锁定课题、教材版本、课时、大纲和AI页面位置。
+3. B开始生成视觉稿前，必须锁定课题、教材版本、课时、大纲和AI页面位置；若用户明确延期 AI 视频，还必须保存视频槽位规范、静态备用和预视觉门禁证据。
 4. 进入可编辑重建前，视觉稿必须完成逐页视觉QA。
 5. 进入动画或视频前，最终PPTX必须通过对象级重建和结构验证。
-6. 最终交付前，内容追踪、资源备用和视频验证必须闭环。
+6. 最终交付或发布前，内容追踪、资源备用和所有必需 AI 任务（含延期视频）的真实产物与 QA 必须闭环。
 
 ## 5. 内容追踪
 

@@ -30,11 +30,14 @@ skills/
   ppt-animation-video/         PPT 动画视频后处理
   ppt-social-publishing/       社交平台与公众号发布包装
   read-wechat-articles/        微信公众号文章读取
+  xhs-research/                小红书只读教学/风格调研
+  azure-tts/                   可选课件旁白
 products/
   education-ppt/                PPT 产品规范、SKU 与交付结构
 materials/
   textbooks/                    本地教材 PDF，默认不提交远程
-projects/                      具体课程项目
+project/                       接单项目和标准课程项目
+mcp/                            无凭据 MCP 版本、端点与校验快照
 logs/                           任务记录、复盘和版本决策
 ```
 
@@ -56,7 +59,7 @@ html-courseware
 
 ## 本地与远程同步原则
 
-仓库中的 `agents/` 和 `skills/` 是源文件；ZCode 通过 `.zcode-plugin/plugin.json` 加载本项目能力。修改 Agent 或 Skill 后，先运行对应 QA，再提交并推送远程。旧的单体教育 PPT 产品 Agent、Skill 和同步脚本已经移除。
+仓库中的 `agents/` 和 `skills/` 是源文件；ZCode 通过 `.zcode-plugin/plugin.json` 加载本项目能力。两端按 `docs/agent-skill-dependencies.md` 的真实依赖读取或安装 Skill，不全量安装独立工具。修改 Agent 或 Skill 后，先运行对应 QA，再提交并推送远程。旧的单体教育 PPT 产品 Agent、Skill 和同步脚本已经移除。
 
 ## 在 ZCode 中使用
 
