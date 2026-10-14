@@ -1,0 +1,152 @@
+{
+  "schema_version": 3,
+  "deck_id": "redox-b1chem",
+  "title": "氧化还原反应 第1课时",
+  "slide_count": 19,
+  "style": "navy-structure-diagram@0.1-b1chem",
+  "rebuild": "v4（+P3 海报 16:9 修复；语义视频按返修后 deck 重渲，母版时效性红线固化）",
+  "video": {
+    "master": {
+      "path": "working/semantic-video/氧化还原反应_课件语义动画_16x9.mp4",
+      "sha256": "017d78ca5242cd7f4c8d56a3d6fe08c51a3f5deb7ae362e7af40cfd5b66146b3",
+      "bytes": 5299272,
+      "resolution": "1920x1080",
+      "fps": 30,
+      "duration_s": 78.9,
+      "mode": "semantic-composite",
+      "rendered_at": "2026-10-14T09:27",
+      "qa_red_lines": {
+        "all_groups_visible_change": true,
+        "media_played_complete": true,
+        "continuation_after_media": true,
+        "audio_only_from_ppt": true
+      }
+    },
+    "bgm": {
+      "path": "working/semantic-video/氧化还原反应_动画视频_16x9_BGM.mp4",
+      "sha256": "75f2c03400504e3bf31470bc8643ecc0440007c6839874c53032977233cd71ce",
+      "bytes": 7006251,
+      "track": "有何不可（assets/bgm/xusong/，许嵩曲库）",
+      "volume": 0.18,
+      "stream_loop": -1,
+      "video_codec": "copy"
+    },
+    "audio_source": "PPT 内嵌 AI-VIDEO-01 原声（母版）；BGM 版为发布用"
+  },
+  "manual_platforms": {
+    "xiaohongshu": {
+      "video": {
+        "path": "outputs/social/xiaohongshu/video_3x4.mp4",
+        "sha256": "7d189be58dd75df66cd983e1cbab636d4356b3f3841a7114e209186bdd26b482",
+        "bytes": 4103048,
+        "size": "1080x1440",
+        "ratio": "3:4",
+        "source": "返修后重渲 BGM 版中央裁切"
+      },
+      "copy": {
+        "path": "outputs/social/xiaohongshu/copy.txt",
+        "sha256": "ef22d32405122d01fa6251210d7315cb612a111331a4288a0da87a6fb9c7fa7b",
+        "bytes": 324,
+        "lines": 3,
+        "tags": 5
+      }
+    },
+    "douyin": {
+      "video": {
+        "path": "outputs/social/douyin/video_9x16.mp4",
+        "sha256": "bcb4230c8114ebba5e7362acff2171e46972b278e79bfa294cfbad77cdace4d6",
+        "bytes": 4287281,
+        "size": "1080x1920",
+        "ratio": "9:16",
+        "source": "返修后重渲 BGM 版中央裁切"
+      },
+      "copy": {
+        "path": "outputs/social/douyin/copy.txt",
+        "sha256": "ef22d32405122d01fa6251210d7315cb612a111331a4288a0da87a6fb9c7fa7b",
+        "bytes": 324,
+        "lines": 3,
+        "tags": 5
+      }
+    },
+    "weixin_channels": {
+      "video": {
+        "path": "outputs/social/weixin_channels/video_9x16.mp4",
+        "sha256": "bcb4230c8114ebba5e7362acff2171e46972b278e79bfa294cfbad77cdace4d6",
+        "bytes": 4287281,
+        "size": "1080x1920",
+        "ratio": "9:16",
+        "source": "返修后重渲 BGM 版中央裁切"
+      },
+      "copy": {
+        "path": "outputs/social/weixin_channels/copy.txt",
+        "sha256": "ef22d32405122d01fa6251210d7315cb612a111331a4288a0da87a6fb9c7fa7b",
+        "bytes": 324,
+        "lines": 3,
+        "tags": 5
+      }
+    }
+  },
+  "wechat_official_account": {
+    "layout": "wechat-education-warm-paper",
+    "title": "《氧化还原反应》",
+    "article_html": {
+      "path": "outputs/social/wechat_official_account/article.html",
+      "sha256": "b834285d182aaf0292b29ee8c29fd0184d589c83986adaa952d9d03becb9a3c5",
+      "bytes": 415
+    },
+    "article_md": {
+      "path": "outputs/social/wechat_official_account/article.md",
+      "sha256": "7ce4bc433483a1ed167a1503091b2799c551c7b2d9c0f0903e5fbb6d851514c5",
+      "bytes": 235
+    },
+    "cover": {
+      "path": "outputs/social/wechat_official_account/cover.jpg",
+      "sha256": "036dfa1236d7a8ef166f159fbeadc9909ce74d1298b371384c1efb0d72e1af4a",
+      "bytes": 53774,
+      "size": "900x383"
+    },
+    "slides": {
+      "dir": "outputs/social/wechat_official_account/slides",
+      "count": 19,
+      "size": "1600x900 JPG"
+    },
+    "copy": {
+      "path": "outputs/social/wechat_official_account/copy.txt",
+      "sha256": "7ce4bc433483a1ed167a1503091b2799c551c7b2d9c0f0903e5fbb6d851514c5",
+      "bytes": 235
+    },
+    "publish_mode": "publish",
+    "result": "blocked_ip_whitelist_40164",
+    "note": "素材与本地文章就绪；access_token 阶段被出口 IP 182.123.100.66 不在白名单拦截（重试2次同IP）。用户加白后重跑 publish_wechat_official.py --mode publish；按账号权限预期走到 draft_created_publish_unauthorized_48001",
+    "status": "draft_created_publish_unauthorized_48001",
+    "draft_media_id": "kLU5-QMfMMKHtGm0e__gUIDEioIDg9-gaq8W9p7Bf26WEEoLQuZAVEZHmiUSooju"
+  },
+  "editable_deck": {
+    "path": "outputs/氧化还原反应_可编辑.pptx",
+    "sha256": "75c19c8aba73522ecd391c1b1b2e8a087f8569206cb5dd85be8237acce4194c5",
+    "bytes": 1460795
+  },
+  "animated_deck": {
+    "path": "outputs/氧化还原反应_可编辑_逻辑动画版.pptx",
+    "sha256": "213af6a428b8b692d442d3b13f124fed16b28459befe7d15f4574437f53a1a6f",
+    "bytes": 1471486
+  },
+  "gate": {
+    "ai_task_gate": "ok=true（AI-VIDEO-01 integrated；AI-HTML-01 integrated）",
+    "visual_acceptance": "19/19 通过（两轮返修闭环）",
+    "blockers": [
+      "微信公众号 API 40164 IP 白名单（等用户加白后重跑 publish）"
+    ]
+  },
+  "runs": [
+    "run-style-candidate-redox-001",
+    "run-ai-enrichment-redox-001",
+    "run-visual-deck-redox-001",
+    "run-editable-rebuild-redox-001",
+    "run-animation-qa-redox-001",
+    "run-video-redox-001",
+    "run-publication-redox-001"
+  ],
+  "credentials": "WECHAT_MP_APPID/SECRET 仅存 eyes/.env，不入 manifest/Git/日志",
+  "paths_note": "本文件为 working 副本；发布事实源为 publish/manifest.json（schema v3）"
+}
