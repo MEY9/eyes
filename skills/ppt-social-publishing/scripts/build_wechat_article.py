@@ -141,6 +141,7 @@ def showcase_hero(kicker, title, subtitle, chips, cover_src=""):
 
 
 def showcase_chapter(title, number):
+    """章节编号标题：白底居中，在彩色卡片外。"""
     return (
         '<section style="margin:0 8px 22px 8px;text-align:center;">'
         f'<p style="margin:0 0 6px 0;font-size:17px;font-weight:700;color:#D2A13A;letter-spacing:2px;line-height:1.5;">'
@@ -163,13 +164,13 @@ def showcase_subsection(title):
 
 
 def showcase_block_open(title, number):
-    """One paper-like block per editorial chapter, never one card per image."""
+    """彩色内容卡：只装内容，不含章节标题（标题在卡片外白底居中）。"""
     tones = {"课件简介": "#FAF6EC", "AI 视频": "#F1F5F8",
              "HTML 互动": "#EEF5F0", "资料包内容": "#FAF6EC"}
     tone = tones.get(title, "#FFFFFF")
-    padding = "24px 0 0" if title == "PPT 视觉展示" else "22px 12px 6px"
-    return (f'<section style="margin:0 0 26px 0;padding:{padding};background:{tone};">'
-            + showcase_chapter(title, number))
+    padding = "0" if title == "PPT 视觉展示" else "16px 12px 10px 12px"
+    radius = "" if title == "PPT 视觉展示" else "border-radius:14px;"
+    return (f'<section style="margin:0 0 26px 0;padding:{padding};background:{tone};{radius}">')
 
 
 GROUP_TONES = ("#F5F3EC", "#EFF4F7", "#EEF4F0", "#FAF3E9")
@@ -264,7 +265,12 @@ def showcase_resources(rows):
 
 
 def showcase_planet_card(planet, card_src):
-    """底部知识星球官方邀请卡（整卡图片，长按识别）。"""
+    """底部 END 章节头（卡片外）+ 知识星球官方邀请卡（整卡图片，长按识别）。"""
+    head = (
+        '<section style="margin:30px 8px 18px 8px;text-align:center;">'
+        '<p style="margin:0 0 6px 0;font-size:17px;font-weight:700;color:#D2A13A;letter-spacing:2px;line-height:1.5;">END</p>'
+        f'<p style="margin:0;font-size:20px;font-weight:700;color:{TEXT};line-height:1.55;letter-spacing:0.5px;">完整课件资料</p>'
+        '</section>')
     qr_html = ""
     if card_src:
         qr_html = (
@@ -272,7 +278,7 @@ def showcase_planet_card(planet, card_src):
             f'<img src="{esc(card_src)}" alt="{esc(planet)} 知识星球邀请卡" style="max-width:100%;height:auto;'
             'display:block;margin:0 auto;border-radius:14px;border:1px solid #E4EAF1;" />'
             '</figure>')
-    return (f'<section style="margin:8px 0 12px 0;padding:6px 0 0 0;">{qr_html}</section>')
+    return (f'<section style="margin:8px 0 12px 0;">{head}{qr_html}</section>')
 
 
 def build(md_text: str, planet: str, planet_qr: str | None = None):
@@ -391,6 +397,7 @@ def build_showcase(md_text: str, planet: str, planet_qr: str | None = None):
                 body.append('</section>')
             chapter_no += 1
             group_no = 0
+            body.append(showcase_chapter(ln[3:].strip(), chapter_no))
             body.append(showcase_block_open(ln[3:].strip(), chapter_no))
             chapter_open = True
         elif ln.startswith("### "):
