@@ -83,9 +83,9 @@ outputs/social/
 
 ## 公众号文章规则
 
-公众号文章默认使用固定主题 `wechat-education-warm-paper`，文章标题只使用真实课题名，例如 `《行路难（其一）》`，不得添加“课件幻灯片”“预览”“正式课堂”等说明性后缀。
+公众号文章默认使用精品主题 `wechat-ios-showcase@1.0`。文章标题直接写课题、年级和课件属性，不使用悬念式营销标题，也不得添加“预览”“正式课堂”等内部说明性后缀。
 
-当用户明确要求精品展示、iOS 视觉或壹伴级排版时，可显式选择独立主题 `wechat-ios-showcase@1.0`。该主题不替换默认主题，不得自动写回项目的默认发布风格。它允许在完整幻灯片之外选用少量真实课件截图与 GIF 讲清教学价值，但仍禁止嵌入 `<video>`。底部引流优先使用知识星球原生小程序卡片：API 创建草稿后由运营者在锚点位置手动插入，正文二维码保留为回退入口，不使用 HTML 伪装按钮。规范见 [references/wechat-ios-showcase.md](references/wechat-ios-showcase.md)。
+`wechat-ios-showcase@1.0` 当前采用壹伴“简单教育”方向的编辑部图文结构：白底、教师友好字号、暖黄色小序号、自然正文、大图展示和充足留白。禁止把文章做成 App 界面、产品详情页或数据看板，不使用深色刊头、胶囊标签、指标宫格、重复卡片、明显横线/竖线或图片描边。完整 PPT 幻灯片必须全部展示；可在其前额外选用真实 GIF 和 HTML 互动截图说明课堂用途，但仍禁止嵌入 `<video>`。底部采用双入口：草稿生成后由运营者在隐藏锚点位置手动插入知识星球原生小程序卡片，并在其下保留用户提供的二维码卡片作为备用；不使用 HTML 伪装按钮，也不显示运营操作提示。旧主题仅在用户明确要求时显式选择。规范见 [references/wechat-ios-showcase.md](references/wechat-ios-showcase.md)。
 
 正文直接从课程信息开始，不显示以下内容：
 
@@ -95,14 +95,9 @@ outputs/social/
 - “课件幻灯片”等制作说明；
 - 技能名、平台名、内部路径或营销话术。
 
-正文只包含：
+正文按“课程信息 → 课件简介 → AI 视频 → HTML 互动 → PPT 视觉展示 → 资料清单 → 知识星球入口”组织。课程信息必须写明教材版本、年级、上/下册和课时；文案以真实产物与课堂用途为主，不设凑字数目标，不扩写成营销文案。
 
-```text
-教材：xxx，年级：xxx，x册，根据用户话语、教学重点和教学过程提炼的摘要
-精研AI教育，接顶制
-```
-
-用户括号或大括号中的内容是对 Codex 的要求，必须理解后改写为自然摘要，不把括号本身或指令性文字放进正文。
+公众号正文不添加品牌行。用户括号或大括号中的内容是对 Codex 的要求，必须理解后改写为自然信息，不把括号本身或指令性文字放进正文。
 
 随后按页序插入全部 PPT 幻灯片图片。公众号正文图片必须通过 `media/uploadimg` 上传后使用返回 URL，不得直接引用本地路径、GitHub URL、CDN 或 base64。每张 JPG/PNG 小于 1 MiB；缺图、乱序或上传失败时停止。
 
@@ -130,7 +125,7 @@ outputs/social/
 - JSON 请求使用 UTF-8 原文发送，不使用会被公众号错误保存的 `\\uXXXX` 字面转义；
 - API 返回即使标为 `text/plain`，也先按 UTF-8 原始字节解析；
 - 不打印或保存密钥、access_token；
-- 草稿回读必须确认教材文本、固定品牌句和全部 `<img>` 节点；
+- 草稿回读必须确认教材文本和全部 PPT 幻灯片 `<img>` 节点；
 - 只有 `publish_status=0` 才能标记为已发布；
 - `40164` 记录为 IP 白名单问题；`48001` 记录为账号发布权限问题；
 - 发布失败保留草稿 ID 和错误信息，不盲目重复提交；
@@ -199,3 +194,13 @@ image-to-editable-ppt
 2. 打包资料包 zip：动画视频（竖版 BGM 版 mp4）+ 可编辑 PPTX；**mp4 不能直传附件**（报“文件类型不支持”），必须打包 zip
 3. `zsxq-cli topic +create --group-id 48885448528888 --markdown-file copy.md --files 资料包.zip`（附件上传仅 CLI 通道，MCP 不可）
 4. 发布前经用户确认；记录 topic_id 到 `publish/manifest.json` 的 `zsxq` 字段
+
+## iOS Showcase 文章流程（新）
+
+公众号文章默认使用 `wechat-ios-showcase@1.0` 精品主题，流程：
+
+1. **动图**：`scripts/make_gifs.py --video <语义视频BGM版> --segments "起-止:标签,..." [--crop w:h:x:y]`——从语义视频按时间线抽 2-4 段关键动画（640px/12fps/调色板优化，单文件 ≤10MB）；媒体窗口片段用 `--crop` 裁窗口
+2. **文案**：`article.md` 用轻量标记（#TITLE/#KICKER/#SUBTITLE/#COVER/#CHIPS/##/###/>TIP/:::metrics/:::resources/![]()），钩子与亮点从教学设计重难点提取；**不得出现「定制」「知识付费」**；文末无品牌行（星球卡即出口）
+3. **构建**：`scripts/build_wechat_article.py --article article.md --planet 一堂微课 --planet-qr planet_qr.png --out article.html --preview-out preview.html --theme wechat-ios-showcase@1.0`
+4. **发布**：`publish_wechat_official.py --article-file article.html --asset-root <article目录> ... --mode publish`——本地图自动上传 uploadimg 并替换为微信 URL；copy.txt 为单行课程信息格式
+5. 主题规范与组件：见 `references/wechat-ios-showcase.md`；幻灯片每张独立卡片（分组色调轮换），文字区高度压缩，幻灯片是主角

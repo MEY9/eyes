@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """把 article.md（轻量标记）构建为公众号文章 HTML。
 
-默认保留原有 ``theme-ios-hig-card`` 输出；显式传入
-``--theme wechat-ios-showcase@1.0`` 时启用独立精品展示主题。
+默认使用 ``wechat-ios-showcase@1.0`` 精品展示主题；只有用户明确要求旧版时，
+才显式传入 ``--theme theme-ios-hig-card``。
 
 标记语法:
   #TITLE: 标题            刊头大标题
@@ -25,15 +25,17 @@ import re
 import sys
 from pathlib import Path
 
-BLUE = "#007AFF"
-TEXT = "#1C1C1E"
-GRAY = "#6E6E73"
-GRAY3 = "#8E8E93"
-LINE = "#E5E5EA"
-FILL = "#F2F2F7"
-FONT = "-apple-system,'PingFang SC','Helvetica Neue','Microsoft YaHei',sans-serif"
+BLUE = "#2F6BFF"
+TEXT = "#243447"
+GRAY = "#667085"
+GRAY3 = "#98A2B3"
+LINE = "#E4EAF1"
+FILL = "#F3F6FA"
+FONT = "-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif"
+KAITI = "'Kaiti SC','STKaiti','KaiTi','FangSong',serif"
 SHOWCASE_THEME = "wechat-ios-showcase@1.0"
-DEFAULT_THEME = "theme-ios-hig-card"
+LEGACY_THEME = "theme-ios-hig-card"
+DEFAULT_THEME = SHOWCASE_THEME
 
 
 def esc(s: str) -> str:
@@ -102,47 +104,91 @@ def resources(rows):
             f'<p style="margin:0;padding:12px 16px 6px 16px;font-size:13px;font-weight:600;color:{GRAY};">资料包清单</p>{secs}</section>')
 
 
-def planet_card(planet, qr_src):
-    return (f'<section style="margin:24px 0 20px 0;padding:18px 16px;background:{FILL};border-radius:14px;">'
-            f'<p style="margin:0 0 8px 0;font-size:17px;font-weight:600;color:{TEXT};text-align:center;">完整资料包已上传知识星球</p>'
-            f'<p style="margin:0 0 14px 0;font-size:13px;color:{GRAY};line-height:1.7;text-align:center;">'
-            f'全部课件的动画视频、可编辑源文件与互动课件<br />持续更新，成员免费下载</p>'
-            f'<figure style="margin:0 0 12px 0;text-align:center;">'
-            f'<img src="{esc(qr_src)}" alt="知识星球二维码" style="width:180px;height:180px;display:block;margin:0 auto;'
-            f'border-radius:12px;border:1px solid {LINE};" />'
-            f'<figcaption style="margin-top:8px;font-size:12px;color:{GRAY3};">长按识别二维码 · 加入「{esc(planet)}」</figcaption></figure>'
-            f'<p style="margin:0;text-align:center;"><span style="display:inline-block;padding:9px 34px;background:{BLUE};'
-            f'color:#FFFFFF;border-radius:999px;font-size:14px;font-weight:600;">加入知识星球，领取全部资料</span></p></section>')
+def planet_card(planet, qr_src=None):
+    qr_html = ""
+    if qr_src:
+        qr_html = (
+            f'<figure style="margin:18px 0 0 0;text-align:center;">'
+            f'<img src="{esc(qr_src)}" alt="一堂微课知识星球二维码" style="max-width:100%;height:auto;display:block;margin:0 auto;'
+            f'border-radius:18px;border:1px solid {LINE};" />'
+            f'<figcaption style="margin-top:9px;font-size:12px;color:{GRAY3};line-height:1.6;">点击图片查看大图 · 长按保存后使用微信扫一扫</figcaption>'
+            f'</figure>')
+    return (f'<section style="margin:34px 4px 12px 4px;padding:24px 18px;background:{FILL};border-radius:22px;">'
+            f'<p style="margin:0 0 7px 0;font-size:12px;font-weight:700;color:{BLUE};letter-spacing:1.1px;text-align:center;">完整资料包</p>'
+            f'<p style="margin:0 0 9px 0;font-size:20px;font-weight:700;color:{TEXT};line-height:1.5;text-align:center;">进入「{esc(planet)}」查看</p>'
+            f'<p style="margin:0;font-size:13px;color:{GRAY};line-height:1.8;text-align:center;">'
+            f'可编辑 PPTX、课件动画、离线互动与教学设计</p>'
+            '<!-- WECHAT_MINIPROGRAM_INSERT: 在此插入知识星球原生小程序卡片 -->'
+            f'{qr_html}</section>')
 
 
-def footer():
-    return (f'<section style="margin:20px 0 0 0;text-align:center;">'
-            f'<div style="height:1px;background:{LINE};line-height:1px;font-size:0;margin:0 0 12px 0;">&nbsp;</div>'
-            f'<p style="margin:0;font-size:12px;color:{GRAY3};letter-spacing:1px;">精研AI教育，接顶制</p></section>')
-
-
-def showcase_hero(kicker, title, subtitle, chips):
-    chip_html = "".join(
-        f'<span style="display:inline-block;margin:0 6px 6px 0;padding:4px 10px;background:#F2F2F7;'
-        f'border-radius:999px;font-size:12px;color:#3A3A3C;line-height:1.5;">{esc(c)}</span>' for c in chips)
+def showcase_hero(kicker, title, subtitle, chips, cover_src=""):
+    """Education-editorial masthead inspired by YiBan's minimal education sets."""
+    cover_html = ""
+    if cover_src:
+        cover_html = (
+            '<figure style="margin:24px 0 0 0;">'
+            f'<img src="{esc(cover_src)}" alt="课件封面" style="max-width:100%;height:auto;display:block;margin:0 auto;" />'
+            '</figure>')
     return (
-        '<section style="margin:0 0 24px 0;padding:10px 12px 20px 12px;background:#FFFFFF;">'
-        f'<p style="margin:0 0 12px 0;font-size:12px;font-weight:600;color:{BLUE};letter-spacing:1.2px;line-height:1.6;">'
-        f'{esc(kicker)}</p>'
-        f'<p style="margin:0 0 12px 0;font-size:23px;font-weight:700;color:{TEXT};line-height:1.42;letter-spacing:-0.3px;">'
-        f'{esc(title)}</p>'
-        '<div style="width:42px;height:3px;margin:0 0 14px 0;background:#007AFF;border-radius:999px;line-height:3px;font-size:0;">&nbsp;</div>'
-        f'<p style="margin:0 0 14px 0;font-size:15px;color:#3A3A3C;line-height:1.8;">{esc(subtitle)}</p>'
-        f'<p style="margin:0;line-height:1;">{chip_html}</p></section>')
+        '<section style="margin:10px 8px 40px 8px;">'
+        f'<p style="margin:0 0 13px 0;text-align:center;font-size:13px;font-weight:600;color:#B4882D;'
+        f'letter-spacing:1.5px;line-height:1.7;">{esc(kicker)}</p>'
+        f'<p style="margin:0 0 14px 0;text-align:center;font-size:24px;font-weight:700;color:{TEXT};'
+        f'line-height:1.5;letter-spacing:0.4px;">{esc(title)}</p>'
+        f'<p style="margin:0;text-align:center;font-size:14px;color:{GRAY};line-height:1.85;letter-spacing:0.3px;">{esc(subtitle)}</p>'
+        f'{cover_html}</section>')
 
 
 def showcase_chapter(title, number):
     return (
-        '<section style="margin:34px 0 16px 0;padding:0 12px;">'
-        f'<p style="margin:0 0 5px 0;font-size:12px;font-weight:700;color:{BLUE};letter-spacing:1.4px;">'
-        f'CHAPTER {number:02d}</p>'
-        f'<p style="margin:0;font-size:20px;font-weight:700;color:{TEXT};line-height:1.5;">{esc(title)}</p>'
+        '<section style="margin:0 8px 22px 8px;text-align:center;">'
+        f'<p style="margin:0 0 6px 0;font-size:17px;font-weight:700;color:#D2A13A;letter-spacing:2px;line-height:1.5;">'
+        f'{number:02d}</p>'
+        f'<p style="margin:0;font-size:20px;font-weight:700;color:{TEXT};line-height:1.55;letter-spacing:0.5px;">{esc(title)}</p>'
         '</section>')
+
+
+def showcase_subsection(title):
+    page_range, separator, heading = title.partition("｜")
+    if not separator:
+        page_range, heading = "", title
+    range_html = (f'<p style="margin:0 0 8px 0;font-size:12px;color:#8A7961;letter-spacing:1px;line-height:1.6;">{esc(page_range)} 页</p>'
+                  if page_range else "")
+    return (
+        '<section style="margin:0 8px 26px 8px;text-align:center;">'
+        f'{range_html}'
+        f'<p style="margin:0;font-size:18px;font-weight:600;color:#334F50;line-height:1.7;letter-spacing:0.2px;">{esc(heading)}</p>'
+        '</section>')
+
+
+def showcase_block_open(title, number):
+    """One paper-like block per editorial chapter, never one card per image."""
+    tones = {"课件简介": "#FAF6EC", "AI 视频": "#F1F5F8",
+             "HTML 互动": "#EEF5F0", "资料包内容": "#FAF6EC"}
+    tone = tones.get(title, "#FFFFFF")
+    padding = "24px 0 0" if title == "PPT 视觉展示" else "22px 12px 6px"
+    return (f'<section style="margin:0 0 26px 0;padding:{padding};background:{tone};">'
+            + showcase_chapter(title, number))
+
+
+GROUP_TONES = ("#F5F3EC", "#EFF4F7", "#EEF4F0", "#FAF3E9")
+
+
+def showcase_group_heading(title, number):
+    """分组小节标题（自包含，不带背景大块）；返回 (HTML, 本组底色)。"""
+    tone = GROUP_TONES[(number - 1) % 4]
+    page_range, separator, heading = title.partition("｜")
+    if not separator:
+        page_range, heading = "", title
+    range_html = (f'<p style="margin:0 0 6px 0;font-size:12px;color:#8A7961;letter-spacing:1px;line-height:1.6;">{esc(page_range)} 页</p>'
+                  if page_range else "")
+    html = (
+        '<section style="margin:26px 8px 14px 8px;text-align:center;">'
+        f'{range_html}'
+        f'<p style="margin:0;font-size:18px;font-weight:600;color:#334F50;line-height:1.7;letter-spacing:0.2px;">{esc(heading)}</p>'
+        '</section>')
+    return html, tone
 
 
 def showcase_paragraph(text):
@@ -150,85 +196,86 @@ def showcase_paragraph(text):
     while "**" in text:
         text = text.replace("**", f'<strong style="color:{BLUE};font-weight:600;">', 1).replace("**", "</strong>", 1)
     return (
-        '<section style="margin:0 0 16px 0;padding:0 12px;">'
-        f'<p style="margin:0;font-size:15px;color:{TEXT};line-height:1.9;text-align:justify;">{text}</p></section>')
+        '<section style="margin:0 0 12px 0;padding:0 12px;">'
+        f'<p style="margin:0;font-size:16px;color:{TEXT};line-height:1.85;text-align:justify;letter-spacing:0.3px;">{text}</p></section>')
 
 
 def showcase_tip(label, content):
     return (
-        '<section style="margin:4px 8px 22px 8px;padding:15px 16px;background:#F2F7FF;border-left:3px solid #007AFF;'
-        'border-radius:4px 16px 16px 4px;">'
-        f'<p style="margin:0 0 6px 0;font-size:12px;font-weight:700;color:{BLUE};letter-spacing:1px;">{esc(label)}</p>'
-        f'<p style="margin:0;font-size:16px;font-weight:600;color:{TEXT};line-height:1.75;">{esc(content)}</p></section>')
+        '<section style="margin:8px 12px 30px 12px;padding:18px 20px;background:#FBF8F0;'
+        'border-left:3px solid #D2A13A;border-radius:0 12px 12px 0;">'
+        f'<p style="margin:0 0 8px 0;font-size:12px;font-weight:700;color:#B4882D;letter-spacing:1px;">{esc(label)}</p>'
+        f'<p style="margin:0;font-size:17px;font-weight:600;color:{TEXT};line-height:1.85;'
+        f'font-family:{KAITI};letter-spacing:0.5px;">{esc(content)}</p></section>')
 
 
-def showcase_media(src, caption, is_gif):
-    kind = "动态演示" if is_gif else "课件实景"
+def showcase_media(src, caption, is_gif, tone=""):
+    """幻灯片：每张独立卡片（组底色+圆角+卡内说明）；GIF：开放式宽幅。"""
+    caption_text = esc(caption or "")
+    alt_text = esc(caption or "配图")
+    card_style = (f'padding:10px 10px 8px 10px;background:{tone};border-radius:14px;'
+                  if tone else f'padding:10px;background:{FILL};border-radius:14px;')
+    if is_gif:
+        return (
+            '<section style="margin:10px 0 20px 0;">'
+            '<figure style="margin:0;">'
+            f'<img src="{esc(src)}" alt="{alt_text}" style="max-width:100%;height:auto;display:block;margin:0 auto;'
+            'background:#FFFFFF;" />'
+            f'<figcaption style="margin:8px 8px 0 8px;text-align:center;font-size:12px;color:{GRAY3};line-height:1.7;">{caption_text}</figcaption>'
+            '</figure></section>')
+    if "互动" in (caption or "") and not (caption or "").startswith("第"):
+        label = ('<p style="margin:0 0 8px 0;text-align:center;font-size:12px;font-weight:600;color:#278273;'
+                 'letter-spacing:0.8px;">HTML · 离线互动</p>')
+    else:
+        label = ""
     return (
-        '<section style="margin:4px 4px 24px 4px;padding:8px 8px 12px 8px;background:#F2F2F7;border-radius:18px;">'
-        '<figure style="margin:0;">'
-        f'<img src="{esc(src)}" alt="{esc(caption or "配图")}" style="max-width:100%;height:auto;display:block;margin:0 auto;'
-        'border-radius:13px;border:1px solid #E5E5EA;background:#FFFFFF;" />'
-        f'<figcaption style="margin:10px 4px 0 4px;font-size:12px;color:{GRAY};line-height:1.65;">'
-        f'<span style="display:inline-block;margin-right:7px;padding:2px 7px;background:#FFFFFF;border-radius:999px;'
-        f'font-size:11px;font-weight:600;color:{BLUE};">{kind}</span>{esc(caption or "")}</figcaption>'
-        '</figure></section>')
+        f'<section style="margin:0 0 14px 0;{card_style}">'
+        f'{label}<figure style="margin:0;">'
+        f'<img src="{esc(src)}" alt="{alt_text}" style="max-width:100%;height:auto;display:block;margin:0 auto;'
+        f'border-radius:8px;" />'
+        f'<figcaption style="margin:8px 4px 2px 4px;text-align:center;font-size:12px;color:{GRAY};line-height:1.6;">'
+        f'{caption_text}</figcaption></figure></section>')
 
 
 def showcase_metrics(pairs):
-    width = 100 / max(len(pairs), 1)
-    tds = "".join(
-        f'<td style="width:{width:.2f}%;border:none;vertical-align:top;padding:12px 3px;">'
-        f'<p style="margin:0;font-size:21px;font-weight:700;color:{TEXT};line-height:1.2;">{esc(v)}</p>'
-        f'<p style="margin:5px 0 0 0;font-size:11px;color:{GRAY};line-height:1.4;">{esc(k)}</p></td>'
-        for v, k in pairs)
+    summary = "　·　".join(f"{esc(value)} {esc(label)}" for value, label in pairs)
     return (
-        '<section style="margin:2px 4px 24px 4px;padding:5px;background:#F2F2F7;border-radius:18px;">'
-        f'<table style="width:100%;border-collapse:collapse;text-align:center;background:#FFFFFF;border-radius:14px;"><tr>{tds}</tr></table>'
+        '<section style="margin:4px 12px 24px 12px;padding:10px 0;">'
+        f'<p style="margin:0;text-align:center;font-size:13px;font-weight:600;color:#5F5A50;line-height:1.9;">{summary}</p>'
         '</section>')
 
 
 def showcase_resources(rows):
-    sections = ""
+    items = []
     for i, (name, meta) in enumerate(rows):
-        border = 'border-bottom:1px solid #E5E5EA;' if i < len(rows) - 1 else ""
-        sections += (
-            f'<section style="padding:13px 15px;{border}">'
-            f'<p style="margin:0 0 4px 0;font-size:15px;font-weight:600;color:{TEXT};line-height:1.55;">{esc(name)}</p>'
-            f'<p style="margin:0;font-size:12px;color:{GRAY};line-height:1.6;">{esc(meta)}</p></section>')
+        clean_name = name.lstrip("🎬📝🧩📄 ")
+        file_type = meta.split("·", 1)[0].strip().upper()
+        divider = 'border-bottom:1px solid #EFE7D2;' if i < len(rows) - 1 else ""
+        items.append(
+            f'<section style="padding:15px 4px;{divider}">'
+            f'<p style="margin:0 0 5px 0;font-size:11px;font-weight:700;color:#B4882D;letter-spacing:1.2px;line-height:1.5;">'
+            f'{file_type}</p>'
+            f'<p style="margin:0 0 5px 0;font-size:16px;font-weight:600;color:{TEXT};line-height:1.6;">{esc(clean_name)}</p>'
+            f'<p style="margin:0;font-size:13px;color:{GRAY};line-height:1.7;">{esc(meta)}</p></section>')
     return (
-        '<section style="margin:0 4px 24px 4px;padding:5px;background:#F2F2F7;border-radius:18px;">'
-        '<section style="background:#FFFFFF;border-radius:14px;overflow:hidden;">'
-        f'<p style="margin:0;padding:14px 15px 6px 15px;font-size:12px;font-weight:700;color:{BLUE};letter-spacing:1px;">PACKAGE CONTENTS</p>'
-        f'{sections}</section></section>')
+        '<section style="margin:6px 12px 34px 12px;padding:8px 18px;background:#FAF6EC;border-radius:16px;">'
+        '<p style="margin:0 0 4px 0;font-size:12px;font-weight:700;color:#B4882D;letter-spacing:1.5px;">资 料 包</p>'
+        + "".join(items) + '</section>')
 
 
-def showcase_planet_card(planet, qr_src):
-    return (
-        '<section style="margin:34px 4px 22px 4px;padding:20px 16px;background:#F2F2F7;border-radius:20px;">'
-        f'<p style="margin:0 0 7px 0;text-align:center;font-size:12px;font-weight:700;color:{BLUE};letter-spacing:1.2px;">完整资料包</p>'
-        f'<p style="margin:0 0 9px 0;text-align:center;font-size:19px;font-weight:700;color:{TEXT};line-height:1.5;">进入「{esc(planet)}」继续学习</p>'
-        f'<p style="margin:0 0 14px 0;text-align:center;font-size:13px;color:{GRAY};line-height:1.75;">'
-        '课件动画视频、可编辑源文件、离线互动与教学设计均已整理</p>'
-        '<!-- WECHAT_MINIPROGRAM_INSERT: 在此插入知识星球原生小程序卡片；保留下方二维码作为回退入口 -->'
-        '<section style="margin:0 0 14px 0;padding:11px 12px;background:#FFFFFF;border-radius:12px;">'
-        f'<p style="margin:0;font-size:12px;color:{GRAY};line-height:1.65;text-align:center;">发布草稿时，请在本提示卡上方插入知识星球小程序卡片</p>'
-        '</section>'
-        f'<figure style="margin:0;text-align:center;">'
-        f'<img src="{esc(qr_src)}" alt="知识星球二维码" style="width:168px;max-width:100%;height:auto;display:block;margin:0 auto;'
-        'border-radius:14px;border:1px solid #E5E5EA;background:#FFFFFF;" />'
-        f'<figcaption style="margin-top:9px;font-size:12px;color:{GRAY3};line-height:1.6;">'
-        f'若小程序卡片暂未显示，可长按识别二维码进入「{esc(planet)}」</figcaption></figure></section>')
+def showcase_planet_card(planet, card_src):
+    """底部知识星球官方邀请卡（整卡图片，长按识别）。"""
+    qr_html = ""
+    if card_src:
+        qr_html = (
+            '<figure style="margin:0;text-align:center;">'
+            f'<img src="{esc(card_src)}" alt="{esc(planet)} 知识星球邀请卡" style="max-width:100%;height:auto;'
+            'display:block;margin:0 auto;border-radius:14px;border:1px solid #E4EAF1;" />'
+            '</figure>')
+    return (f'<section style="margin:8px 0 12px 0;padding:6px 0 0 0;">{qr_html}</section>')
 
 
-def showcase_footer():
-    return (
-        '<section style="margin:22px 12px 4px 12px;text-align:center;">'
-        '<div style="height:1px;background:#E5E5EA;line-height:1px;font-size:0;margin:0 0 14px 0;">&nbsp;</div>'
-        f'<p style="margin:0;font-size:12px;color:{GRAY3};letter-spacing:1px;">精研AI教育，接顶制</p></section>')
-
-
-def build(md_text: str, planet: str, planet_qr: str):
+def build(md_text: str, planet: str, planet_qr: str | None = None):
     body, assets = [], []
     title = kicker = subtitle = ""
     chips = []
@@ -283,7 +330,6 @@ def build(md_text: str, planet: str, planet_qr: str):
             body.append(resources(rows))
         elif ln.lstrip().startswith("!["):
             flush_para()
-            import re
             m = re.match(r"!\[(.*?)\]\((.+?)\)", ln.strip())
             caption, src = m.group(1), m.group(2)
             reg_local(src)
@@ -297,19 +343,21 @@ def build(md_text: str, planet: str, planet_qr: str):
         raise ValueError("article metadata must include #TITLE, #KICKER and #SUBTITLE")
     body.insert(0, hero(kicker, title, subtitle, chips))
     reg_local(planet_qr)
-
     html = (f'<section style="background:#FFFFFF;padding:20px 4px;color:{TEXT};'
             f'font-family:{FONT};">' + "".join(body) +
-            planet_card(planet, planet_qr) + footer() + '</section>')
+            planet_card(planet, planet_qr) + '</section>')
     return html, assets
 
 
-def build_showcase(md_text: str, planet: str, planet_qr: str):
+def build_showcase(md_text: str, planet: str, planet_qr: str | None = None):
     """Render the opt-in wechat-ios-showcase@1.0 theme without changing legacy output."""
     body, assets = [], []
-    title = kicker = subtitle = ""
+    title = kicker = subtitle = cover = ""
     chips = []
     chapter_no = 0
+    chapter_open = False
+    group_no = 0
+    group_tone = GROUP_TONES[0]
 
     def reg_local(src):
         if src and not src.startswith(("http://", "https://")) and src not in assets:
@@ -333,10 +381,23 @@ def build_showcase(md_text: str, planet: str, planet_qr: str):
             flush_para(); kicker = ln[len("#KICKER:"):].strip()
         elif ln.startswith("#SUBTITLE:"):
             flush_para(); subtitle = ln[len("#SUBTITLE:"):].strip()
+        elif ln.startswith("#COVER:"):
+            flush_para(); cover = ln[len("#COVER:"):].strip(); reg_local(cover)
         elif ln.startswith("#CHIPS:"):
             flush_para(); chips = [c.strip() for c in ln[len("#CHIPS:"):].split(",") if c.strip()]
         elif ln.startswith("## "):
-            flush_para(); chapter_no += 1; body.append(showcase_chapter(ln[3:].strip(), chapter_no))
+            flush_para()
+            if chapter_open:
+                body.append('</section>')
+            chapter_no += 1
+            group_no = 0
+            body.append(showcase_block_open(ln[3:].strip(), chapter_no))
+            chapter_open = True
+        elif ln.startswith("### "):
+            flush_para()
+            group_no += 1
+            heading, group_tone = showcase_group_heading(ln[4:].strip(), group_no)
+            body.append(heading)
         elif ln.startswith(">TIP:"):
             flush_para()
             label, content = ln[len(">TIP:"):].split("|", 1)
@@ -365,7 +426,7 @@ def build_showcase(md_text: str, planet: str, planet_qr: str):
                 raise ValueError(f"invalid image syntax: {ln}")
             caption, src = match.group(1), match.group(2)
             reg_local(src)
-            body.append(showcase_media(src, caption, src.lower().endswith(".gif")))
+            body.append(showcase_media(src, caption, src.lower().endswith(".gif"), group_tone))
         else:
             para_buf.append(ln.strip())
         i += 1
@@ -373,11 +434,13 @@ def build_showcase(md_text: str, planet: str, planet_qr: str):
 
     if not all((title, kicker, subtitle)):
         raise ValueError("article metadata must include #TITLE, #KICKER and #SUBTITLE")
-    body.insert(0, showcase_hero(kicker, title, subtitle, chips))
+    if chapter_open:
+        body.append('</section>')
+    body.insert(0, showcase_hero(kicker, title, subtitle, chips, cover))
     reg_local(planet_qr)
     article_html = (
-        f'<section style="background:#FFFFFF;padding:18px 4px;color:{TEXT};font-family:{FONT};">'
-        + "".join(body) + showcase_planet_card(planet, planet_qr) + showcase_footer() + '</section>')
+        f'<section style="background:#FFFFFF;padding:18px 12px;color:{TEXT};font-family:{FONT};">'
+        + "".join(body) + showcase_planet_card(planet, planet_qr) + '</section>')
     return article_html, assets
 
 
@@ -386,11 +449,11 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--article", required=True, help="article.md 路径")
     ap.add_argument("--planet", default="一堂微课")
-    ap.add_argument("--planet-qr", required=True, help="星球二维码图片路径")
+    ap.add_argument("--planet-qr", help="知识星球官方邀请卡图片（整卡）")
     ap.add_argument("--out", required=True, help="输出 article.html 路径")
     ap.add_argument("--preview-out", help="可选：输出 640px 本地预览页")
-    ap.add_argument("--theme", choices=(DEFAULT_THEME, SHOWCASE_THEME), default=DEFAULT_THEME,
-                    help=f"主题；默认 {DEFAULT_THEME}，精品展示请显式选 {SHOWCASE_THEME}")
+    ap.add_argument("--theme", choices=(SHOWCASE_THEME, LEGACY_THEME), default=DEFAULT_THEME,
+                    help=f"主题；默认 {DEFAULT_THEME}，旧版需显式选 {LEGACY_THEME}")
     args = ap.parse_args()
 
     source = Path(args.article).read_text(encoding="utf-8")
@@ -407,7 +470,7 @@ def main():
         json.dumps({
             "theme_id": args.theme,
             "version": "1.0" if args.theme == SHOWCASE_THEME else None,
-            "selection": "explicit" if args.theme == SHOWCASE_THEME else "default",
+            "selection": "default" if args.theme == DEFAULT_THEME else "explicit",
             "miniprogram_insert": "manual_after_draft" if args.theme == SHOWCASE_THEME else None,
             "miniprogram_anchor": "WECHAT_MINIPROGRAM_INSERT" if args.theme == SHOWCASE_THEME else None,
         }, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -416,9 +479,9 @@ def main():
             '<!doctype html><html lang="zh-CN"><head><meta charset="utf-8">'
             '<meta name="viewport" content="width=device-width,initial-scale=1">'
             '<title>公众号文章预览</title></head>'
-            '<body style="margin:0;background:#E8E8ED;">'
-            '<section style="box-sizing:border-box;width:640px;max-width:100%;margin:24px auto;'
-            'padding:16px 20px;background:#FFFFFF;border-radius:8px;">'
+            '<body style="margin:0;background:#FFFFFF;">'
+            '<section style="box-sizing:border-box;width:640px;max-width:100%;margin:0 auto;'
+            'padding:16px 20px;background:#FFFFFF;">'
             f'{html}</section></body></html>'
         )
         preview_out = Path(args.preview_out)

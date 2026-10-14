@@ -11,6 +11,8 @@ import html
 import json
 import os
 import re
+import shutil
+import subprocess
 import time
 from pathlib import Path
 from typing import Any, Dict, Iterable, Tuple
@@ -109,22 +111,51 @@ def upload_permanent(token: str, file_path: Path, media_type: str,
     return payload["media_id"]
 
 
-def upload_article_image(token: str, file_path: Path) -> str:
+def make_wechat_safe_image(file_path: Path, work_dir: Path) -> Path:
+    """Return an article-image upload copy below the one-mebibyte contract.
+
+    Slides should already comply.  Animated GIFs occasionally do not, so make
+    a publication-only copy rather than changing the approved project asset.
+    """
+    if file_path.stat().st_size < 1 * 1024 * 1024:
+        return file_path
+    if file_path.suffix.lower() != ".gif":
+        raise SystemExit(f"article image must be smaller than 1 MiB: {file_path}")
+
+    ffmpeg = shutil.which("ffmpeg")
+    if not ffmpeg:
+        raise SystemExit(f"animated GIF exceeds 1 MiB and ffmpeg is unavailable: {file_path}")
+    work_dir.mkdir(parents=True, exist_ok=True)
+    target = work_dir / f"{file_path.stem}_wechat.gif"
+    # Keep the demonstration animated, while reducing the publication copy's
+    # sampling rate and width.  Do not mutate the source animation.
+    command = [
+        ffmpeg, "-y", "-i", str(file_path), "-vf",
+        "fps=4,scale='min(480,iw)':-2:flags=lanczos,split[s0][s1];"
+        "[s0]palettegen=max_colors=32[p];[s1][p]paletteuse=dither=none",
+        "-loop", "0", str(target),
+    ]
+    subprocess.run(command, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    if not target.is_file() or target.stat().st_size >= 1 * 1024 * 1024:
+        raise SystemExit(f"could not create a GIF below 1 MiB for WeChat: {file_path}")
+    return target
+
+
+def upload_article_image(token: str, file_path: Path, upload_work_dir: Path) -> str:
     """Upload an image for direct use in article HTML."""
     if not file_path.is_file():
         raise SystemExit(f"file not found: {file_path}")
-    if file_path.stat().st_size >= 1 * 1024 * 1024:
-        raise SystemExit(f"article image must be smaller than 1 MiB: {file_path}")
-    suffix = file_path.suffix.lower()
-    if suffix not in {".jpg", ".jpeg", ".png"}:
-        raise SystemExit(f"article image must be jpg/png: {file_path}")
-    mime = "image/png" if suffix == ".png" else "image/jpeg"
-    with file_path.open("rb") as handle:
+    upload_path = make_wechat_safe_image(file_path, upload_work_dir)
+    suffix = upload_path.suffix.lower()
+    if suffix not in {".jpg", ".jpeg", ".png", ".gif"}:
+        raise SystemExit(f"article image must be jpg/png/gif: {file_path}")
+    mime = {".png": "image/png", ".gif": "image/gif"}.get(suffix, "image/jpeg")
+    with upload_path.open("rb") as handle:
         payload = request_json(
             "POST",
             "/cgi-bin/media/uploadimg",
             params={"access_token": token},
-            files={"media": (file_path.name, handle, mime)},
+            files={"media": (upload_path.name, handle, mime)},
             json_body=None,
             form_data=None,
         )
@@ -133,19 +164,17 @@ def upload_article_image(token: str, file_path: Path) -> str:
 
 def validate_copy(copy_text: str) -> list[str]:
     lines = [line.strip() for line in copy_text.splitlines() if line.strip()]
-    if len(lines) != 2:
-        raise SystemExit("copy.txt must contain exactly two non-empty lines")
+    if len(lines) != 1:
+        raise SystemExit("copy.txt must contain exactly one non-empty course-information line")
     if not lines[0].startswith("教材：") or "年级：" not in lines[0] or "册" not in lines[0]:
         raise SystemExit("copy.txt first line must contain 教材、年级和上/下册")
     if len(lines[0]) > 120:
         raise SystemExit("copy.txt first line is unexpectedly long")
-    if lines[1] != "精研AI教育，接顶制":
-        raise SystemExit("copy.txt second line must be 精研AI教育，接顶制")
     return lines
 
 
 def build_article(lines: Iterable[str], image_urls: Iterable[str] = ()) -> str:
-    summary, brand = [html.escape(item) for item in lines]
+    summary = html.escape(next(iter(lines)))
     slides = "\n".join(
         f'  <p style="margin:16px 0 0;"><img src="{html.escape(url, quote=True)}" '
         'style="display:block;width:100%;height:auto;" /></p>'
@@ -153,9 +182,44 @@ def build_article(lines: Iterable[str], image_urls: Iterable[str] = ()) -> str:
     )
     return f'''<section style="background:#FBF8F2;padding:24px 20px;color:#20252B;line-height:1.8;font-size:16px;">
   <p style="margin:0 0 8px;">{summary}</p>
-  <p style="margin:0 0 8px;">{brand}</p>
 {slides}
 </section>'''
+
+
+def upload_article_assets(token: str, article_html: str, asset_root: Path,
+                          upload_work_dir: Path) -> tuple[str, int]:
+    """Upload each local `<img>` source and substitute its WeChat URL.
+
+    The approved showcase article intentionally repeats a few slide images. A
+    path-to-URL map preserves those repeats in HTML without re-uploading them.
+    """
+    source_pattern = re.compile(r'(<img\b[^>]*\bsrc=["\'])([^"\']+)(["\'])', re.I)
+    uploaded: Dict[str, str] = {}
+    image_nodes = 0
+
+    def substitute(match: re.Match[str]) -> str:
+        nonlocal image_nodes
+        image_nodes += 1
+        source = match.group(2)
+        if re.match(r"https?://", source, re.I):
+            return match.group(0)
+        relative = Path(source.replace("/", os.sep))
+        if relative.is_absolute() or ".." in relative.parts:
+            raise SystemExit(f"article image source must be a safe relative path: {source}")
+        asset_path = (asset_root / relative).resolve()
+        try:
+            asset_path.relative_to(asset_root.resolve())
+        except ValueError as exc:
+            raise SystemExit(f"article image escaped asset root: {source}") from exc
+        key = str(asset_path).lower()
+        if key not in uploaded:
+            uploaded[key] = upload_article_image(token, asset_path, upload_work_dir)
+        return f"{match.group(1)}{uploaded[key]}{match.group(3)}"
+
+    rendered = source_pattern.sub(substitute, article_html)
+    if image_nodes == 0:
+        raise SystemExit("custom article must contain at least one <img> node")
+    return rendered, image_nodes
 
 
 def add_draft(token: str, title: str, content: str, cover_id: str, digest: str) -> str:
@@ -208,6 +272,10 @@ def main() -> int:
     parser.add_argument("--cover", required=True, type=Path)
     parser.add_argument("--slides-dir", required=True, type=Path,
                         help="Directory containing ordered slide_*.jpg/png images")
+    parser.add_argument("--article-file", type=Path,
+                        help="Approved rich article HTML. Local img sources are uploaded and replaced.")
+    parser.add_argument("--asset-root", type=Path,
+                        help="Root for local img sources in --article-file (defaults to that file's folder)")
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
     parser.add_argument("--mode", choices=["draft", "publish"],
@@ -220,7 +288,8 @@ def main() -> int:
     args.output_dir.mkdir(parents=True, exist_ok=True)
 
     if args.dry_run:
-        article = build_article(lines)
+        article = (args.article_file.read_text(encoding="utf-8")
+                   if args.article_file else build_article(lines))
         (args.output_dir / "article.html").write_text(article, encoding="utf-8")
         (args.output_dir / "article.md").write_text(
             "\n".join(lines) +
@@ -240,8 +309,25 @@ def main() -> int:
     )
     if not slide_paths:
         raise SystemExit(f"no slide images found in {args.slides_dir}")
-    slide_urls = [upload_article_image(token, path) for path in slide_paths]
-    article = build_article(lines, slide_urls)
+    if args.article_file:
+        if not args.article_file.is_file():
+            raise SystemExit(f"article file not found: {args.article_file}")
+        article_source = args.article_file.read_text(encoding="utf-8")
+        if re.search(r"<\s*(video|script|iframe)\b", article_source, re.I):
+            raise SystemExit("custom article may not contain video, script, or iframe nodes")
+        asset_root = (args.asset_root or args.article_file.parent).resolve()
+        if not asset_root.is_dir():
+            raise SystemExit(f"article asset root not found: {asset_root}")
+        article, expected_image_count = upload_article_assets(
+            token, article_source, asset_root, args.output_dir / ".wechat_upload_assets"
+        )
+    else:
+        slide_urls = [upload_article_image(token, path, args.output_dir / ".wechat_upload_assets")
+                      for path in slide_paths]
+        article = build_article(lines, slide_urls)
+        expected_image_count = len(slide_paths)
+    if re.search(r'\bsrc=["\'](?!https?://)', article, re.I):
+        raise RuntimeError("article still contains a non-WeChat image source")
     (args.output_dir / "article.html").write_text(article, encoding="utf-8")
     (args.output_dir / "article.md").write_text(
         "\n".join(lines) +
@@ -250,10 +336,10 @@ def main() -> int:
     draft_id = add_draft(token, args.title, article, cover_id, lines[0])
     draft = get_draft(token, draft_id)
     draft_text = json.dumps(draft, ensure_ascii=False)
-    if "精研AI教育，接顶制" not in draft_text or "教材：" not in draft_text:
+    if "教材：" not in draft_text:
         raise RuntimeError("draft verification failed: WeChat did not retain the Chinese article text")
-    if slide_paths and draft_text.count("<img") < len(slide_paths):
-        raise RuntimeError("draft verification failed: WeChat did not retain all slide images")
+    if draft_text.count("<img") < expected_image_count:
+        raise RuntimeError("draft verification failed: WeChat did not retain all article images")
 
     result: Dict[str, Any] = {
         "status": "draft_created",
@@ -261,6 +347,7 @@ def main() -> int:
         "article_path": str(args.output_dir / "article.html"),
         "cover_media_id": cover_id,
         "slide_count": len(slide_paths),
+        "article_image_count": expected_image_count,
     }
     (args.output_dir / "publish_result.json").write_text(
         json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
