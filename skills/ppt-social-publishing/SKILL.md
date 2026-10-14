@@ -180,3 +180,19 @@ image-to-editable-ppt
 - 数据回流是手动触发步骤（用户说一声拉一次），不做定时自动化；
 - 只读采集，遵守 xhs-research 的低频与账号隔离约定；
 - 多套课件的 performance 数据对比可反哺下一套的选题与大纲（高互动教学点优先），结论记入新立项的 `working/xhs_research.md`，不臆测因果。
+
+## 知识星球发布节点
+
+发布素材包到用户的知识星球（私域沉淀：动画视频 + 可编辑源文件供成员下载）。使用官方 zsxq-cli（OAuth 授权，Token 在系统钥匙串）。
+
+### 固定配置
+
+- 星球：`一堂微课`（group-id `48885448528888`）；更换星球时更新本节
+- 认证：`zsxq-cli auth login`（OAuth 链接+确认码，用户浏览器完成）；失效时重新授权
+
+### 发布规程
+
+1. 写 Markdown 文案 `outputs/social/zsxq/copy.md`：标题（课题+课时+教材版本）、摘要、资料包清单、品牌行「精研AI教育，接顶制」——不用 `#` 话题标签语法
+2. 打包资料包 zip：动画视频（竖版 BGM 版 mp4）+ 可编辑 PPTX；**mp4 不能直传附件**（报“文件类型不支持”），必须打包 zip
+3. `zsxq-cli topic +create --group-id 48885448528888 --markdown-file copy.md --files 资料包.zip`（附件上传仅 CLI 通道，MCP 不可）
+4. 发布前经用户确认；记录 topic_id 到 `publish/manifest.json` 的 `zsxq` 字段
