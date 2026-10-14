@@ -35,55 +35,43 @@
   },
   "manual_platforms": {
     "xiaohongshu": {
-      "video": {
-        "path": "outputs/social/xiaohongshu/video_3x4.mp4",
-        "sha256": "7d189be58dd75df66cd983e1cbab636d4356b3f3841a7114e209186bdd26b482",
-        "bytes": 4103048,
-        "size": "1080x1440",
-        "ratio": "3:4",
-        "source": "返修后重渲 BGM 版中央裁切"
-      },
+      "video": "outputs/social/video_9x16.mp4",
       "copy": {
         "path": "outputs/social/xiaohongshu/copy.txt",
         "sha256": "ef22d32405122d01fa6251210d7315cb612a111331a4288a0da87a6fb9c7fa7b",
         "bytes": 324,
         "lines": 3,
         "tags": 5
-      }
+      },
+      "video_sha256": "bc62600826ae859e0fcb6eced073f81f36dc65f83678a3f7cf52c52d09017fb7",
+      "canvas": "1080x1920",
+      "note": "三平台共用唯一 9:16（完整幻灯片居中+模糊衬底，无裁切）"
     },
     "douyin": {
-      "video": {
-        "path": "outputs/social/douyin/video_9x16.mp4",
-        "sha256": "bcb4230c8114ebba5e7362acff2171e46972b278e79bfa294cfbad77cdace4d6",
-        "bytes": 4287281,
-        "size": "1080x1920",
-        "ratio": "9:16",
-        "source": "返修后重渲 BGM 版中央裁切"
-      },
+      "video": "outputs/social/video_9x16.mp4",
       "copy": {
         "path": "outputs/social/douyin/copy.txt",
         "sha256": "ef22d32405122d01fa6251210d7315cb612a111331a4288a0da87a6fb9c7fa7b",
         "bytes": 324,
         "lines": 3,
         "tags": 5
-      }
+      },
+      "video_sha256": "bc62600826ae859e0fcb6eced073f81f36dc65f83678a3f7cf52c52d09017fb7",
+      "canvas": "1080x1920",
+      "note": "三平台共用唯一 9:16（完整幻灯片居中+模糊衬底，无裁切）"
     },
     "weixin_channels": {
-      "video": {
-        "path": "outputs/social/weixin_channels/video_9x16.mp4",
-        "sha256": "bcb4230c8114ebba5e7362acff2171e46972b278e79bfa294cfbad77cdace4d6",
-        "bytes": 4287281,
-        "size": "1080x1920",
-        "ratio": "9:16",
-        "source": "返修后重渲 BGM 版中央裁切"
-      },
+      "video": "outputs/social/video_9x16.mp4",
       "copy": {
         "path": "outputs/social/weixin_channels/copy.txt",
         "sha256": "ef22d32405122d01fa6251210d7315cb612a111331a4288a0da87a6fb9c7fa7b",
         "bytes": 324,
         "lines": 3,
         "tags": 5
-      }
+      },
+      "video_sha256": "bc62600826ae859e0fcb6eced073f81f36dc65f83678a3f7cf52c52d09017fb7",
+      "canvas": "1080x1920",
+      "note": "三平台共用唯一 9:16（完整幻灯片居中+模糊衬底，无裁切）"
     }
   },
   "wechat_official_account": {
