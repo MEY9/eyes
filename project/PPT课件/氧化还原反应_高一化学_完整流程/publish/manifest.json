@@ -135,5 +135,10 @@
     "run-video-redox-001",
     "run-publication-redox-001"
   ],
-  "credentials": "WECHAT_MP_APPID/SECRET 仅存 eyes/.env，不入 manifest/Git/日志"
+  "credentials": "WECHAT_MP_APPID/SECRET 仅存 eyes/.env，不入 manifest/Git/日志",
+  "zsxq": {
+    "topic_id": "55521554511582524",
+    "url": "https://wx.zsxq.com/group/48885448528888/topic/55521554511582524",
+    "planet": "一堂微课"
+  }
 }
