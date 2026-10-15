@@ -192,7 +192,7 @@ image-to-editable-ppt
 
 1. 写**纯文本**文案 `outputs/social/zsxq/copy.txt`：标题（课题+课时+教材版本）、摘要、资料包清单、品牌行「精研AI教育，接顶制」。**禁止 Markdown 符号**（不用 `##`、`**`、`-` 列表符）；分节用空行，列举用 ①②③ 或 emoji；话题 ID 记入 manifest
 2. **主题必须带课程封面图**：用课件封面页（slide_01）生成竖版 3:4 配图（1080×1440，幻灯片等比居中+模糊衬底），避免信息流里只露附件的 UI 文件图标；生成命令见 `scripts/make_gifs.py` 同目录说明或 ffmpeg：`scale=1080:608[main]; scale=1080:1440,boxblur=24:2[bg]; overlay 居中`
-3. 打包资料包 zip：动画视频（竖版 BGM 版 mp4）+ 可编辑 PPTX；**mp4 不能直传附件**（报“文件类型不支持”），必须打包 zip；发布时 `--files "封面图.jpg,资料包.zip"`（图在前）
+3. 打包资料包 zip：**四件套，与公众号资料清单逐项一致**——① 课件动画视频（竖版 BGM 版 mp4）② 可编辑课件 PPTX ③ 互动练习 HTML（单文件）④ 教学设计 DOCX；**mp4 不能直传附件**（报“文件类型不支持”），必须打包 zip；发布时 `--files "封面图.jpg,资料包.zip"`（图在前）。星球文案与公众号资料清单必须同批核对，不得只放两件
 4. 发布用**纯文本**：`zsxq-cli topic +create --group-id 48885448528888 --text "$(cat copy.txt)" --files 封面图.jpg,资料包.zip`（附件上传仅 CLI 通道，MCP 不可）。**禁用 `--markdown-file`**——星球渲染器会把《课名》自动转成“查找图书”链接元素；`--text` 直传原文，换行原样保留
 5. 发布前经用户确认；记录 topic_id 到 `publish/manifest.json` 的 `zsxq` 字段
 
