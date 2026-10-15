@@ -8,12 +8,12 @@
   #TITLE: 标题            刊头大标题
   #KICKER: 学段·教材      刊头顶部小字
   #SUBTITLE: 副题         刊头副题
-  #CHIPS: a,b,c           刊头胶囊章
+  #CHIPS: a,b,c           兼容旧稿；精品主题不渲染胶囊标签
   ## 章节标题             章节大标题块
-  >TIP: 标签|内容         提示卡（口诀/重点）
-  :::metrics 19|课件页,40|动画组 :::   指标条
+  >TIP: 标签|内容         提示段（口诀/重点）
+  :::metrics 19|课件页,40|动画组 :::   一行课程信息
   :::resources ... :::    资料清单（每行 `名称 | 元信息`，首字符为 emoji）
-  ![说明](路径)           图片：.gif → GIF 卡；其他 → 整页图卡
+  ![说明](路径)           图片：接近正文全宽展示
   普通段落文本            正文段（支持 **加粗蓝色**）
 
 输出: article.html（图片为本地区域路径，由发布脚本上传后替换）+ assets.json（本地素材清单）
@@ -141,7 +141,7 @@ def showcase_hero(kicker, title, subtitle, chips, cover_src=""):
 
 
 def showcase_chapter(title, number):
-    """章节编号标题：白底居中，在彩色卡片外。"""
+    """教育图文的章节题头，不使用网页分隔线或 UI 标签。"""
     return (
         '<section style="margin:0 8px 22px 8px;text-align:center;">'
         f'<p style="margin:0 0 6px 0;font-size:17px;font-weight:700;color:#D2A13A;letter-spacing:2px;line-height:1.5;">'
@@ -164,32 +164,33 @@ def showcase_subsection(title):
 
 
 def showcase_block_open(title, number):
-    """彩色内容卡：只装内容，不含章节标题（标题在卡片外白底居中）。"""
+    """完整章节纸张区块；阅读节奏来自底色和留白，而非卡片边框。"""
     tones = {"课件简介": "#FAF6EC", "AI 视频": "#F1F5F8",
              "HTML 互动": "#EEF5F0", "资料包内容": "#FAF6EC"}
     tone = tones.get(title, "#FFFFFF")
-    padding = "0" if title == "PPT 视觉展示" else "16px 12px 10px 12px"
-    radius = "" if title == "PPT 视觉展示" else "border-radius:14px;"
-    return (f'<section style="margin:0 0 26px 0;padding:{padding};background:{tone};{radius}">')
+    padding = "28px 0 0" if title == "PPT 视觉展示" else "28px 12px 8px"
+    return (f'<section style="margin:0 0 38px 0;padding:{padding};background:{tone};">'
+            + showcase_chapter(title, number))
 
 
 GROUP_TONES = ("#F5F3EC", "#EFF4F7", "#EEF4F0", "#FAF3E9")
 
 
-def showcase_group_heading(title, number):
-    """分组小节标题（自包含，不带背景大块）；返回 (HTML, 本组底色)。"""
+def showcase_group_open(title, number):
+    """PPT 长画廊的教学阶段容器，避免所有幻灯片连续铺在同一底色。"""
     tone = GROUP_TONES[(number - 1) % 4]
     page_range, separator, heading = title.partition("｜")
     if not separator:
         page_range, heading = "", title
     range_html = (f'<p style="margin:0 0 6px 0;font-size:12px;color:#8A7961;letter-spacing:1px;line-height:1.6;">{esc(page_range)} 页</p>'
                   if page_range else "")
-    html = (
-        '<section style="margin:26px 8px 14px 8px;text-align:center;">'
+    heading_html = (
+        '<section style="margin:0 8px 26px 8px;text-align:center;">'
         f'{range_html}'
         f'<p style="margin:0;font-size:18px;font-weight:600;color:#334F50;line-height:1.7;letter-spacing:0.2px;">{esc(heading)}</p>'
         '</section>')
-    return html, tone
+    return (f'<section style="margin:28px 0 38px 0;padding:26px 8px 2px;background:{tone};">'
+            + heading_html)
 
 
 def showcase_paragraph(text):
@@ -203,19 +204,16 @@ def showcase_paragraph(text):
 
 def showcase_tip(label, content):
     return (
-        '<section style="margin:8px 12px 30px 12px;padding:18px 20px;background:#FBF8F0;'
-        'border-left:3px solid #D2A13A;border-radius:0 12px 12px 0;">'
+        '<section style="margin:8px 12px 30px 12px;padding:18px 20px;background:#FBF8F0;">'
         f'<p style="margin:0 0 8px 0;font-size:12px;font-weight:700;color:#B4882D;letter-spacing:1px;">{esc(label)}</p>'
         f'<p style="margin:0;font-size:17px;font-weight:600;color:{TEXT};line-height:1.85;'
         f'font-family:{KAITI};letter-spacing:0.5px;">{esc(content)}</p></section>')
 
 
-def showcase_media(src, caption, is_gif, tone=""):
-    """幻灯片：每张独立卡片（组底色+圆角+卡内说明）；GIF：开放式宽幅。"""
+def showcase_media(src, caption, is_gif):
+    """媒体直接融入章节纸张，不为每张图套独立圆角卡片。"""
     caption_text = esc(caption or "")
     alt_text = esc(caption or "配图")
-    card_style = (f'padding:10px 10px 8px 10px;background:{tone};border-radius:14px;'
-                  if tone else f'padding:10px;background:{FILL};border-radius:14px;')
     if is_gif:
         return (
             '<section style="margin:10px 0 20px 0;">'
@@ -230,11 +228,11 @@ def showcase_media(src, caption, is_gif, tone=""):
     else:
         label = ""
     return (
-        f'<section style="margin:0 0 14px 0;{card_style}">'
+        '<section style="margin:9px 0 34px 0;">'
         f'{label}<figure style="margin:0;">'
         f'<img src="{esc(src)}" alt="{alt_text}" style="max-width:100%;height:auto;display:block;margin:0 auto;'
-        f'border-radius:8px;" />'
-        f'<figcaption style="margin:8px 4px 2px 4px;text-align:center;font-size:12px;color:{GRAY};line-height:1.6;">'
+        f'" />'
+        f'<figcaption style="margin:9px 8px 0 8px;text-align:center;font-size:12px;color:{GRAY3};line-height:1.7;">'
         f'{caption_text}</figcaption></figure></section>')
 
 
@@ -248,37 +246,37 @@ def showcase_metrics(pairs):
 
 def showcase_resources(rows):
     items = []
-    for i, (name, meta) in enumerate(rows):
+    for name, meta in rows:
         clean_name = name.lstrip("🎬📝🧩📄 ")
         file_type = meta.split("·", 1)[0].strip().upper()
-        divider = 'border-bottom:1px solid #EFE7D2;' if i < len(rows) - 1 else ""
         items.append(
-            f'<section style="padding:15px 4px;{divider}">'
+            '<section style="margin:0 0 20px 0;">'
             f'<p style="margin:0 0 5px 0;font-size:11px;font-weight:700;color:#B4882D;letter-spacing:1.2px;line-height:1.5;">'
             f'{file_type}</p>'
             f'<p style="margin:0 0 5px 0;font-size:16px;font-weight:600;color:{TEXT};line-height:1.6;">{esc(clean_name)}</p>'
             f'<p style="margin:0;font-size:13px;color:{GRAY};line-height:1.7;">{esc(meta)}</p></section>')
     return (
-        '<section style="margin:6px 12px 34px 12px;padding:8px 18px;background:#FAF6EC;border-radius:16px;">'
-        '<p style="margin:0 0 4px 0;font-size:12px;font-weight:700;color:#B4882D;letter-spacing:1.5px;">资 料 包</p>'
+        '<section style="margin:0 14px 36px 14px;">'
         + "".join(items) + '</section>')
 
 
 def showcase_planet_card(planet, card_src):
-    """底部 END 章节头（卡片外）+ 知识星球官方邀请卡（整卡图片，长按识别）。"""
-    head = (
-        '<section style="margin:30px 8px 18px 8px;text-align:center;">'
-        '<p style="margin:0 0 6px 0;font-size:17px;font-weight:700;color:#D2A13A;letter-spacing:2px;line-height:1.5;">END</p>'
-        f'<p style="margin:0;font-size:20px;font-weight:700;color:{TEXT};line-height:1.55;letter-spacing:0.5px;">完整课件资料</p>'
-        '</section>')
+    """资料入口：后台在二维码上方插入知识星球原生卡片，二维码始终保留。"""
     qr_html = ""
     if card_src:
         qr_html = (
             '<figure style="margin:0;text-align:center;">'
             f'<img src="{esc(card_src)}" alt="{esc(planet)} 知识星球邀请卡" style="max-width:100%;height:auto;'
-            'display:block;margin:0 auto;border-radius:14px;border:1px solid #E4EAF1;" />'
+            'display:block;margin:0 auto;background:#FFFFFF;" />'
+            '<figcaption style="margin-top:10px;font-size:12px;color:#98A2B3;line-height:1.65;">点击图片查看大图 · 长按保存后使用微信扫一扫</figcaption>'
             '</figure>')
-    return (f'<section style="margin:8px 0 12px 0;">{head}{qr_html}</section>')
+    return (f'<section style="margin:8px 0 12px 0;padding:30px 12px 24px;background:#EEF5F0;">'
+            '<p style="margin:0 0 5px 0;text-align:center;font-size:18px;font-weight:700;color:#D2A13A;letter-spacing:1px;">END</p>'
+            '<p style="margin:0 0 8px 0;text-align:center;font-size:12px;font-weight:600;color:#B4882D;letter-spacing:1px;">完整课件资料</p>'
+            f'<p style="margin:0 0 10px 0;text-align:center;font-size:20px;font-weight:700;color:{TEXT};line-height:1.5;">知识星球 · {esc(planet)}</p>'
+            f'<p style="margin:0;text-align:center;font-size:13px;color:{GRAY};line-height:1.8;">课件动画视频、可编辑源文件、离线互动与教学设计均已整理</p>'
+            '<!-- WECHAT_MINIPROGRAM_INSERT: 在二维码上方插入知识星球原生小程序卡片 -->'
+            f'{qr_html}</section>')
 
 
 def build(md_text: str, planet: str, planet_qr: str | None = None):
@@ -362,8 +360,8 @@ def build_showcase(md_text: str, planet: str, planet_qr: str | None = None):
     chips = []
     chapter_no = 0
     chapter_open = False
+    group_open = False
     group_no = 0
-    group_tone = GROUP_TONES[0]
 
     def reg_local(src):
         if src and not src.startswith(("http://", "https://")) and src not in assets:
@@ -393,18 +391,22 @@ def build_showcase(md_text: str, planet: str, planet_qr: str | None = None):
             flush_para(); chips = [c.strip() for c in ln[len("#CHIPS:"):].split(",") if c.strip()]
         elif ln.startswith("## "):
             flush_para()
+            if group_open:
+                body.append('</section>')
+                group_open = False
             if chapter_open:
                 body.append('</section>')
             chapter_no += 1
             group_no = 0
-            body.append(showcase_chapter(ln[3:].strip(), chapter_no))
             body.append(showcase_block_open(ln[3:].strip(), chapter_no))
             chapter_open = True
         elif ln.startswith("### "):
             flush_para()
+            if group_open:
+                body.append('</section>')
             group_no += 1
-            heading, group_tone = showcase_group_heading(ln[4:].strip(), group_no)
-            body.append(heading)
+            body.append(showcase_group_open(ln[4:].strip(), group_no))
+            group_open = True
         elif ln.startswith(">TIP:"):
             flush_para()
             label, content = ln[len(">TIP:"):].split("|", 1)
@@ -433,7 +435,7 @@ def build_showcase(md_text: str, planet: str, planet_qr: str | None = None):
                 raise ValueError(f"invalid image syntax: {ln}")
             caption, src = match.group(1), match.group(2)
             reg_local(src)
-            body.append(showcase_media(src, caption, src.lower().endswith(".gif"), group_tone))
+            body.append(showcase_media(src, caption, src.lower().endswith(".gif")))
         else:
             para_buf.append(ln.strip())
         i += 1
@@ -441,6 +443,8 @@ def build_showcase(md_text: str, planet: str, planet_qr: str | None = None):
 
     if not all((title, kicker, subtitle)):
         raise ValueError("article metadata must include #TITLE, #KICKER and #SUBTITLE")
+    if group_open:
+        body.append('</section>')
     if chapter_open:
         body.append('</section>')
     body.insert(0, showcase_hero(kicker, title, subtitle, chips, cover))

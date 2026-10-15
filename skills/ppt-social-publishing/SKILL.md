@@ -83,9 +83,9 @@ outputs/social/
 
 ## 公众号文章规则
 
-公众号文章默认使用精品主题 `wechat-ios-showcase@1.0`。文章标题**固定格式**：`《课题》年级上下册+科目+课件+AI赋能`（例：《氧化还原反应》高一第一册化学课件AI赋能、《秋天的雨》三年级上册语文课件AI赋能）；不使用悬念式营销标题，不得添加“预览”“正式课堂”等内部说明性后缀。
+公众号文章默认使用精品主题 `wechat-ios-showcase@1.0`。标题只写可核验的课程事实：课题为主，可按用户确认补充年级、学科和“课件”；不得固定追加“AI赋能”、营销口号或“预览”“正式课堂”等内部说明性后缀。
 
-`wechat-ios-showcase@1.0` 当前采用壹伴“简单教育”方向的编辑部图文结构：白底、教师友好字号、暖黄色小序号、自然正文、大图展示和充足留白。禁止把文章做成 App 界面、产品详情页或数据看板，不使用深色刊头、胶囊标签、指标宫格、重复卡片、明显横线/竖线或图片描边。完整 PPT 幻灯片必须全部展示；可在其前额外选用真实 GIF 和 HTML 互动截图说明课堂用途，但仍禁止嵌入 `<video>`。底部采用双入口：草稿生成后由运营者在隐藏锚点位置手动插入知识星球原生小程序卡片，并在其下保留用户提供的二维码卡片作为备用；不使用 HTML 伪装按钮，也不显示运营操作提示。旧主题仅在用户明确要求时显式选择。规范见 [references/wechat-ios-showcase.md](references/wechat-ios-showcase.md)。
+`wechat-ios-showcase@1.0` 当前采用壹伴“简单教育”方向的编辑部图文结构：白底、教师友好字号、暖黄色小序号、自然正文、大图展示和充足留白。禁止把文章做成 App 界面、产品详情页或数据看板，不使用深色刊头、胶囊标签、指标宫格、重复卡片、明显横线/竖线或图片描边。完整 PPT 幻灯片必须全部展示；可在其前额外选用真实 GIF 和 HTML 互动截图说明课堂用途，但仍禁止嵌入 `<video>`。底部采用双入口：公众号管理员按知识星球官方流程主动关联“知识星球”小程序、从自己星球复制小程序路径后，在草稿编辑器中把原生卡片插到二维码上方；二维码始终保留为 iOS 和异常场景回退。API 不能插入原生卡片，不使用 HTML 伪装按钮或面向读者的运营提示。旧主题仅在用户明确要求时显式选择。规范见 [references/wechat-ios-showcase.md](references/wechat-ios-showcase.md)。
 
 正文直接从课程信息开始，不显示以下内容：
 
@@ -99,7 +99,7 @@ outputs/social/
 
 公众号正文不添加品牌行。用户括号或大括号中的内容是对 Codex 的要求，必须理解后改写为自然信息，不把括号本身或指令性文字放进正文。
 
-随后按页序插入全部 PPT 幻灯片图片。公众号正文图片必须通过 `media/uploadimg` 上传后使用返回 URL，不得直接引用本地路径、GitHub URL、CDN 或 base64。每张 JPG/PNG 小于 1 MiB；缺图、乱序或上传失败时停止。
+随后按页序插入全部 PPT 幻灯片图片。公众号正文图片必须通过 `media/uploadimg` 上传后使用返回 URL，不得直接引用本地路径、GitHub URL、CDN 或 base64。每张上传图片（含 GIF）小于 1 MiB；超限 GIF 只能生成发布专用压缩副本，不能改写已验收素材。缺图、乱序或上传失败时停止。
 
 公众号文章不自动上传或嵌入课件视频。视频只进入微信视频号手动发布包。
 
@@ -141,7 +141,7 @@ outputs/social/
 
 1. 唯一发布视频 `video_9x16.mp4` 为 9:16（1080×1920）画布，由 16:9 基底包装而来：抽帧核对幻灯片区域保持完整 16:9、无裁切、无变形，背景为模糊同源画面；三个平台共用该文件，各平台目录内无视频副本；
 2. 三个平台文案各三行，摘要不超过 50 个汉字，标签恰好五个；
-3. 公众号文章标题固定为：《课题》+年级上下册+科目+课件+AI赋能（如《DNA分子的结构》高一第二册生物课件AI赋能）；
+3. 公众号文章标题只包含真实课程信息，不含固定“AI赋能”尾缀、品牌行或内部说明；
 4. 公众号正文无标签、无视频节点、无 `【教学设计总结内容】` 和 `【教学课件视频】`；
 5. 公众号正文图片数量等于当前 PPT 实际页数；页数从当前课件的幻灯片文件或发布 manifest 枚举，顺序正确，全部来自微信 `uploadimg` URL；不得继承上一套课件的 19 页或任何固定页数；
 6. 中文显示正常，无 `\\uXXXX`、`ã...` 等编码异常；
@@ -200,8 +200,8 @@ image-to-editable-ppt
 
 公众号文章默认使用 `wechat-ios-showcase@1.0` 精品主题，流程：
 
-1. **动图**：`scripts/make_gifs.py --video <语义视频BGM版> --segments "起-止:标签,..." [--crop w:h:x:y]`——从语义视频按时间线抽 2-4 段关键动画（640px/12fps/调色板优化，单文件 ≤10MB）；媒体窗口片段用 `--crop` 裁窗口
+1. **动图**：`scripts/make_gifs.py --video <语义视频BGM版> --segments "起-止:标签,..." [--crop w:h:x:y]`——从语义视频按时间线抽 2-4 段关键动画；发布前必须满足单张上传图片小于 1 MiB，媒体窗口片段用 `--crop w:h:x:y` 裁窗口
 2. **文案**：`article.md` 用轻量标记（#TITLE/#KICKER/#SUBTITLE/#COVER/#CHIPS/##/###/>TIP/:::metrics/:::resources/![]()），钩子与亮点从教学设计重难点提取；**不得出现「定制」「知识付费」**；文末无品牌行（星球卡即出口）
 3. **构建**：`scripts/build_wechat_article.py --article article.md --planet 一堂微课 --planet-qr planet_qr.png --out article.html --preview-out preview.html --theme wechat-ios-showcase@1.0`
-4. **发布**：`publish_wechat_official.py --article-file article.html --asset-root <article目录> ... --mode publish`——本地图自动上传 uploadimg 并替换为微信 URL；copy.txt 为单行课程信息格式
-5. 主题规范与组件：见 `references/wechat-ios-showcase.md`；幻灯片每张独立卡片（分组色调轮换），文字区高度压缩，幻灯片是主角
+4. **投递**：`publish_wechat_official.py --article-file article.html --asset-root <article目录> ... --mode draft`——本地图自动上传 uploadimg 并替换为微信 URL；只有用户明确要求正式发布且权限已确认时才改用 `--mode publish`；copy.txt 为单行课程信息格式
+5. 主题规范与组件：见 `references/wechat-ios-showcase.md`；幻灯片按教学阶段分组，使用浅色分区、页码范围和自然留白，不为每页套独立卡片

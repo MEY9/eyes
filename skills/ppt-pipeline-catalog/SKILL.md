@@ -126,7 +126,7 @@ python3 "$CATALOG" publication \
   --deck-id "poetry-xing-lu-nan" \
   --package-id "publish-poetry-xing-lu-nan-001" \
   --status passed \
-  --layout-id "wechat-education-warm-paper@1.0"
+  --layout-id "wechat-ios-showcase@1.0"
 
 python3 "$CATALOG" publication \
   --deck-id "poetry-xing-lu-nan" \

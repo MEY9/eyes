@@ -278,8 +278,8 @@ def main() -> int:
                         help="Root for local img sources in --article-file (defaults to that file's folder)")
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
-    parser.add_argument("--mode", choices=["draft", "publish"],
-                        default=os.environ.get("WECHAT_MP_PUBLISH_MODE", "publish"))
+    parser.add_argument("--mode", choices=["draft", "publish"], default="draft",
+                        help="默认仅创建草稿；正式发布必须显式传入 --mode publish。")
     parser.add_argument("--dry-run", action="store_true")
     args = parser.parse_args()
 
