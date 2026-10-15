@@ -196,7 +196,7 @@ image-to-editable-ppt
 4. **可编辑课件超 48MB 时轻量化阶梯**：解包重编码 `ppt/media`（视频 720p CRF30 逐级降 540p CRF33、图片 ≤1200px q78）直到达标；降档仍超限则改用视觉版 PPTX 替代并在正文注明
 5. 发布用**纯文本**：`zsxq-cli topic +create --group-id 48885448528888 --text "$(cat copy.txt)" --files 封面图.jpg,轻量课件.pptx,互动练习.html,教学设计.docx,AI导入短片.zip`（附件上传仅 CLI 通道，MCP 不可）。**禁用 `--markdown-file`**——星球渲染器会把《课名》自动转成“查找图书”链接元素；`--text` 直传原文，换行原样保留。注意：仅 `--text` 的编辑会清空附件，附件须与文本同批或事后重挂
 6. **文案确认门**：文章正文叙述（钩子、亮点描述）由 AI 起草后必须先交用户确认，确认前**不创建公众号草稿、不发星球贴**；确认后的稿件才进入发布流程
-6. 发布前经用户确认；记录 topic_id 到 `publish/manifest.json` 的 `zsxq` 字段
+7. 发布前经用户确认；记录 topic_id 到 `publish/manifest.json` 的 `zsxq` 字段
 
 ## iOS Showcase 文章流程（新）
 
@@ -206,4 +206,4 @@ image-to-editable-ppt
 2. **文案**：`article.md` 用轻量标记（#TITLE/#KICKER/#SUBTITLE/#COVER/#CHIPS/##/###/>TIP/:::metrics/:::resources/![]()），钩子与亮点从教学设计重难点提取；**不得出现「定制」「知识付费」**；文末无品牌行（星球卡即出口）
 3. **构建**：`scripts/build_wechat_article.py --article article.md --planet 一堂微课 --planet-qr planet_qr.png --out article.html --preview-out preview.html --theme wechat-ios-showcase@1.0`
 4. **投递**：`publish_wechat_official.py --article-file article.html --asset-root <article目录> ... --mode draft`——本地图自动上传 uploadimg 并替换为微信 URL；运营者提供 `#小程序://...` 短码时，额外传入 `--miniprogram-code`，它将作为纯文本置于最后一张二维码图上方，不能替代后台原生卡片；只有用户明确要求正式发布且权限已确认时才改用 `--mode publish`；copy.txt 为单行课程信息格式
-5. 主题规范与组件：见 `references/wechat-ios-showcase.md`；幻灯片按教学阶段分组，使用浅色分区、页码范围和自然留白，不为每页套独立卡片
+5. 主题规范与组件：见 `references/wechat-ios-showcase.md`。文章底部星球引流卡上方放**小程序口令文本**：`#小程序://知识星球/...` 形态（发布时原样插入、不改链接）；API 草稿不会自动转链，显示为文本——用户在编辑器中手动替换为原生小程序卡片（公众号后台需先关联知识星球小程序），构建器已在卡位预留 `WECHAT_MINIPROGRAM_INSERT` 锚点。质感规范：卡片用纸张渐变底+极浅投影+衬线标题+大数字编号+细线分隔，颜色收敛主色1+强调1+灰阶3；正文 15.5px/1.9 行距/0.3px 字距；幻灯片按教学阶段分组，使用浅色分区、页码范围和自然留白，不为每页套独立卡片
