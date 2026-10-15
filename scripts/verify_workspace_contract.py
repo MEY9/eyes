@@ -31,6 +31,7 @@ EXPECTED_ZCODE_AGENTS = [
     "education-ppt-b.md",
     "html-courseware.md",
 ]
+EXPECTED_ZCODE_COMMANDS = ["education-ppt.md"]
 SENSITIVE_KEYS = {
     "api_key",
     "access_token",
@@ -79,6 +80,12 @@ def compare_installed_copy(source: Path, installed: Path) -> list[str]:
             drift.append(f"missing {relative}")
         elif sha256(source_file) != sha256(installed_file):
             drift.append(f"different {relative}")
+    for installed_file in installed.rglob("*"):
+        if not installed_file.is_file() or "__pycache__" in installed_file.parts:
+            continue
+        relative = installed_file.relative_to(installed)
+        if not (source / relative).is_file():
+            drift.append(f"unexpected {relative}")
     return drift
 
 
@@ -125,13 +132,28 @@ def main() -> int:
     if not command.is_file():
         errors.append("missing zcode/commands/education-ppt.md")
 
-    client_roots = {
-        "ZCode": Path.home() / ".zcode" / "skills",
-        "Codex": Path.home() / ".codex" / "skills",
-    }
-    for client, client_root in client_roots.items():
+    zcode_skill_root = Path.home() / ".zcode" / "skills"
+    if zcode_skill_root.is_dir():
         for name in EXPECTED_SKILLS:
-            installed = client_root / name
+            installed = zcode_skill_root / name
+            if not installed.is_dir():
+                errors.append(f"ZCode installed production skill is missing: {name}")
+                continue
+            drift = compare_installed_copy(ROOT / "skills" / name, installed)
+            if drift:
+                preview = ", ".join(drift[:3])
+                suffix = " ..." if len(drift) > 3 else ""
+                errors.append(
+                    f"ZCode installed {name} drifts in {len(drift)} file(s): "
+                    f"{preview}{suffix}"
+                )
+
+    # Codex reads repository contracts on demand. If a matching user-level copy
+    # exists, it must still match, but optional skills are not required locally.
+    codex_skill_root = Path.home() / ".codex" / "skills"
+    if codex_skill_root.is_dir():
+        for name in EXPECTED_SKILLS:
+            installed = codex_skill_root / name
             if not installed.is_dir():
                 continue
             drift = compare_installed_copy(ROOT / "skills" / name, installed)
@@ -139,7 +161,7 @@ def main() -> int:
                 preview = ", ".join(drift[:3])
                 suffix = " ..." if len(drift) > 3 else ""
                 errors.append(
-                    f"{client} installed {name} drifts in {len(drift)} file(s): "
+                    f"Codex installed {name} drifts in {len(drift)} file(s): "
                     f"{preview}{suffix}"
                 )
 
@@ -148,8 +170,20 @@ def main() -> int:
         for filename in EXPECTED_ZCODE_AGENTS:
             source = ROOT / "zcode" / "agents" / filename
             installed = installed_agent_root / filename
-            if installed.is_file() and sha256(source) != sha256(installed):
+            if not installed.is_file():
+                errors.append(f"ZCode installed agent is missing: {filename}")
+            elif sha256(source) != sha256(installed):
                 errors.append(f"ZCode installed agent drifts: {filename}")
+
+    installed_command_root = Path.home() / ".zcode" / "commands"
+    if installed_command_root.is_dir():
+        for filename in EXPECTED_ZCODE_COMMANDS:
+            source = ROOT / "zcode" / "commands" / filename
+            installed = installed_command_root / filename
+            if not installed.is_file():
+                errors.append(f"ZCode installed command is missing: {filename}")
+            elif sha256(source) != sha256(installed):
+                errors.append(f"ZCode installed command drifts: {filename}")
 
     mcp_path = ROOT / "mcp" / "servers.json"
     mcp = load_json(mcp_path)
