@@ -186,6 +186,29 @@ def build_article(lines: Iterable[str], image_urls: Iterable[str] = ()) -> str:
 </section>'''
 
 
+def insert_miniprogram_code(article_html: str, code: str | None) -> str:
+    """Place an operator-supplied mini-program short code above the final image.
+
+    The official draft API cannot create a native mini-program card.  This keeps
+    the supplied short code as visible text immediately before the QR card (the
+    article's final image), while the native card remains an editor-side action.
+    """
+    if not code:
+        return article_html
+    code = code.strip()
+    if not code.startswith("#小程序://") or "\n" in code or "\r" in code:
+        raise SystemExit("miniprogram code must be one #小程序://… line")
+    images = list(re.finditer(r"<img\b[^>]*>", article_html, re.I))
+    if not images:
+        raise SystemExit("cannot insert miniprogram code: article has no image")
+    insertion = (
+        '<p style="margin:24px 0 10px 0;text-align:center;font-size:15px;'
+        f'color:#243447;line-height:1.8;word-break:break-all;">{html.escape(code)}</p>'
+    )
+    last_image = images[-1]
+    return article_html[:last_image.start()] + insertion + article_html[last_image.start():]
+
+
 def upload_article_assets(token: str, article_html: str, asset_root: Path,
                           upload_work_dir: Path) -> tuple[str, int]:
     """Upload each local `<img>` source and substitute its WeChat URL.
@@ -276,6 +299,8 @@ def main() -> int:
                         help="Approved rich article HTML. Local img sources are uploaded and replaced.")
     parser.add_argument("--asset-root", type=Path,
                         help="Root for local img sources in --article-file (defaults to that file's folder)")
+    parser.add_argument("--miniprogram-code",
+                        help="可选 #小程序:// 短码，作为纯文本插入最后一张图片上方")
     parser.add_argument("--output-dir", required=True, type=Path)
     parser.add_argument("--env-file", type=Path, default=Path(".env"))
     parser.add_argument("--mode", choices=["draft", "publish"], default="draft",
@@ -290,6 +315,7 @@ def main() -> int:
     if args.dry_run:
         article = (args.article_file.read_text(encoding="utf-8")
                    if args.article_file else build_article(lines))
+        article = insert_miniprogram_code(article, args.miniprogram_code)
         (args.output_dir / "article.html").write_text(article, encoding="utf-8")
         (args.output_dir / "article.md").write_text(
             "\n".join(lines) +
@@ -312,7 +338,9 @@ def main() -> int:
     if args.article_file:
         if not args.article_file.is_file():
             raise SystemExit(f"article file not found: {args.article_file}")
-        article_source = args.article_file.read_text(encoding="utf-8")
+        article_source = insert_miniprogram_code(
+            args.article_file.read_text(encoding="utf-8"), args.miniprogram_code
+        )
         if re.search(r"<\s*(video|script|iframe)\b", article_source, re.I):
             raise SystemExit("custom article may not contain video, script, or iframe nodes")
         asset_root = (args.asset_root or args.article_file.parent).resolve()
@@ -325,6 +353,7 @@ def main() -> int:
         slide_urls = [upload_article_image(token, path, args.output_dir / ".wechat_upload_assets")
                       for path in slide_paths]
         article = build_article(lines, slide_urls)
+        article = insert_miniprogram_code(article, args.miniprogram_code)
         expected_image_count = len(slide_paths)
     if re.search(r'\bsrc=["\'](?!https?://)', article, re.I):
         raise RuntimeError("article still contains a non-WeChat image source")
@@ -338,6 +367,8 @@ def main() -> int:
     draft_text = json.dumps(draft, ensure_ascii=False)
     if "教材：" not in draft_text:
         raise RuntimeError("draft verification failed: WeChat did not retain the Chinese article text")
+    if args.miniprogram_code and args.miniprogram_code not in draft_text:
+        raise RuntimeError("draft verification failed: WeChat did not retain the miniprogram code")
     if draft_text.count("<img") < expected_image_count:
         raise RuntimeError("draft verification failed: WeChat did not retain all article images")
 
@@ -348,6 +379,7 @@ def main() -> int:
         "cover_media_id": cover_id,
         "slide_count": len(slide_paths),
         "article_image_count": expected_image_count,
+        "miniprogram_code_inserted": bool(args.miniprogram_code),
     }
     (args.output_dir / "publish_result.json").write_text(
         json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
@@ -362,7 +394,6 @@ def main() -> int:
                 print(json.dumps(result, ensure_ascii=False))
                 return 2
             raise
-        result["publish_id"] = submitted["publish_id"]
         result["publish_id"] = submitted["publish_id"]
         for _ in range(40):
             status = publish_status(token, submitted["publish_id"])

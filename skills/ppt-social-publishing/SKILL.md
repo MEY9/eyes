@@ -204,5 +204,5 @@ image-to-editable-ppt
 1. **动图**：`scripts/make_gifs.py --video <语义视频BGM版> --segments "起-止:标签,..." [--crop w:h:x:y]`——从语义视频按时间线抽 2-4 段关键动画；发布前必须满足单张上传图片小于 1 MiB，媒体窗口片段用 `--crop w:h:x:y` 裁窗口
 2. **文案**：`article.md` 用轻量标记（#TITLE/#KICKER/#SUBTITLE/#COVER/#CHIPS/##/###/>TIP/:::metrics/:::resources/![]()），钩子与亮点从教学设计重难点提取；**不得出现「定制」「知识付费」**；文末无品牌行（星球卡即出口）
 3. **构建**：`scripts/build_wechat_article.py --article article.md --planet 一堂微课 --planet-qr planet_qr.png --out article.html --preview-out preview.html --theme wechat-ios-showcase@1.0`
-4. **投递**：`publish_wechat_official.py --article-file article.html --asset-root <article目录> ... --mode draft`——本地图自动上传 uploadimg 并替换为微信 URL；只有用户明确要求正式发布且权限已确认时才改用 `--mode publish`；copy.txt 为单行课程信息格式
+4. **投递**：`publish_wechat_official.py --article-file article.html --asset-root <article目录> ... --mode draft`——本地图自动上传 uploadimg 并替换为微信 URL；运营者提供 `#小程序://...` 短码时，额外传入 `--miniprogram-code`，它将作为纯文本置于最后一张二维码图上方，不能替代后台原生卡片；只有用户明确要求正式发布且权限已确认时才改用 `--mode publish`；copy.txt 为单行课程信息格式
 5. 主题规范与组件：见 `references/wechat-ios-showcase.md`；幻灯片按教学阶段分组，使用浅色分区、页码范围和自然留白，不为每页套独立卡片
