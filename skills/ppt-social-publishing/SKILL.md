@@ -192,9 +192,10 @@ image-to-editable-ppt
 
 1. 写**纯文本**文案 `outputs/social/zsxq/copy.txt`：标题（课题+课时+教材版本）、摘要、资料清单（「资料包含：」+①②③④）、教材信息行。**禁止 Markdown 符号**（不用 `##`、`**`、`-` 列表符）；**不加 emoji 图标、不加品牌行**；分节用空行，列举用 ①②③；话题 ID 记入 manifest
 2. **主题必须带课程封面图**：用课件封面页（slide_01）生成竖版 3:4 配图（1080×1440，幻灯片等比居中+模糊衬底），避免信息流里只露附件的 UI 文件图标；生成命令见 `scripts/make_gifs.py` 同目录说明或 ffmpeg：`scale=1080:608[main]; scale=1080:1440,boxblur=24:2[bg]; overlay 居中`
-3. 打包资料包 zip：**四件套，与公众号资料清单逐项一致**——① 课件动画视频（竖版 BGM 版 mp4）② 可编辑课件 PPTX ③ 互动练习 HTML（单文件）④ 教学设计 DOCX；**mp4 不能直传附件**（报“文件类型不支持”），必须打包 zip；发布时 `--files "封面图.jpg,资料包.zip"`（图在前）。星球文案与公众号资料清单必须同批核对，不得只放两件
-4. 发布用**纯文本**：`zsxq-cli topic +create --group-id 48885448528888 --text "$(cat copy.txt)" --files 封面图.jpg,资料包.zip`（附件上传仅 CLI 通道，MCP 不可）。**禁用 `--markdown-file`**——星球渲染器会把《课名》自动转成“查找图书”链接元素；`--text` 直传原文，换行原样保留
-5. 发布前经用户确认；记录 topic_id 到 `publish/manifest.json` 的 `zsxq` 字段
+3. **附件逐文件上传，不打压缩包**：封面图（jpg，进主题图片）+ AI 导入短片（**mp4 类型不被附件接口接受，打包为同名 zip**）+ 可编辑课件 PPTX + 互动练习 HTML + 教学设计 DOCX，一次 `--files` 逗号拼接提交（编辑为全量替换，多次编辑会互相覆盖）；每附件 ≤48MB
+4. **可编辑课件超 48MB 时轻量化阶梯**：解包重编码 `ppt/media`（视频 720p CRF30 逐级降 540p CRF33、图片 ≤1200px q78）直到达标；降档仍超限则改用视觉版 PPTX 替代并在正文注明
+5. 发布用**纯文本**：`zsxq-cli topic +create --group-id 48885448528888 --text "$(cat copy.txt)" --files 封面图.jpg,轻量课件.pptx,互动练习.html,教学设计.docx,AI导入短片.zip`（附件上传仅 CLI 通道，MCP 不可）。**禁用 `--markdown-file`**——星球渲染器会把《课名》自动转成“查找图书”链接元素；`--text` 直传原文，换行原样保留。注意：仅 `--text` 的编辑会清空附件，附件须与文本同批或事后重挂
+6. 发布前经用户确认；记录 topic_id 到 `publish/manifest.json` 的 `zsxq` 字段
 
 ## iOS Showcase 文章流程（新）
 
