@@ -2,36 +2,36 @@
 
 Read this before confirming the image backend or generating the representative sample set.
 
-This skill supports two image backends:
+## Backends
 
-1. Built-in image tool, preferred when available. Example tool names: Codex `image_gen`; OpenClaw `image_generate`.
-2. Local API/CLI fallback, using `scripts/image_gen.py`.
+1. **API/CLI backend — default.** Uses `scripts/image_gen.py` against the OpenAI-compatible endpoint configured in the project-level `.env`.
+2. **Codex OAuth / built-in image tool — disabled by default.** The CLI treats `CODEX_PPT_DISABLE_CODEX_OAUTH` as `1` unless the user exports `CODEX_PPT_DISABLE_CODEX_OAUTH=0`, so `~/.codex/auth.json` is never read and no job is routed through the ChatGPT/Codex image endpoints.
+
+## Configuration Precedence
+
+Highest first:
+
+1. Process environment variables
+2. Project-level `.env` — found by walking up from the current working directory and stopping after the directory that contains `.git`; nearer files override farther ones. Override the search with `CODEX_PPT_PROJECT_ENV=<path>`.
+3. Global `~/.codex-ppt-skill/.env`
+4. Built-in defaults
+
+Relevant keys: `OPENAI_API_KEY`, `OPENAI_BASE_URL`, `CODEX_PPT_IMAGE_MODEL`.
 
 ## Decision Rules
 
-- Before recommending CLI/API fallback, actively check whether the built-in image generation tool is callable in the current environment. Do not infer availability only from the agent name or subscription context.
-- Prefer the built-in image tool when available. In Codex, this usually means the built-in `image_gen` tool. In OpenClaw, this may be `image_generate`. Resolution, quality, aspect ratio, or slide-edit requests alone do not require CLI/API fallback. Check which parameters the current tool actually exposes.
-- Do not identify the built-in tool as a specific GPT Image model unless the environment provides evidence. If exact model, size, or quality selection is required but the tool does not expose it, explain the limitation and select a compatible API/CLI fallback with the user. Successful image generation alone does not verify the actual model or requested parameters.
-- Use CLI/API fallback only when the built-in tool is unavailable, the built-in tool failed for a required capability, the user explicitly asks for API/CLI or a third-party image API/provider adapter, or the requested capability is unavailable in the built-in tool.
-- Do not recommend CLI/API fallback merely because it provides direct `--out` file paths, easier local file management, local config reuse, batch generation convenience, or simpler automation.
-- Before generating the first image, tell the user which tool availability you checked, which backend you plan to use, why fallback is or is not needed, and ask for confirmation. Do not treat being in a specific agent environment as proof that the built-in image tool is available.
-- CLI/API fallback loads `~/.codex-ppt-skill/.env` automatically. Run the CLI normally; do not manually parse `.env` or ask for configuration before an error.
-- Ask for `OPENAI_API_KEY` configuration only after you have intentionally selected CLI/API fallback and that fallback reports missing config, after authentication/base URL/model errors, or when the user explicitly wants to change API settings. Do not mention missing `OPENAI_API_KEY` while the Codex built-in image tool is available. Configure provided values with `scripts/codex_ppt_runtime.py config --api-key`.
+- Default to the API/CLI backend. Do not switch to Codex OAuth or the built-in image tool unless the user explicitly exports `CODEX_PPT_DISABLE_CODEX_OAUTH=0`.
+- Do not describe the API/CLI backend as a "fallback". It is the configured primary path for this project.
+- Do not identify the endpoint as a specific GPT Image model unless the configuration provides evidence. If exact model, size, or quality selection is required but the provider does not expose it, explain the limitation and confirm the setting with the user.
+- Before generating the first image, tell the user which `.env` file was resolved, which backend you plan to use, and confirm the endpoint and model. Wait for confirmation.
+- Configure credentials with `scripts/codex_ppt_runtime.py config --api-key`. Never copy credentials, tokens, or `.env` contents into prompts, manifests, logs, or generated artifacts.
 
 If CLI/API fallback is selected, read `cli-api-fallback.md` before generating images. For API key, base URL, model, and `.env` configuration, read `image-model-configuration.md` only after the fallback CLI reports missing or invalid configuration, or when the user explicitly wants to change those settings.
 
 ## Confirmation Text
 
-Built-in backend:
-
 ```text
-我检查到当前环境可调用内置图片生成工具（Codex 通常是 image_gen，OpenClaw 通常是 image_generate），因此准备优先用内置工具生成三组候选风格样稿，每组包含封面/导入、普通讲授、活动/练习页各一张，并分别打包为风格1.pdf、风格2.pdf、风格3.pdf，不切到本地 API/CLI fallback。可以开始生成三组样稿吗？
-```
-
-CLI/API fallback:
-
-```text
-我检查后没有可用的内置图片生成工具，或内置工具缺少本页必需能力，因此准备使用本地 API/CLI fallback 生成三组候选风格样稿，读取 ~/.codex-ppt-skill/.env 中的 OPENAI_BASE_URL / CODEX_PPT_IMAGE_MODEL 配置，并分别打包为风格1.pdf、风格2.pdf、风格3.pdf。可以开始生成三组样稿吗？
+我已解析到项目级 .env（<解析到的 .env 路径>），准备使用 API/CLI 图片后端生成三组候选风格样稿：端点 <OPENAI_BASE_URL>、模型 <CODEX_PPT_IMAGE_MODEL>，Codex OAuth 已按项目约定禁用。每组包含封面/导入、普通讲授、活动/练习页各一张，分别打包为风格1.pdf、风格2.pdf、风格3.pdf。可以开始生成三组样稿吗？
 ```
 
 Wait for confirmation before generating the representative sample set. If the user questions the backend, resolve that before continuing.

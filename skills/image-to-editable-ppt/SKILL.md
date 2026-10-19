@@ -83,10 +83,25 @@ Font fidelity is a reconstruction prerequisite, not a cosmetic post-processing s
 
 ### Image Backend Selection
 
-This subsection is the authoritative execution policy for every page-local image job. Before prepare, check whether the current agent runtime can call `image_gen.imagegen`; if so, pass `--image-backend builtin-imagegen` to `editppt prepare`, otherwise keep the default CLI contract. Run image jobs serially within a page, in this order:
+This subsection is the authoritative execution policy for every page-local image job.
 
-1. Use the built-in agent tool `image_gen.imagegen` whenever it is callable in the current agent runtime.
-2. Only when the run's recorded built-in fallback policy applies, call `editppt image generate/edit`. That CLI fallback selects Codex OAuth first and a configured OpenAI-compatible API second.
+Codex OAuth is disabled by default: the CLI treats `EDITPPT_DISABLE_CODEX_OAUTH` as `1` unless the user exports it as `0`, so `~/.codex/auth.json` is never consulted and no image job is routed through the ChatGPT/Codex image endpoints.
+
+Keep the default CLI contract when preparing a run: pass `--image-backend editppt-image-cli`, or omit the flag. Do not pass `--image-backend builtin-imagegen` unless the user explicitly asks for the built-in agent tool. Run image jobs serially within a page, in this order:
+
+1. Resolve configuration from the project-level `.env` (see "Configuration Precedence").
+2. Call `editppt image generate/edit`, which targets the OpenAI-compatible endpoint.
+
+#### Configuration Precedence
+
+Highest first:
+
+1. Process environment variables
+2. Project-level `.env` — found by walking up from the current working directory and stopping after the directory that contains `.git`; nearer files override farther ones. Override the search with `EDITPPT_PROJECT_ENV=<path>`.
+3. Global `~/.editppt/config.yaml`
+4. Built-in defaults
+
+Never read the global file ahead of a project-level `.env`, and never copy credentials, tokens, or `.env` contents into prompts, manifests, logs, or PPTX artifacts.
 
 The exact built-in arguments, input-inspection prerequisite, output acceptance rule, and allowed fallback events are owned by the `image_backend` field contract in `references/manifest-schema.md`; copy and execute that contract without weakening or extending it. If its CLI fallback cannot produce a compliant output, fail the page rather than substituting an approximate object source.
 

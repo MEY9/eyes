@@ -69,20 +69,67 @@ def _runtime_env_path() -> Path:
     return _runtime_home() / ".env"
 
 
-def _load_runtime_env() -> None:
-    path = _runtime_env_path()
-    if not path.exists():
-        return
-    for raw in path.read_text(encoding="utf-8").splitlines():
+def _parse_env_file(path: Path) -> Dict[str, str]:
+    """Parse a dotenv-style file into a dict. Comments and blanks are ignored."""
+    path = Path(path).expanduser()
+    if not path.is_file():
+        return {}
+    values: Dict[str, str] = {}
+    for raw in path.read_text(encoding="utf-8", errors="replace").splitlines():
         line = raw.strip()
         if not line or line.startswith("#") or "=" not in line:
             continue
         key, value = line.split("=", 1)
         key = key.strip()
-        if key not in ENV_FIELDS or os.getenv(key):
+        if not key:
             continue
-        value = value.strip().strip('"').strip("'")
-        os.environ[key] = value
+        values[key] = value.strip().strip('"').strip("'")
+    return values
+
+
+def _project_env_files(start: Optional[Path] = None) -> List[Path]:
+    """Locate project-level .env files, nearest first.
+
+    Resolution order:
+      1. CODEX_PPT_PROJECT_ENV / EDITPPT_PROJECT_ENV, when the path exists.
+      2. Walk from `start` (default: cwd) up through its parents, collecting every
+         .env found. Search stops after the directory that contains .git, so it
+         never escapes the project repository.
+    """
+    explicit = os.getenv("CODEX_PPT_PROJECT_ENV") or os.getenv("EDITPPT_PROJECT_ENV")
+    if explicit:
+        path = Path(explicit).expanduser()
+        return [path] if path.is_file() else []
+
+    found: List[Path] = []
+    current = (start or Path.cwd()).resolve()
+    for directory in [current] + list(current.parents):
+        candidate = directory / ".env"
+        if candidate.is_file():
+            found.append(candidate)
+        if (directory / ".git").exists():
+            break
+    return found
+
+
+def _load_runtime_env() -> None:
+    """Resolve image-backend configuration.
+
+    Precedence (highest first):
+      1. Process environment variables
+      2. Project-level .env (nearest to cwd, stopping at the .git boundary)
+      3. Global ~/.codex-ppt-skill/.env
+      4. Built-in defaults
+    """
+    preset = {key for key in ENV_FIELDS if os.getenv(key)}
+    merged: Dict[str, str] = dict(_parse_env_file(_runtime_env_path()))
+    for path in reversed(_project_env_files()):
+        merged.update(_parse_env_file(path))
+
+    for key, value in merged.items():
+        if key not in ENV_FIELDS or key in preset:
+            continue
+        os.environ[key] = str(value)
 
 
 def _default_model() -> str:

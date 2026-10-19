@@ -145,10 +145,11 @@ def _runtime_env_path() -> Path:
     return _runtime_home() / "config.yaml"
 
 
-def _load_runtime_env() -> None:
+def _read_global_config() -> Dict[str, str]:
+    """Read ~/.editppt/config.yaml. Returns {} when the file is absent."""
     path = _runtime_env_path()
     if not path.exists():
-        return
+        return {}
     try:
         import yaml
     except ImportError as exc:
@@ -159,8 +160,68 @@ def _load_runtime_env() -> None:
     data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
     if not isinstance(data, dict):
         _die(f"Invalid config file: {path}")
-    for key, value in data.items():
-        if key not in ENV_FIELDS or os.getenv(key):
+    return {key: str(value) for key, value in data.items()}
+
+
+def _project_env_files(start: Optional[Path] = None) -> List[Path]:
+    """Locate project-level .env files, nearest first.
+
+    Resolution order:
+      1. EDITPPT_PROJECT_ENV / CODEX_PPT_PROJECT_ENV, when the path exists.
+      2. Walk from `start` (default: cwd) up through its parents, collecting
+         every .env found. Search stops after the directory that contains
+         .git, so it never escapes the project repository.
+    """
+    explicit = os.getenv("EDITPPT_PROJECT_ENV") or os.getenv("CODEX_PPT_PROJECT_ENV")
+    if explicit:
+        path = Path(explicit).expanduser()
+        return [path] if path.is_file() else []
+
+    found: List[Path] = []
+    current = (start or Path.cwd()).resolve()
+    for directory in [current] + list(current.parents):
+        candidate = directory / ".env"
+        if candidate.is_file():
+            found.append(candidate)
+        if (directory / ".git").exists():
+            break
+    return found
+
+
+def _parse_env_file(path: Path) -> Dict[str, str]:
+    """Parse a dotenv-style file into a dict. Comments and blanks are ignored."""
+    path = Path(path).expanduser()
+    if not path.is_file():
+        return {}
+    values: Dict[str, str] = {}
+    for raw in path.read_text(encoding="utf-8", errors="replace").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        key = key.strip()
+        if not key:
+            continue
+        values[key] = value.strip().strip('"').strip("'")
+    return values
+
+
+def _load_runtime_env() -> None:
+    """Resolve image-backend configuration.
+
+    Precedence (highest first):
+      1. Process environment variables
+      2. Project-level .env (nearest to cwd, stopping at the .git boundary)
+      3. Global ~/.editppt/config.yaml
+      4. Built-in defaults
+    """
+    preset = {key for key in ENV_FIELDS if os.getenv(key)}
+    merged: Dict[str, str] = dict(_read_global_config())
+    for path in reversed(_project_env_files()):
+        merged.update(_parse_env_file(path))
+
+    for key, value in merged.items():
+        if key not in ENV_FIELDS or key in preset:
             continue
         os.environ[key] = str(value)
 
@@ -236,7 +297,23 @@ def _load_codex_access_token() -> Optional[str]:
     return auth[0] if auth else None
 
 
+DISABLE_CODEX_OAUTH_ENV = "EDITPPT_DISABLE_CODEX_OAUTH"
+
+
+def _codex_oauth_disabled() -> bool:
+    """Codex OAuth is disabled by default.
+
+    Set EDITPPT_DISABLE_CODEX_OAUTH=0 to re-enable it. When disabled, every image
+    job goes straight to the OpenAI-compatible endpoint configured in the
+    project-level .env.
+    """
+    raw = (os.getenv(DISABLE_CODEX_OAUTH_ENV) or "1").strip().lower()
+    return raw not in ("0", "false", "no", "off")
+
+
 def _codex_available() -> bool:
+    if _codex_oauth_disabled():
+        return False
     return _load_codex_access_token() is not None
 
 

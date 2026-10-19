@@ -99,6 +99,58 @@ def codex_auth_file():
     return Path(os.getenv("CODEX_AUTH_FILE", DEFAULT_CODEX_AUTH_FILE)).expanduser()
 
 
+DISABLE_CODEX_OAUTH_ENV = "EDITPPT_DISABLE_CODEX_OAUTH"
+
+
+def codex_oauth_disabled():
+    """Codex OAuth is disabled by default.
+
+    Set EDITPPT_DISABLE_CODEX_OAUTH=0 to re-enable it. When disabled, every image job
+    goes straight to the OpenAI-compatible endpoint configured in the project-level .env.
+    """
+    raw = (os.getenv(DISABLE_CODEX_OAUTH_ENV) or "1").strip().lower()
+    return raw not in ("0", "false", "no", "off")
+
+
+def project_env_files(start=None):
+    """Locate project-level .env files, nearest first.
+
+    Resolution order:
+      1. EDITPPT_PROJECT_ENV / CODEX_PPT_PROJECT_ENV, when the path exists.
+      2. Walk from `start` (default: cwd) up through its parents, collecting every
+         .env found. Search stops after the directory that contains .git, so it
+       never escapes the project repository.
+    """
+    explicit = os.getenv("EDITPPT_PROJECT_ENV") or os.getenv("CODEX_PPT_PROJECT_ENV")
+    if explicit:
+        path = Path(explicit).expanduser()
+        return [path] if path.is_file() else []
+
+    found = []
+    current = (Path(start) if start else Path.cwd()).resolve()
+    for directory in [current] + list(current.parents):
+        candidate = directory / ".env"
+        if candidate.is_file():
+            found.append(candidate)
+        if (directory / ".git").exists():
+            break
+    return found
+
+
+def collect_project_env(values, start=None):
+    """Apply project-level .env on top of the global config: project wins."""
+    files = []
+    for path in reversed(project_env_files(start)):
+        parsed = parse_env_file(path)
+        if not parsed:
+            continue
+        files.append(str(path))
+        for key, value in parsed.items():
+            if key in ENV_FIELDS:
+                values[key] = value
+    return files
+
+
 def codex_oauth_ready():
     path = codex_auth_file()
     if not path.exists():
@@ -169,9 +221,10 @@ def collect_status(check_api=False):
     home = runtime_home()
     values = read_config_file(config_path(home))
     config_values = dict(values)
-    for key in ENV_FIELDS:
-        if os.getenv(key):
-            values[key] = os.environ[key]
+    # Precedence: process env > project-level .env > global config file
+    process_env = {key: os.environ[key] for key in ENV_FIELDS if os.getenv(key)}
+    project_files = collect_project_env(values)
+    values.update(process_env)
     imported_codex_ppt = False
     if not values.get("OPENAI_API_KEY"):
         imported_codex_ppt, _ = import_codex_ppt_values(values)
@@ -182,7 +235,8 @@ def collect_status(check_api=False):
     }
     api_key = values.get("OPENAI_API_KEY", "")
     api_ready = bool(api_key)
-    codex_ready = codex_oauth_ready()
+    codex_disabled = codex_oauth_disabled()
+    codex_ready = codex_oauth_ready() and not codex_disabled
     cli_fallback_ready = codex_ready or api_ready
     ok = all(dependencies.values()) and (cli_fallback_ready if check_api else True)
     return {
@@ -190,6 +244,7 @@ def collect_status(check_api=False):
         "config_home": str(home),
         "config_file": str(config_path(home)),
         "config_exists": config_path(home).exists(),
+        "project_env_files": project_files,
         "cli_python": sys.executable,
         "dependencies": dependencies,
         "config_keys": sorted(key for key in ENV_FIELDS if config_values.get(key)),
@@ -205,6 +260,8 @@ def collect_status(check_api=False):
         },
         "codex_oauth": {
             "ready": codex_ready,
+            "disabled": codex_disabled,
+            "disable_env": DISABLE_CODEX_OAUTH_ENV,
             "auth_file": str(codex_auth_file()),
         },
         "agent_builtin_imagegen": {

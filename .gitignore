@@ -8,6 +8,9 @@ __pycache__/
 .env
 .env.*
 !.env.example
+# 本地改动前的安全备份，不进远程仓库
+*.bak_*
+*.bak
 
 # 教材、客户资料和未经确认的外部素材默认不进入远程仓库
 materials/textbooks/**/*.pdf

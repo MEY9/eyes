@@ -43,7 +43,7 @@ When this skill is invoked by Agent B for the confirmed education-courseware pip
 - When invoked by Agent B, use the shared `ppt-pipeline-catalog` skill. Read the same `deck_id`, `style_id@version`, `catalog_db`, and `run_id` from the handoff; register style candidates, Style Lock, approved samples, visual artifacts, and QA before returning control to Agent B.
 
 
-Prefer the built-in image generation/editing tool. Use `scripts/image_gen.py` only when the built-in backend is unavailable, lacks a required capability, or the user explicitly asks for API/CLI mode.
+Use the local API/CLI backend (`scripts/image_gen.py`) as the default image backend. Codex OAuth and the built-in image tool are disabled by default: the CLI treats `CODEX_PPT_DISABLE_CODEX_OAUTH` as `1` unless the user exports it as `0`, so image jobs are never routed through the ChatGPT/Codex image endpoints. Configuration is read from the project-level `.env` (see `docs/backend-selection.md` → Configuration Precedence).
 
 ## Hard Constraints
 
@@ -94,8 +94,8 @@ Do not mark a step complete from chat alone; use real files or script-recorded s
 
 4. Confirm the image backend.
    - Before generating any slide image, read `docs/backend-selection.md`.
-   - Check whether a built-in image tool is callable, state what you checked, name the backend, explain fallback status, and wait for confirmation.
-   - If CLI/API fallback is selected, read `docs/cli-api-fallback.md`. Read `docs/image-model-configuration.md` only after config errors or explicit API-setting requests.
+   - Default to the API/CLI backend and confirm it with the user: state that Codex OAuth is disabled, name the OpenAI-compatible endpoint and model resolved from the project-level `.env`, then wait for confirmation.
+   - Read `docs/cli-api-fallback.md` for CLI usage. Read `docs/image-model-configuration.md` only after config errors or explicit API-setting requests.
 
 5. Generate the three-style representative sample packages for approval.
    - Before generating or approving the sample set, read `docs/outline-style-and-sample.md`.

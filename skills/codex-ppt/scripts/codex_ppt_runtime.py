@@ -15,7 +15,7 @@ from pathlib import Path
 import stat
 import subprocess
 import sys
-from typing import Dict, Iterable, Optional
+from typing import Dict, Iterable, List, Optional
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -104,8 +104,42 @@ def _write_env_file(path: Path, values: Dict[str, str]) -> None:
         pass
 
 
-def _load_env_values(home: Path) -> Dict[str, str]:
+def _project_env_files(start: Optional[Path] = None) -> List[Path]:
+    """Locate project-level .env files, nearest first.
+
+    Resolution order:
+      1. CODEX_PPT_PROJECT_ENV / EDITPPT_PROJECT_ENV, when the path exists.
+      2. Walk from `start` (default: cwd) up through its parents, collecting every
+         .env found. Search stops after the directory that contains .git, so it
+         never escapes the project repository.
+    """
+    explicit = os.getenv("CODEX_PPT_PROJECT_ENV") or os.getenv("EDITPPT_PROJECT_ENV")
+    if explicit:
+        path = Path(explicit).expanduser()
+        return [path] if path.is_file() else []
+
+    found: List[Path] = []
+    current = (start or Path.cwd()).resolve()
+    for directory in [current] + list(current.parents):
+        candidate = directory / ".env"
+        if candidate.is_file():
+            found.append(candidate)
+        if (directory / ".git").exists():
+            break
+    return found
+
+
+def _load_env_values(home: Path, start: Optional[Path] = None) -> Dict[str, str]:
+    """Resolve config values.
+
+    Precedence (highest first):
+      1. Process environment variables
+      2. Project-level .env (nearest to cwd, stopping at the .git boundary)
+      3. Global ~/.codex-ppt-skill/.env
+    """
     values = _parse_env_file(_env_path(home))
+    for path in reversed(_project_env_files(start)):
+        values.update(_parse_env_file(path))
     for key in ENV_FIELDS:
         if os.getenv(key):
             values[key] = os.environ[key]
