@@ -31,7 +31,7 @@
 | Agent B | `image-to-editable-ppt` | 视觉稿 QA 通过后 | 完全拆解并重建对象级可编辑 PPTX |
 | Agent B | `azure-tts` | 用户或教学设计明确需要课件旁白时 | 生成课件旁白；不处理 AI 视频内部声音 |
 | Agent B | `ppt-animation-video` | 用户需要连续课件视频时 | 从可编辑 PPTX 和语义动画清单生成 16:9 内部基底 |
-| Agent B | `ppt-social-publishing` | 视频发布包装/公众号投递被启用时 | 唯一 9:16 发布视频、三平台文案、公众号图文草稿/发布结果 |
+| Agent B | `ppt-social-publishing` | 视频发布包装/公众号投递被启用时 | 唯一 9:16 发布视频、三平台文案、公众号图文草稿/发布结果；公众号正式发布成功后按用户长期授权自动发布“一堂微课”知识星球主题 |
 
 ## 安装分类
 
@@ -62,7 +62,7 @@
 - 小红书：`xhs-research` 通过本机 `xiaohongshu-mcp` 的只读 HTTP 端点调用；无密钥版本、端点、二进制哈希和工具白名单保存在 `mcp/servers.json`。
 - 图片生成：优先项目 `.env` 指定的 OpenAI 兼容图像接口；额度或能力不可用时按 Agent B 契约回落。
 - AI 视频：只使用 Agent B 规定的即梦模型与次数门禁。
-- 知识星球：发布节点使用官方 `zsxq-cli`，认证保存在系统安全存储，不进入仓库。
+- 知识星球：公众号正式发布成功后自动执行星球发布（已获用户长期授权）；使用官方 `zsxq-cli`，认证保存在系统安全存储，不进入仓库。公众号未正式发布成功时不触发星球发布。
 
 ## 双端切换规则
 
@@ -72,3 +72,8 @@
 4. 独立项目可以分别由两端开发，但不得共享同一 `deck_id` 或互相覆盖运行目录。
 5. `.env`、MCP Cookie/token、账号凭据、SQLite 运行库和私密客户材料不提交 Git。
 6. 切换客户端或升级 Agent、Skill、MCP 后运行 `python scripts/verify_workspace_contract.py`；校验失败时先修复仓库权威源，不用旧的用户目录副本覆盖仓库。
+7. 改 `skills/image-to-editable-ppt/cli/` 下的代码后，必须同步全部已装副本，否则会出现"仓库已修、实际执行仍报错"的假修复：
+   - `~/.zcode/skills/image-to-editable-ppt/cli`（`editppt` 命令是 uv editable 安装，直接指向这一份，改了才真正生效）
+   - `~/.codex/skills/image-to-editable-ppt/cli`
+   - `~/.workbuddy/skills/image-to-editable-ppt/cli`（WorkBuddy 会话实际读取的一份）
+8. `editppt` 的 runtime 模块之间使用裸模块名互相 import；`cli.py` 通过 `runpy` 执行 `runtime/main.py` 时会把 runtime 目录加入 `sys.path`，因此包方式导入（`import editppt.runtime.<module>`）依赖 `runtime/__init__.py` 中的路径自举。两种入口都必须可用：命令行用 `editppt <command>`，脚本内调用用 `python editppt/cli.py <command>`。
