@@ -1,0 +1,321 @@
+{
+  "schema_version": 1,
+  "deck_id": "chibifu-g1chn-20261019",
+  "run_id": "td-chibifu-20261019-01",
+  "title": "赤壁赋（高一语文第1课时）",
+  "stage": "delivered",
+  "status": "passed",
+  "updated_at": "2026-10-20",
+  "source_ingest": {
+    "status": "completed",
+    "mode": "public_research_synthesis",
+    "mode_note": "无用户原始教学设计，基线由公开教研资料整合。不得按轻量改写口径表述。",
+    "audit": "working/source_audit.md",
+    "sources": 5,
+    "failed_reads": [
+      {
+        "source": "微信公众号《赤壁赋》教学案例设计",
+        "reason": "http协议被Skill拒绝；https返回page may require verification",
+        "fallback": "改用WebSearch摘要，不引用其逐字内容"
+      }
+    ]
+  },
+  "teaching_design": {
+    "status": "completed",
+    "markdown": "working/teaching_design.md",
+    "docx": "outputs/teaching_design.docx",
+    "change_log": "working/change_log.md",
+    "lesson_packet": "working/lesson_packet.json",
+    "ai_manifest": "working/ai_assets_manifest.md",
+    "handoff": "working/handoff.md",
+    "rights_manifest": "working/rights_manifest.md",
+    "docx_qa": {
+      "status": "passed",
+      "font": "宋体",
+      "size": "五号 10.5pt",
+      "color": "000000 黑色",
+      "markdown_residue": 0,
+      "tables": 4,
+      "paragraphs": 130,
+      "render": "qa/teaching_design.pdf",
+      "render_pages": 9,
+      "preview": [
+        "qa/preview_p1.png",
+        "qa/preview_p2.png"
+      ],
+      "checked_at": "2026-10-19"
+    }
+  },
+  "ai_enrichment": {
+    "status": "passed",
+    "gate": "passed",
+    "gate_path": "working/ai_task_gate.json",
+    "tasks": [
+      "AI-HTML-01",
+      "AI-VIDEO-01"
+    ],
+    "artifact_status": "qa_passed",
+    "note": "AI 视频分辨率偏低已记录，不阻塞但需在交付报告披露"
+  },
+  "agent_a_gate": {
+    "status": "passed",
+    "checks": {
+      "source_consistency": "passed",
+      "original_intent_preserved": "passed_with_note",
+      "note_original_intent": "无用户原始设计，改以“基线来源意图未被曲解”为标准；课时冲突已通过采用1课时框架解决",
+      "every_step_has_teacher_student_action": "passed",
+      "objective_activity_assessment_alignment": "passed",
+      "ai_has_teaching_role_and_fallback": "passed",
+      "ai_tasks_have_required_status_owner": "passed",
+      "original_rewrite_added_distinguishable": "passed",
+      "docx_format_verified": "passed",
+      "handoff_paths_usable": "passed",
+      "lesson_packet_audit_rights_state_consistent": "passed",
+      "open_questions_recorded": "passed"
+    },
+    "blocking_items": []
+  },
+  "agent_b_outline": {
+    "status": "completed",
+    "path": "outline.md",
+    "slides": 25,
+    "roles_covered": [
+      "cover",
+      "media",
+      "concept",
+      "agenda",
+      "timeline",
+      "reference",
+      "process",
+      "structure",
+      "comparison",
+      "quote",
+      "interactive",
+      "summary"
+    ],
+    "note": "页数由教学动作决定，未套用固定页数。大纲已写出但未单独设确认点，与样稿选择合并为一次确认。"
+  },
+  "agent_b_style": {
+    "status": "waiting_user",
+    "version": "v2",
+    "version_note": "v1 因未做参考图驱动、视觉被用户判定太差，已归档至 style_candidates/_pdf_old/",
+    "reference_driven": true,
+    "reference": {
+      "skill": "xhs-research",
+      "keywords": [
+        "赤壁赋 课件",
+        "高中语文课件 设计"
+      ],
+      "notes_collected": 40,
+      "covers_downloaded": 22,
+      "provenance": "style_candidates/reference-xhs/provenance.json",
+      "dna_extracted": [
+        "配色",
+        "图形语言",
+        "版式"
+      ],
+      "excluded": [
+        "原帖文字",
+        "logo",
+        "水印",
+        "原版式内容"
+      ]
+    },
+    "candidates": [
+      {
+        "style_id": "qinglv-gongbi@0.2-chibifu",
+        "label": "风格1 青绿赤壁·绢本工笔",
+        "pdf": "style_candidates/_pdf/风格1.pdf",
+        "dir": "style_candidates/styleA-qinglv-gongbi"
+      },
+      {
+        "style_id": "danmo-changjuan@0.2-chibifu",
+        "label": "风格2 淡墨夜江·宣纸长卷",
+        "pdf": "style_candidates/_pdf/风格2.pdf",
+        "dir": "style_candidates/styleB-danmo-changjuan"
+      },
+      {
+        "style_id": "jianzhi-ceye@0.2-chibifu",
+        "label": "风格3 笺纸册页·雅致书卷",
+        "pdf": "style_candidates/_pdf/风格3.pdf",
+        "dir": "style_candidates/styleC-jianzhi-ceye"
+      }
+    ],
+    "samples_per_candidate": 3,
+    "total_samples": 9,
+    "generation": {
+      "backend": "scripts/image_gen.py",
+      "model": "gpt-image-2.5",
+      "native_size": "1536x1024",
+      "constraint": "接口仅支持 1K，2560x1440 被拒",
+      "postprocess": "中央裁切 1536x864 -> Lanczos 放大 2560x1440",
+      "quality": "high",
+      "total_generated": 18,
+      "chinese_check": "逐字目检通过，无错字",
+      "known_defects": [
+        "风格3 页眉编号轻微贴顶",
+        "风格1/3 底部小字提示略糊"
+      ]
+    },
+    "recommended": "danmo-changjuan@0.2-chibifu",
+    "forbidden": "书法体/毛笔字/艺术字一律禁止，国风感由配色+图形+版式承担",
+    "note": "确认前不得锁定风格、不得批量生成"
+  },
+  "visual_deck": {
+    "status": "passed",
+    "slides": 25,
+    "design_resolution": "2560x1440",
+    "origin_dir": "origin_image/",
+    "visual_pptx": "outputs/赤壁赋_视觉版.pptx",
+    "render_pdf": "qa/visual_deck/赤壁赋_视觉版.pdf",
+    "contact_sheet": "qa/contact_sheet_final.png",
+    "qa": "qa/visual_deck/qa.md",
+    "repaired": [
+      "slide_07 生僻字→PIL精确合成",
+      "slide_21 文件损坏+标题切顶",
+      "slide_23 误画人物→改纯文字"
+    ],
+    "chinese_check": "18页放大目检 + 25页联系表通览，问题页已返修",
+    "note": "视觉版为满版图片，非交付物，须经对象级重建"
+  },
+  "editable_rebuild": {
+    "status": "passed",
+    "run": "editable_rebuild_run",
+    "slides": 25,
+    "final_pptx": "outputs/赤壁赋_可编辑版.pptx",
+    "final_pdf": "qa/editable_deck/赤壁赋_可编辑版.pdf",
+    "deck_manifest": "editable_rebuild_run/deck_manifest.json",
+    "objects": {
+      "shapes": 323,
+      "editable_texts": 208,
+      "pictures": 27,
+      "native_tables": 1
+    },
+    "special_pages": {
+      "page_002": "视频槽位 AI-VIDEO-01_VIDEO_SLOT，待回填 MP4",
+      "page_020": "原生表格对象（变/不变 × 水/月/人），可双击编辑",
+      "page_024": "互动页，6 个原生条框登记 interactive_regions（slot-l1..l3/slot-r1..r3），保留静态备用版，后续接入 HTML"
+    },
+    "spot_check": "PDF 渲染抽检 p07(生僻字全对)/p20(原生表格)/p23(纯文字无人物+中央同字)/p24(互动框架)，全部合格",
+    "finalize": "editppt run finalize passed=true, 0 violations, 0 warnings"
+  },
+  "open_questions": [
+    "本课件按1课时设计。若授课学校安排2课时，需在环节四至环节六之间增加课时段。",
+    "学生文言基础较弱的班级，环节四的12分钟可能不足，建议把环节六的互动配对转为课后完成。",
+    "教材原文未与纸质教材逐字比对，建议教师本人复核一次。"
+  ],
+  "next_stage": null,
+  "next_action": "已全量交付。仅剩教师确认项（见交付报告第六节）；无待办技术项。",
+  "blocking_evidence": [],
+  "image_backend_policy": {
+    "changed_at": "2026-10-20 01:12",
+    "config_source": "project-level .env (E:/codex/jiaosdhi/eyes/.env)",
+    "config_precedence": [
+      "process env",
+      "project .env (walk up to .git boundary)",
+      "~/.editppt/config.yaml or ~/.codex-ppt-skill/.env",
+      "built-in defaults"
+    ],
+    "codex_oauth": "disabled by default (EDITPPT_DISABLE_CODEX_OAUTH=1 / CODEX_PPT_DISABLE_CODEX_OAUTH=1)",
+    "skills_updated": [
+      "skills/image-to-editable-ppt/cli/editppt/runtime/image_gen.py",
+      "skills/image-to-editable-ppt/cli/editppt/runtime/runtime_env.py",
+      "skills/image-to-editable-ppt/SKILL.md",
+      "skills/codex-ppt/scripts/image_gen.py",
+      "skills/codex-ppt/scripts/codex_ppt_runtime.py",
+      "skills/codex-ppt/SKILL.md",
+      "skills/codex-ppt/docs/backend-selection.md"
+    ],
+    "runtime_sync": "同步到 ~/.zcode/skills/ （editppt 的 editable 安装指向该路径）",
+    "verified": "doctor 命中 E://codex//jiaosdhi//eyes//.env；codex_oauth.ready=false；selection=openai-compatible-api；真实生图 36.4s 成功",
+    "github_commit": "e205371 (main -> origin/main)"
+  },
+  "media_backfill": {
+    "status": "passed",
+    "at": "2026-10-20 01:20",
+    "script": "working/backfill_media.py",
+    "output": "outputs/赤壁赋_可编辑版.pptx",
+    "note": "回填版已覆盖回原名；旧版（无视频）备份为 outputs/赤壁赋_可编辑版.bak_20261020_102900_旧版无视频.pptx；临时副本已清理",
+    "page_002": "视频槽位图片→嵌入 MP4（ai-video-01-1080p.mp4 3.04MB，poster=ai-video-01-poster.png，保持原 z 序在最底层）",
+    "page_024": "底部说明文字→超链接入口 html_embeds/ai-html-01/ai-html-01.html（TargetMode=External），静态备用内容保留",
+    "proofread": {
+      "script": "working/proofread_deck.py",
+      "report": "qa/editable_deck/proofread_report.json",
+      "pages": 25,
+      "totals": {
+        "shapes": 323,
+        "texts": 208,
+        "pictures": 26,
+        "tables": 1,
+        "media": 1
+      },
+      "problem_pages": 5,
+      "verdict": "无阻断问题：p18/p21/p25 越界为朱砂方印贴边裁切（源图设计，shape 名称已注明）；p01 12.5pt 逐字竖排与 p03 11.5pt 出处行为源图测量忠实还原"
+    },
+    "finalized_at": "2026-10-20 10:29",
+    "final_check": {
+      "slides": 25,
+      "media": "ai-video-01-1080p.mp4 960x540pt 满页",
+      "p24_link": "html_embeds/ai-html-01/ai-html-01.html",
+      "objects": 323,
+      "editable_texts": 208
+    }
+  },
+  "deliverable": "outputs/赤壁赋_可编辑版.pptx",
+  "font_polish": {
+    "status": "passed",
+    "at": "2026-10-20 10:51",
+    "script": "working/polish_fonts.py",
+    "changes": [
+      {
+        "page": 3,
+        "text": "林语堂《苏东坡传》",
+        "from_pt": 11.5,
+        "to_pt": 14.0,
+        "box_width_in": "1.53 -> 2.01",
+        "right_edge_in": 9.92
+      }
+    ],
+    "unchanged": [
+      {
+        "page": 1,
+        "reason": "封面竖排版本行：16 字框间距仅 0.20in，12.5pt 字高已占 0.17in，放大到 14pt 会与相邻字框几乎贴死，保持源图测量"
+      }
+    ],
+    "safety": "python-pptx 往返保存已验证不丢部件（90 parts / ppt/media/media1.mp4 均保留）；修改前自动备份到 outputs/_backups/"
+  },
+  "delivery_report": {
+    "status": "passed",
+    "at": "2026-10-20 10:54",
+    "script": "working/build_delivery_report_docx.py",
+    "output": "outputs/赤壁赋_课件交付验收报告.docx",
+    "format_qa": {
+      "paragraphs": 34,
+      "tables": 4,
+      "font": "宋体",
+      "size": "五号 10.5pt",
+      "color": "000000",
+      "markdown_residue": 0
+    },
+    "sections": [
+      "基本信息",
+      "交付清单",
+      "课件结构与环节对应",
+      "课堂使用说明",
+      "验收结果",
+      "需要教师确认的三件事",
+      "两点披露",
+      "回滚与再生成"
+    ]
+  },
+  "outputs_layout": {
+    "main": [
+      "outputs/赤壁赋_可编辑版.pptx",
+      "outputs/赤壁赋_视觉版.pptx",
+      "outputs/teaching_design.docx",
+      "outputs/赤壁赋_课件交付验收报告.docx"
+    ],
+    "backups": "outputs/_backups/（旧版无视频 + 微调前，确认后可整体删除）",
+    "interactive": "html_embeds/ai-html-01/ai-html-01.html"
+  }
+}
