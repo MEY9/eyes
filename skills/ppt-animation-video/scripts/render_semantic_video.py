@@ -397,7 +397,11 @@ def compose_media(
     command += ["-f", "lavfi", "-t", f"{total_duration:.6f}", "-i", "anullsrc=r=48000:cl=stereo"]
 
     filters: list[str] = []
-    video_source = "[0:v]"
+    # When there are no media overlays, map the base video's stream directly.
+    # FFmpeg only accepts labeled streams as `-map` targets when the label is
+    # produced by a filter graph; in the empty-media case the graph only
+    # contains the silent AAC source, so `[0:v]` is not a valid label.
+    video_source = "0:v:0" if not media_entries else "[0:v]"
     for index, entry in enumerate(media_entries, start=1):
         geometry = entry["geometry"]
         filters.append(

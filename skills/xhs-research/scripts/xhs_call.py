@@ -22,13 +22,20 @@ import requests
 MCP = "http://localhost:18060/mcp"
 READONLY = {"check_login_status", "get_login_qrcode", "search_feeds", "get_feed_detail", "user_profile", "list_feeds"}
 
+# 本机环境会注入 HTTP_PROXY/HTTPS_PROXY（sandbox 与 Clash 代理）。requests 默认
+# trust_env=True 会把 http://localhost 的请求也发给代理，导致 502 Bad Gateway。
+# 本地 MCP 必须直连，媒体下载仍允许走系统环境（小红书图床可能需代理）。
+LOCAL = requests.Session()
+LOCAL.trust_env = False
+LOCAL.headers.update({"Accept": "application/json, text/event-stream"})
+
 
 def call(name: str, arguments: dict, timeout: int = 120):
     if name not in READONLY:
         raise SystemExit(f"拒绝调用非只读工具: {name}")
     payload = {"jsonrpc": "2.0", "id": 1, "method": "tools/call",
                "params": {"name": name, "arguments": arguments}}
-    r = requests.post(MCP, json=payload, timeout=timeout)
+    r = LOCAL.post(MCP, json=payload, timeout=timeout)
     r.raise_for_status()
     body = r.json()
     if "error" in body:
