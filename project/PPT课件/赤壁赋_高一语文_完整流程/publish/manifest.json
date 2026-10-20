@@ -1,0 +1,65 @@
+{
+  "deck": "chibifu-g1chn-20261019",
+  "lesson": "《赤壁赋》",
+  "book": "统编版（2019）高中语文必修上册",
+  "grade": "高一",
+  "unit": "第七单元 第16课",
+  "period": "第1课时",
+  "source_video": "working/semantic-video/赤壁赋_课件语义动画_16x9_BGM.mp4",
+  "source_video_sha256": "8202b4d7b35253a2ea80749f8db97cbd0ff76b9984d2bc093871a8b9f0023830",
+  "bgm": "许嵩全线统一曲目（assets/bgm/BGM.md）",
+  "packages": {
+    "xiaohongshu": {
+      "video": "video_9x16.mp4",
+      "ratio": "9:16",
+      "resolution": "1080x1920",
+      "sha256": "aa287c6de8f658470f7dc201cfcf6e21a70d98ec9ca58b0e06f584671605e1e4",
+      "copy": "copy.txt",
+      "tags": 5
+    },
+    "douyin": {
+      "video": "video_9x16.mp4",
+      "ratio": "9:16",
+      "resolution": "1080x1920",
+      "sha256": "aa287c6de8f658470f7dc201cfcf6e21a70d98ec9ca58b0e06f584671605e1e4",
+      "copy": "copy.txt",
+      "tags": 5
+    },
+    "weixin_channels": {
+      "video": "video_9x16.mp4",
+      "ratio": "9:16",
+      "resolution": "1080x1920",
+      "sha256": "aa287c6de8f658470f7dc201cfcf6e21a70d98ec9ca58b0e06f584671605e1e4",
+      "copy": "copy.txt",
+      "tags": 5
+    },
+    "wechat_official_account": {
+      "article": "article.html",
+      "copy": "copy.txt",
+      "cover": "cover.jpg",
+      "status": "draft_created",
+      "draft_media_id": "kLU5-QMfMMKHtGm0e__gUCHIxTyVUa3hD63bcFJtYx1wh0WN7KFqgLeCuaafmKz4",
+      "cover_media_id": "kLU5-QMfMMKHtGm0e__gUKMU_JiHOOjhRr1UtWdxc25_OzZF85T4n5EQwTnEMtap",
+      "slide_count": 25,
+      "miniprogram_code_inserted": true,
+      "detail": "草稿已在公众号草稿箱；按 SKILL 门禁，正式发布需用户明确要求且账号已认证（freepublish 权限）。后台手动发布或授权后自动化。"
+    }
+  },
+  "zsxq": {
+    "topic_id": "55521544852855844",
+    "url": "https://wx.zsxq.com/group/48885448528888/topic/55521544852855844",
+    "planet": "一堂微课",
+    "group_id": "48885448528888",
+    "created_at": "2026-10-21T03:48:03+0800",
+    "copy": "outputs/social/zsxq/copy.txt",
+    "attachments": [
+      "封面图.jpg (100161 B)",
+      "可编辑课件.pptx (41189392 B, 轻量版)",
+      "互动练习.html (12866 B)",
+      "教学设计.docx (46182 B)",
+      "AI导入短片.zip (3186154 B)"
+    ],
+    "note": "轻量版由 working/make_light_pptx.py 生成：仅降分辨率至 1920 宽、不动 PNG 扩展名与 rels、保留内嵌视频。原版 51.92MB 超星球 50MB 上限，轻量版 39.28MB。"
+  },
+  "note": "公众号为草稿态，星球按用户本次明确要求提前发布（SKILL 第 7 条例外条款），不改变后续默认顺序。"
+}

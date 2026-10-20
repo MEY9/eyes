@@ -3,9 +3,9 @@
   "deck_id": "chibifu-g1chn-20261019",
   "run_id": "td-chibifu-20261019-01",
   "title": "赤壁赋（高一语文第1课时）",
-  "stage": "delivered",
+  "stage": "published_wechat_draft_zsxq_done",
   "status": "passed",
-  "updated_at": "2026-10-20",
+  "updated_at": "2026-10-21",
   "source_ingest": {
     "status": "completed",
     "mode": "public_research_synthesis",
@@ -205,7 +205,7 @@
     "教材原文未与纸质教材逐字比对，建议教师本人复核一次。"
   ],
   "next_stage": null,
-  "next_action": "已全量交付。仅剩教师确认项（见交付报告第六节）；无待办技术项。",
+  "next_action": "公众号草稿待人工确认正式发布（需 freepublish 权限）；其余全完成。",
   "blocking_evidence": [],
   "image_backend_policy": {
     "changed_at": "2026-10-20 01:12",
@@ -333,6 +333,51 @@
       "p03": "出处行 14pt 渲染生效，右移后无越界",
       "p24": "底部超链接入口文字在位（下划线蓝字）",
       "全片": "25 页全部渲染，无空白页、无缺页"
+    }
+  },
+  "semantic_video": {
+    "status": "passed",
+    "at": "2026-10-21 00:05",
+    "mode": "semantic_compose",
+    "script": "skills/ppt-animation-video/scripts/render_semantic_video.py --skip-render",
+    "states_helper": "working/render_states.py (本机无 pdftoppm，复用官方 write_state_variant + LibreOffice + PyMuPDF)",
+    "manifest": "working/animation_manifest_logic.json (25页/85组/213对象/110静态)",
+    "media_plan": "working/semantic_video_media_plan.json",
+    "master": "working/semantic-video/赤壁赋_课件语义动画_16x9.mp4",
+    "master_spec": "1920x1080 30fps 142.033s 21.1MB",
+    "bgm": "working/semantic-video/赤壁赋_课件语义动画_16x9_BGM.mp4",
+    "media_window": "AI-VIDEO-01 t=7.200-17.267s 完整播放 10.080s 原声",
+    "audio_check": "媒体区间外 -91dB 数字静音",
+    "qa": "working/video_qa.md",
+    "frames_qa": "qa/semantic-video/"
+  },
+  "social_publishing": {
+    "status": "done",
+    "at": "2026-10-21 03:48",
+    "wechat": {
+      "status": "draft_created",
+      "draft_media_id": "kLU5-QMfMMKHtGm0e__gUCHIxTyVUa3hD63bcFJtYx1wh0WN7KFqgLeCuaafmKz4",
+      "cover_media_id": "kLU5-QMfMMKHtGm0e__gUKMU_JiHOOjhRr1UtWdxc25_OzZF85T4n5EQwTnEMtap",
+      "slides": 25,
+      "images": 26,
+      "miniprogram_code": true,
+      "unblocked_by": "IP 白名单加入 182.123.103.118"
+    },
+    "zsxq": {
+      "status": "published",
+      "topic_id": "55521544852855844",
+      "url": "https://wx.zsxq.com/group/48885448528888/topic/55521544852855844",
+      "planet": "一堂微课",
+      "attachments": 5,
+      "trigger": "用户明确要求提前发布（SKILL 第7条例外），公众号仍为草稿"
+    },
+    "manifest": "publish/manifest.json",
+    "light_pptx": {
+      "script": "working/make_light_pptx.py",
+      "size_mb": 39.28,
+      "reason": "星球单附件 50MB 上限，原版 51.92MB 超限",
+      "method": "仅降分辨率至 1920 宽，不改 PNG 扩展名/rels/Content_Types，保留内嵌视频",
+      "integrity": "25页/323对象/208文本框/media1.mp4 均在"
     }
   }
 }
