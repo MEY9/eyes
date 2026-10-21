@@ -7,8 +7,8 @@
   "language": "Chinese",
   "subject": "高中语文",
   "grade": "高一",
-  "goal": null,
-  "goal_note": "教学目标待 Agent A 从用户提供的现有教学设计来源中提取，不由本立项文件预设。",
+  "goal": "依托橘子洲研学导游大情境，赏析湘江秋景壮阔蓬勃的意境，梳理词作景、事、情、志四层结构，掌握借景抒情、情景交融、景志同构的艺术手法；突破“悲秋—壮秋”审美定式，理解“问苍茫大地，谁主沉浮”的时代内涵与青年担当。",
+  "goal_source": "working/lesson_packet.json#objectives（来源：夜雨聆风学习网 971474，2026-08-26）",
   "selected_image_backend": "scripts/image_gen.py",
   "max_concurrent_slides": 3,
   "deck_context": {
@@ -17,23 +17,27 @@
     "textbook": "统编版（2019）高中语文必修上册",
     "unit": "第一单元（文学阅读与写作 · 单元主题“青春的价值”）",
     "lesson": "第1课 沁园春·长沙",
-    "lesson_hours": null,
-    "planned_minutes": null
+    "lesson_hours": 1,
+    "planned_minutes": 45,
+    "lesson_hours_source": "来源明示“授课课时：1课时”，佐证来源 14391217 同为 1 课时"
   },
   "slides": null,
-  "slides_note": "页数由课时和教学动作决定，不固定为任何整数；待大纲阶段确定实际 slide_count。",
+  "slides_note": "页数由课时和教学动作决定，不预设整数；待 Agent B 大纲阶段确定实际 slide_count。",
   "outline": "outline.md",
   "lesson_packet": "working/lesson_packet.json",
   "teaching_design": "outputs/teaching_design.docx",
-  "stage": "awaiting_agent_a_source",
+  "stage": "agent_a_handoff_ready",
   "style_family": null,
   "style_family_note": "待 Agent B 阶段 2 风格探索后经用户确认锁定；须遵守同质化防护（连续课件不得沿用同一风格家族，同一家族不得三连用）。",
   "style_lock_status": "pending",
-  "asset_plan": "待 Agent A 完成 AI 赋能检查后确定。",
+  "asset_plan": "AI-01 AI 视频（湘江秋景动态意境，1920×1080，8—12 秒，Agent B）；AI-02 HTML 互动（意象空间归类，单文件离线，Agent HTML）。字段详见 working/ai_assets_manifest.md 与 working/lesson_packet.json#ai_plan。",
   "prompt_rules": {
     "margin_guard": "每页提示词必须包含：画面上下各留约六分之一空白，任何文字、表格线、装饰线不得贴边；成品会裁切上下各百分之八。",
     "text_accuracy": "所有中文按大纲逐字给出，禁止模型自行增删字词；生成后逐页核字。",
     "no_calligraphy": "禁止书法体、毛笔字、艺术字；标题用宋体加粗并拉开字距。注意：本课虽以毛泽东书法真迹闻名，但课件内一律不使用草书与毛笔字体效果。",
-    "background_restraint": "湘江秋景为背景层，对比度低于文字；同一页不得出现两处以上山水视觉重心。"
+    "background_restraint": "湘江秋景为背景层，对比度低于文字；同一页不得出现两处以上山水视觉重心。",
+    "autumn_tone": "全片基调为“壮秋”：赤红与澄碧相生、生机蓬勃、气象壮阔。禁止枯枝败叶、暮霭沉沉、孤舟独钓等悲秋符号，除非页面明确用于“悲秋—壮秋”对比。",
+    "era_guard": "画面不得出现现代建筑、现代桥梁、霓虹灯光等与 1925 年语境冲突的元素；人物一律不使用真人肖像式写实，改用写意剪影或远景身影。",
+    "ai_label": "AI 生成画面须在课件中标注为“AI 生成示意画面”，不得标注为橘子洲实景照片或历史影像。"
   }
 }

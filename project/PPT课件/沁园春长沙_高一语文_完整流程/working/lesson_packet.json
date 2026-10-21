@@ -1,34 +1,267 @@
 {
-  "schema_version": 1,
   "deck_id": "qinyuanchun-changsha-g1chn-20261021",
   "title": "沁园春·长沙",
   "author": "毛泽东",
   "subject": "高中语文",
   "grade": "高一",
-  "textbook": "统编版（2019）高中语文必修上册",
-  "chapter": "第一单元（文学阅读与写作 · 单元主题“青春的价值”）",
-  "lesson": "第1课 沁园春·长沙",
-  "lesson_hours": null,
-  "planned_minutes": null,
-  "source_status": "awaiting_user_material",
-  "source_status_note": "Agent A 规则 1：默认模式是“基于现有教学设计的轻量改写”，不是从零创作；第 7 节“没有现有设计却要求按轻量改写交付”属于必须暂停项。因此本文件在用户提供来源前不填写教学目标、重难点、教学步骤与 AI 赋能，全部留空。",
-  "required_source_material": [
-    "现有教学设计（DOCX / PDF / 图片 / 粘贴文本均可）",
-    "或教参、教研资料原文",
-    "或微信公众号文章公开链接（走 $read-wechat-articles 读取）"
+  "textbook": {
+    "version": "统编版（部编版）",
+    "volume": "必修上册",
+    "unit": "第一单元",
+    "unit_theme": "青春的价值",
+    "lesson_no": "第1课",
+    "genre": "词（双阕，豪放词）"
+  },
+  "lesson_hours": 1,
+  "minutes": 45,
+  "lesson_type": "情境任务驱动型公开课、沉浸式研学课堂、素养导向思维课堂",
+  "source": {
+    "primary": {
+      "title": "研学橘子洲 品读少年志——必修上册高一语文《沁园春·长沙》公开课教学设计（橘子洲我来当导游·沉浸式研学情境版）",
+      "site": "夜雨聆风学习网",
+      "url": "https://www.yeyulingfeng.com/a/971474.html",
+      "published_at": "2026-08-26",
+      "declared_hours": "1课时",
+      "completeness": "完整",
+      "archived": [
+        "source_materials/yeyulingfeng_971474.html",
+        "source_materials/yeyulingfeng_971474.txt"
+      ]
+    },
+    "supporting": [
+      {
+        "url": "https://zy.21cnjy.com/26598918",
+        "declared_hours": "未写明",
+        "role": "事实交叉核验，不并入改写",
+        "archived": "source_materials/21cnjy_26598918.txt"
+      },
+      {
+        "url": "https://mip.21cnjy.com/P/14391217.html",
+        "declared_hours": "一课时",
+        "role": "课时佐证，不并入改写",
+        "archived": "source_materials/21cnjy_14391217.txt"
+      },
+      {
+        "url": "https://mip.21cnjy.com/P/21278401.html",
+        "declared_hours": "2课时",
+        "role": "课时与主来源不符，不采用",
+        "archived": "source_materials/21cnjy_21278401.txt"
+      }
+    ],
+    "source_status": "archived_and_audited",
+    "audit": "working/source_audit.md",
+    "index": "source_materials/source_index.md"
+  },
+  "objectives": [
+    {
+      "id": "O1",
+      "dimension": "语言建构与运用",
+      "text": "有感情朗读诗词，积累并掌握「舸、寥廓、峥嵘、遒劲、遏」等重点字词；能够以规范、优美、贴合实景的导游语系完成诗词解说与文本表达。",
+      "origin": "source",
+      "note": "维度名称为补充标注，目标文字沿用原设计"
+    },
+    {
+      "id": "O2",
+      "dimension": "思维发展与提升",
+      "text": "依托橘子洲研学打卡路线，梳理「观景—绘景—问天—忆昔—言志」行文脉络；通过古今秋景诗词对比思辨，突破传统悲秋思维定式，建立壮秋审美认知，提升文本结构化梳理、对比思辨、逻辑表达的高阶思维能力。",
+      "origin": "source",
+      "note": "维度名称为补充标注"
+    },
+    {
+      "id": "O3",
+      "dimension": "审美鉴赏与创造",
+      "text": "品读词作远近高低、俯仰动静、色彩相生、虚实相融的写景艺术；赏析湘江秋景蓬勃壮阔、昂扬雄浑的独特意境；体会豪放词作阔大、刚健、高远的语言审美与格局之美。",
+      "origin": "source",
+      "note": "维度名称为补充标注"
+    },
+    {
+      "id": "O4",
+      "dimension": "文化传承与理解",
+      "text": "体悟词人博大胸襟、进取姿态与胸怀天下的时代担当；理解红色诗词独特的精神气质；联结当代青年生活，完成古今青春对话，传承青春报国、矢志担当的红色文脉。",
+      "origin": "source",
+      "note": "维度名称为补充标注"
+    }
   ],
-  "source_materials_dir": "source_materials/",
-  "objectives": [],
-  "key_points": [],
-  "difficult_points": [],
-  "teaching_steps": [],
-  "ai_tasks": [],
+  "key_points": [
+    "依托导游解说任务，赏析湘江秋景壮阔蓬勃的意境特点",
+    "梳理词作景、事、情、志四层结构",
+    "掌握借景抒情、情景交融、景志同构的艺术手法"
+  ],
+  "difficult_points": [
+    "深度阐释「问苍茫大地，谁主沉浮」的时代内涵与精神内核",
+    "读懂壮秋意象背后的革命胸襟、青年锐气与济世担当",
+    "理解词作弃悲扬壮、以景衬志的独特审美价值"
+  ],
+  "teaching_steps": [
+    {
+      "step": 1,
+      "name": "情境入课：上岗集训，解锁研学任务",
+      "minutes": 5,
+      "minutes_note": "补充（原设计未写明分钟分配）",
+      "teacher_action": "出示橘子洲实景图建立空间印象；板书课题与作者；发布四大进阶导游任务。",
+      "student_action": "记录四大任务，明确本组角色分工（路线规划员、点位讲解员、答疑员、宣讲员）。",
+      "activities": [
+        "沉浸式情境导入（教师导语：悲秋与壮秋的对照）",
+        "岗前素养集训：创作背景（1925年晚秋重游橘子洲）+ 文体知识（沁园春为词牌、长沙为题、双阕结构）",
+        "发布四大任务：全景打卡、点位精讲、深度答疑、收官宣讲"
+      ]
+    },
+    {
+      "step": 2,
+      "name": "初读集训：诵读涵咏，规划研学路线",
+      "minutes": 8,
+      "minutes_note": "补充",
+      "teacher_action": "配乐范读；组织自由读、指名读、齐读；纠正易错字音（百舸、寥廓、峥嵘、遒劲、遏）；巡组抽查路线图并点评。",
+      "student_action": "标注停顿、语速、重音；小组共建橘子洲诗词研学路线图；口头说明层次划分依据。",
+      "activities": [
+        "范读定调：确立开阔、沉毅、昂扬、豪迈的基调",
+        "分层诵读，夯实基础",
+        "小组共建：三区路线（上阕绘景 / 下阕叙事 / 核心制高点言志）"
+      ],
+      "evaluation": "补充：路线图须标明上阕、下阕与言志三层并能说明依据；抽查 2—3 组当场点评。"
+    },
+    {
+      "step": 3,
+      "name": "核心探究：点位精讲，金牌导游实景展演",
+      "minutes": 20,
+      "minutes_note": "补充",
+      "teacher_action": "按四大点位推进文本细读；组织分组展演与师生互评；在点位二出示 AI 生成画面并按四维追问；点位三、四做深挖点拨。",
+      "student_action": "撰写专属实景导游解说词；分组展演；借助 AI 画面印证解说；完成意象空间归类互动。",
+      "activities": [
+        "点位一 洲头临江观景台：独立寒秋，定格全篇气象（独立非孤寂、寒秋不写凄冷、湘江北去铺垫气势）",
+        "点位二 湘江秋色全景点：万类霜天竞自由（六大意象 × 色彩/空间/动静/意境四维）——含 AI-01",
+        "点位三 洲头问天核心点：问苍茫大地，谁主沉浮（怅为深沉忧思与时代担当）",
+        "点位四 青春记忆展馆：峥嵘岁月，风华少年（风华正茂/书生意气/挥斥方遒/指点江山）——含 AI-02"
+      ],
+      "evaluation": "师生互评打磨解说词；课堂评优：金牌诗词导游、优秀研学小组。"
+    },
+    {
+      "step": 4,
+      "name": "拓展思辨：导游答疑专场，突破教学难点",
+      "minutes": 8,
+      "minutes_note": "补充",
+      "teacher_action": "设置研学高频答疑，组织思辨对话；升华引领当代青年如何理解「谁主沉浮」。",
+      "student_action": "回答并总结：悲秋立足小我、壮秋立足大我；联系自身谈新时代青年的「主沉浮」。",
+      "activities": [
+        "问题1：古人逢秋多悲寂，本词秋景为何全无悲凉、只剩豪迈壮阔",
+        "问题2：立足新时代橘子洲头，当代青年如何理解「谁主沉浮」"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "结课升华：全域研学收官宣讲",
+      "minutes": 4,
+      "minutes_note": "补充",
+      "teacher_action": "组织集体收官宣讲；评选金牌诗词导游与优秀研学小组；布置分层情境作业。",
+      "student_action": "集体宣讲；接受评优；记录分层作业。",
+      "activities": [
+        "集体收官宣讲（课堂升华高潮）",
+        "课堂评优",
+        "分层情境作业：基础巩固（背诵默写）/ 能力提升（150—200字导游解说词）/ 素养拓展（短评：新时代青年，何为主沉浮）"
+      ]
+    }
+  ],
+  "blackboard": [
+    "沁园春·长沙（橘子洲研学导览图）",
+    "毛泽东",
+    "【观景台 · 绘秋景】远近动静 壮阔蓬勃 → 山河之美",
+    "【问天台 · 抒胸臆】叩问大地 谁主沉浮 → 时代之思",
+    "【青春馆 · 忆峥嵘】风华正茂 挥斥方遒 → 少年之志",
+    "景壮 · 气豪 · 志远 · 担当"
+  ],
+  "ai_plan": [
+    {
+      "ai_id": "AI-01",
+      "ai_type": "AI 视频",
+      "teaching_role": "情境还原：把「万类霜天竞自由」的湘江秋景由文字转为动态画面，支撑色彩、空间、动静、意境四维解说",
+      "linked_objective": "O3",
+      "linked_step": 3,
+      "linked_position": "打卡点位二 湘江秋色全景点",
+      "teacher_action": "学生在四维分层解说后由教师出示画面；按「色彩—空间—动静—意境」顺序逐层追问，要求学生用画面印证自己的解说词",
+      "student_action": "对照画面检查并打磨本组导游解说词，指出画面中与词句对应的意象",
+      "input_or_prompt": "秋日湘江橘子洲全景，远景岳麓山万山红遍、层林尽染，中景湘江碧透、百舸争流，仰视雄鹰击于长空，俯视游鱼翔于浅底；光线明亮通透，色彩以赤红与澄碧为主，生机蓬勃、气象壮阔；写实国风，不使用人物特写，不添加词作以外的元素",
+      "expected_output": "8—12 秒动态意境画面，1920×1080，单屏内可辨远近俯仰层次与红绿色彩关系",
+      "duration": "课前生成；课堂展示与追问约 3 分钟",
+      "verification": "画面须数出六个意象（山、林、江、舸、鹰、鱼），缺一重生成；基调须为壮秋，不得出现枯枝败叶、暮霭沉沉、孤舟独钓等悲秋符号；不得出现现代建筑、桥梁、霓虹等与 1925 年语境冲突的元素；教师放映前预看一次",
+      "fallback": "平板或网络不可用→教师端单机演示；视频无法播放→改用静态 AI 生成的湘江秋景全景图；完全无多媒体→闭目想象加教师语言描述，直接进行四维解说与展演",
+      "rights_note": "AI 生成内容，非实景照片、非历史影像；课件中须标注为「AI 生成示意画面」",
+      "handoff_note": "Agent B 生成并嵌入课件；finalize 后若重跑须再执行媒体回填脚本",
+      "required": true,
+      "status": "planned",
+      "execution_owner": "Agent B",
+      "resource_path": "resources/ai_video/ai-video-01-xiangjiang-qiujing-1080p.mp4",
+      "origin": "source（原设计已写明，本轮补齐教师动作、核验与备用方案字段）"
+    },
+    {
+      "ai_id": "AI-02",
+      "ai_type": "HTML 互动",
+      "teaching_role": "结构拆解：让学生把六大意象归入远眺/近观/仰视/俯瞰四个空间方位并标注动静属性，把写景艺术转化为可操作的结构认知",
+      "linked_objective": "O3",
+      "linked_step": 3,
+      "linked_position": "打卡点位四 青春记忆展馆之后",
+      "teacher_action": "展演结束后分发互动页，要求学生独立完成归类；投屏展示典型结果，点出远近俯仰、高低错落构成的全景图",
+      "student_action": "将六个意象卡片拖入四个空间方位框，勾选动静属性，完成后提交查看归类与解析",
+      "html_input": "上阕写景六句原文（万山红遍、层林尽染、漫江碧透、百舸争流、鹰击长空、鱼翔浅底），四个空间方位框（远眺/近观/仰视/俯瞰），动静属性选项",
+      "html_interaction": "拖动六个意象卡片到对应空间方位框；为每个卡片选择静或动属性；全部放置后点击提交",
+      "html_feedback": "正确：卡片变绿锁定并显示该句赏析要点；错误：卡片抖动标红并提示再看看词人是抬头看还是低头看，允许重试且不显示答案；重置：提供重新开始按钮；完成：展示立体全景湘江秋景图结构图与总结句",
+      "html_runtime": "电脑或平板浏览器，Chrome 或 Edge 近两年版本；单文件 HTML，离线可用，无需联网与安装",
+      "html_fallback": "无法运行时改用纸质意象归类卡：六句原文印成小卡片，学生在研学导游手册上画出四个方位框并粘贴归类，口头说明依据",
+      "html_handoff_target": "agents/html-courseware/AGENT.md",
+      "expected_output": "学生能独立说出六个意象的空间分布与动静属性，并解释远近俯仰、高低错落如何构成立体全景湘江秋景图",
+      "duration": "课堂约 5 分钟",
+      "verification": "方位归属须与原文一致（万山红遍、层林尽染→远眺；漫江碧透、百舸争流→近观；鹰击长空→仰视；鱼翔浅底→俯瞰）；动静属性须一致（层林、漫江为静；百舸、鹰、鱼为动）；完成态总结语须与板书一致，不引入新结论",
+      "fallback": "纸质意象归类卡加口头说明，教学闭环不变",
+      "rights_note": "本地生成单文件 HTML，不含第三方素材；词作原文引用自教材，仅作教学使用",
+      "handoff_note": "由 Agent HTML 生成可运行文件，交由 Agent B 放入正式课件；该页须保留静态备用内容",
+      "required": true,
+      "status": "planned",
+      "execution_owner": "Agent HTML",
+      "resource_path": "html_embeds/ai-html-01/ai-html-01.html",
+      "origin": "补充（原设计无此环节，需教师确认）"
+    }
+  ],
   "open_questions": [
-    "课时数未知：来源写明几课时就做几课时，不得擅自扩课时。",
-    "教学目标、重点难点、环节时长、提问与评价均待来源确认。",
-    "AI 赋能任务待来源检查后确定：若原设计已有有效 AI 环节则保留，否则由 Agent A 补充一项最轻量且最贴合目标的方案。",
-    "是否需要 AI 视频、是否延期到最后生成，待用户明确。"
+    {
+      "id": "Q1",
+      "question": "各环节分钟分配（原设计未写明，已按 1 课时 45 分钟给出建议）是否采用",
+      "impact": "课件页数与课堂节奏",
+      "status": "待教师确认"
+    },
+    {
+      "id": "Q2",
+      "question": "新增 HTML 互动 AI-02 是否采用",
+      "impact": "课堂节奏；不采用时以纸质意象归类卡替代，教学闭环不受影响",
+      "status": "待教师确认"
+    },
+    {
+      "id": "Q3",
+      "question": "AI-01 在班级不具备平板或网络条件时的降级方式是否可接受",
+      "impact": "课堂可落地性",
+      "status": "待教师确认"
+    },
+    {
+      "id": "Q4",
+      "question": "主来源未标注原作者与首发单位，如需正式署名请提供原始出处",
+      "impact": "溯源与署名",
+      "status": "待教师确认"
+    }
   ],
-  "blocking": true,
-  "blocking_reason": "缺少 Agent A 所需的现有教学设计来源；按规则暂停，不得由 AI 自行综合生成教学设计。"
+  "artifacts": {
+    "teaching_design_md": "teaching_design.md",
+    "teaching_design_docx": "outputs/teaching_design.docx",
+    "change_log": "working/change_log.md",
+    "ai_assets_manifest": "working/ai_assets_manifest.md",
+    "source_audit": "working/source_audit.md",
+    "rights_manifest": "working/rights_manifest.md",
+    "handoff": "working/handoff.md",
+    "pipeline_state": "working/pipeline_state.json"
+  },
+  "format_policy": {
+    "font": "宋体",
+    "size": "五号 10.5pt",
+    "color": "黑色 000000",
+    "table": "普通 Word 表格",
+    "forbidden": ["横线", "引用符号", "加粗标记", "代码块标记", "反引号", "Markdown 表格", "字符画"],
+    "verified": true
+  }
 }

@@ -1,0 +1,115 @@
+{
+  "deck_id": "qinyuanchun-changsha-g1chn-20261021",
+  "title": "沁园春·长沙",
+  "grade": "高一",
+  "subject": "语文",
+  "textbook": "统编版（部编版）必修上册 第一单元第1课",
+  "unit_theme": "青春的价值",
+  "lesson_hours": 1,
+  "minutes": 45,
+  "stage": "agent_a_handoff_ready",
+  "agent": "A",
+  "updated_at": "2026-10-21",
+  "source": {
+    "status": "archived_and_audited",
+    "primary_url": "https://www.yeyulingfeng.com/a/971474.html",
+    "primary_site": "夜雨聆风学习网",
+    "published_at": "2026-08-26",
+    "declared_hours": "1课时",
+    "completeness": "完整",
+    "supporting_count": 3,
+    "index": "source_materials/source_index.md",
+    "audit": "working/source_audit.md",
+    "blocking": false,
+    "note": "主来源唯一；辅助来源仅用于事实核验与课时佐证，未并入改写"
+  },
+  "phases": {
+    "phase_0_archive": {
+      "status": "done",
+      "evidence": [
+        "source_materials/yeyulingfeng_971474.html",
+        "source_materials/yeyulingfeng_971474.txt",
+        "source_materials/21cnjy_26598918.txt",
+        "source_materials/21cnjy_14391217.txt",
+        "source_materials/21cnjy_21278401.txt",
+        "source_materials/source_index.md"
+      ]
+    },
+    "phase_1_applicability": {
+      "status": "done",
+      "checks_passed": 16,
+      "fact_check_passed": true,
+      "evidence": "working/source_audit.md"
+    },
+    "phase_2_light_rewrite": {
+      "status": "done",
+      "corrections": 0,
+      "supplements": 8,
+      "evidence": "teaching_design.md, working/change_log.md"
+    },
+    "phase_3_ai_check": {
+      "status": "done",
+      "existing_ai_kept": "AI-01",
+      "ai_added": "AI-02",
+      "total_ai": 2,
+      "evidence": "working/ai_assets_manifest.md"
+    },
+    "phase_4_layout": {
+      "status": "done",
+      "docx": "outputs/teaching_design.docx",
+      "format_qa": {
+        "paragraphs": 152,
+        "tables": 2,
+        "font": "宋体",
+        "size": "五号 10.5pt",
+        "color": "000000",
+        "markdown_residue": 0
+      },
+      "script": "_流水线/md_to_docx.py"
+    },
+    "phase_5_handoff": {
+      "status": "done",
+      "evidence": "working/handoff.md, working/lesson_packet.json"
+    }
+  },
+  "ai_plan": [
+    {
+      "ai_id": "AI-01",
+      "ai_type": "AI 视频",
+      "required": true,
+      "status": "planned",
+      "execution_owner": "Agent B",
+      "resource_path": "resources/ai_video/ai-video-01-xiangjiang-qiujing-1080p.mp4"
+    },
+    {
+      "ai_id": "AI-02",
+      "ai_type": "HTML 互动",
+      "required": true,
+      "status": "planned",
+      "execution_owner": "Agent HTML",
+      "resource_path": "html_embeds/ai-html-01/ai-html-01.html"
+    }
+  ],
+  "open_questions": [
+    "Q1 各环节分钟分配建议是否采用",
+    "Q2 AI-02 HTML 互动是否采用",
+    "Q3 AI-01 无平板无网络时降级方式是否可接受",
+    "Q4 主来源原作者与首发单位未知，是否需正式署名"
+  ],
+  "gate_check": {
+    "source_consistent": true,
+    "intent_preserved": true,
+    "every_step_has_teacher_and_student_action": true,
+    "objective_activity_question_evaluation_aligned": true,
+    "ai_has_role_and_fallback": true,
+    "ai_fields_complete": true,
+    "origin_rewrite_addition_distinguishable": true,
+    "docx_format_verified": true,
+    "handoff_paths_available": true,
+    "artifacts_consistent": true,
+    "open_questions_recorded": true,
+    "result": "pass"
+  },
+  "next_stage": "Agent B：按 handoff.md 与 lesson_packet.json 编写课件大纲并制作课件",
+  "next_action": "Agent B 编写 outline.md（页数按 1 课时 45 分钟安排），随后进入 deck_spec 与视觉/可编辑两版制作"
+}
