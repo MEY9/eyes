@@ -35,7 +35,7 @@ description: Package Agent B's approved education PPT animation for manual publi
 
 ### 固定 BGM
 
-全线唯一指定班得瑞《雪之梦》（Snowdreams），无备选曲目。发布包装只接收已按 `assets/bgm/BGM.md` 核验的《雪之梦》BGM 基底；不得用旧项目残留音轨、许嵩曲库、Local Forecast 或其他音乐替代。没有完整音源时不制作音乐版发布视频，并把状态登记为 `awaiting_snowdreams_audio`；30 秒官方试听不能作为整条视频配乐。
+全线唯一指定班得瑞《雪之梦》（Snowdreams），无备选曲目，统一从原曲约 00:45 起使用至曲尾。发布包装只接收使用 `assets/bgm/snowdreams/Snowdreams_from_45s.mp3` 制作并通过 QA 的 BGM 基底；不得用旧项目残留音轨、许嵩曲库、Local Forecast 或其他音乐替代。只有本机截取段确实缺失时才登记 `awaiting_snowdreams_audio`；30 秒官方试听不能作为整条视频配乐。
 
 ## 固定发布包
 

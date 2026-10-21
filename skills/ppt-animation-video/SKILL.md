@@ -1,6 +1,6 @@
 ---
 name: ppt-animation-video
-description: Create one continuous 16:9 MP4 base from a completed editable PPTX and its semantic animation manifest, including full embedded-video playback and only audio already contained in the PPT during base composition; after QA, create the fixed Bandari Snowdreams BGM derivative when the complete user-provided audio file is available. Default to player-free semantic composition; use native PowerPoint or WPS recording only when the user explicitly requires exact engine playback. Use after editable reconstruction and animation QA, not for deck authoring or social-platform framing.
+description: Create one continuous 16:9 MP4 base from a completed editable PPTX and its semantic animation manifest, including full embedded-video playback and only audio already contained in the PPT during base composition; after QA, create the fixed Bandari Snowdreams BGM derivative using the user's audio trimmed from 45 seconds. Default to player-free semantic composition; use native PowerPoint or WPS recording only when the user explicitly requires exact engine playback. Use after editable reconstruction and animation QA, not for deck authoring or social-platform framing.
 ---
 
 # PPT 动画视频
@@ -17,7 +17,7 @@ description: Create one continuous 16:9 MP4 base from a completed editable PPTX 
 - 每个语义动画组必须播放一次；动画顺序、组合关系和课堂逻辑以 `animation_manifest_logic.json` 为准。
 - 内嵌视频在指定动画组结束后自动开始，完整播放结束后才继续下一步或切页。
 - 母版合成阶段只保留 PPT 内部已有声音，不添加 Azure 旁白、后期音效或麦克风声音；母版通过 QA 后，才可按 `assets/bgm/BGM.md` 生成标准 BGM 派生基底。
-- 全线唯一 BGM 是班得瑞《雪之梦》（Snowdreams），不得选用其他曲目。只有完整音源就绪后才生成 BGM 版；缺少完整音源时保留静音母版并登记 `awaiting_snowdreams_audio`，不改用其他音乐。30 秒试听片段不可作为完整视频配乐。
+- 全线唯一 BGM 是班得瑞《雪之梦》（Snowdreams），统一使用 `assets/bgm/snowdreams/Snowdreams_from_45s.mp3`（从原曲约 00:45 截至曲尾）。不得选用其他曲目。只有该本机音源缺失时才保留静音母版并登记 `awaiting_snowdreams_audio`，不改用其他音乐。30 秒试听片段不可作为完整视频配乐。
 - 保留 PPT 的原始画幅，默认 16:9；不添加页码、进度条、竖版外框、说明文字、外部封面或平台装饰。
 - 不设一分钟上限；总时长由动画、媒体和必要的阅读停留共同决定。
 
@@ -115,7 +115,7 @@ python3 skills/ppt-animation-video/scripts/render_semantic_video.py \
 - 输出 H.264 视频、AAC 音频、30 fps 的连续 MP4。
 - 分辨率跟随 PPT 画幅，16:9 默认使用 1920×1080。
 - 只裁掉合成器的技术空白，不删除教学停留、动画过程或媒体内容。
-- 母版通过 QA 后，只按 `assets/bgm/BGM.md` 的唯一曲目《雪之梦》和混音标准生成 BGM 派生版。完整音源未就绪时不生成替代曲目版本。母版及 BGM 版都是内部合成基底，写入 `working/semantic-video/`（如 `working/semantic-video/<课题>_课件语义动画_16x9.mp4` 与 `*_BGM.mp4`），不放入 `outputs/`；对外唯一交付的视频由 `ppt-social-publishing` 包装为 `outputs/social/video_9x16.mp4`。
+- 母版通过 QA 后，只按 `assets/bgm/BGM.md` 的唯一曲目与 00:45 起截取段生成 BGM 派生版。本机截取段缺失时不生成替代曲目版本。母版及 BGM 版都是内部合成基底，写入 `working/semantic-video/`（如 `working/semantic-video/<课题>_课件语义动画_16x9.mp4` 与 `*_BGM.mp4`），不放入 `outputs/`；对外唯一交付的视频由 `ppt-social-publishing` 包装为 `outputs/social/video_9x16.mp4`。
 
 ## 模式 B 原生录制流程
 

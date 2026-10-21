@@ -10,4 +10,4 @@ injectAgentsMd: true
 
 AI 赋能必须有真实产物和教学证据；HTML 任务必须实际调用 Agent HTML。动画必须根据教学逻辑分组和变化，不得无脑统一添加。完成 PPTX QA 后，按用户要求调用动画/视频和公众号发布 Skill，报告每个阶段的真实文件路径、状态和 QA 结果。
 
-课件视频 BGM 固定为班得瑞《雪之梦》（Snowdreams），没有备选曲目；完整音源缺失时保留静音母版并登记 `awaiting_snowdreams_audio`，不得换歌。详细处理以 `assets/bgm/BGM.md` 为准。
+课件视频 BGM 固定为班得瑞《雪之梦》（Snowdreams），统一从原曲约 00:45 起使用至曲尾，没有备选曲目；本机截取段缺失时保留静音母版并登记 `awaiting_snowdreams_audio`，不得换歌。详细处理以 `assets/bgm/BGM.md` 为准。
