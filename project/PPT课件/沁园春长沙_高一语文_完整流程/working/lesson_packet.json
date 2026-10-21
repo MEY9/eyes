@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "deck_id": "qinyuanchun-changsha-g1chn-20261021",
+  "title": "沁园春·长沙",
+  "author": "毛泽东",
+  "subject": "高中语文",
+  "grade": "高一",
+  "textbook": "统编版（2019）高中语文必修上册",
+  "chapter": "第一单元（文学阅读与写作 · 单元主题“青春的价值”）",
+  "lesson": "第1课 沁园春·长沙",
+  "lesson_hours": null,
+  "planned_minutes": null,
+  "source_status": "awaiting_user_material",
+  "source_status_note": "Agent A 规则 1：默认模式是“基于现有教学设计的轻量改写”，不是从零创作；第 7 节“没有现有设计却要求按轻量改写交付”属于必须暂停项。因此本文件在用户提供来源前不填写教学目标、重难点、教学步骤与 AI 赋能，全部留空。",
+  "required_source_material": [
+    "现有教学设计（DOCX / PDF / 图片 / 粘贴文本均可）",
+    "或教参、教研资料原文",
+    "或微信公众号文章公开链接（走 $read-wechat-articles 读取）"
+  ],
+  "source_materials_dir": "source_materials/",
+  "objectives": [],
+  "key_points": [],
+  "difficult_points": [],
+  "teaching_steps": [],
+  "ai_tasks": [],
+  "open_questions": [
+    "课时数未知：来源写明几课时就做几课时，不得擅自扩课时。",
+    "教学目标、重点难点、环节时长、提问与评价均待来源确认。",
+    "AI 赋能任务待来源检查后确定：若原设计已有有效 AI 环节则保留，否则由 Agent A 补充一项最轻量且最贴合目标的方案。",
+    "是否需要 AI 视频、是否延期到最后生成，待用户明确。"
+  ],
+  "blocking": true,
+  "blocking_reason": "缺少 Agent A 所需的现有教学设计来源；按规则暂停，不得由 AI 自行综合生成教学设计。"
+}
